@@ -1,0 +1,21 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# ACWR
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+Pre-release version of the ACWR package. This package contains functions for calculating the acute chronic workload ratio using three different methods: exponentially weighted moving average (EWMA), rolling average coupled (RAC) and rolling averaged uncoupled (RAU).

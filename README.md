@@ -18,8 +18,8 @@ rolling averaged uncoupled (RAU).
 
   - [Application of ACWR](https://bjsm.bmj.com/content/50/5/273)
     (European Journal of Sport Science)
-      - [rolling average method](https://bjsm.bmj.com/content/53/16/988)
-        (British Journal of Sports Medicine)
+  - [rolling average method](https://bjsm.bmj.com/content/53/16/988)
+    (British Journal of Sports Medicine)
   - [exponentially weighted moving averages
     method](https://bjsm.bmj.com/content/51/9/749.long) (British Journal
     of Sports Medicine)

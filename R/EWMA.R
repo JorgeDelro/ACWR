@@ -67,8 +67,8 @@ EWMA <- function(TL) {
 
   }
 
-  return(list(EWMA_chronic = EWMA_chronic,
-              EWMA_acute = EWMA_acute,
+  return(list(EWMA_acute = EWMA_acute,
+              EWMA_chronic = EWMA_chronic,
               EWMA_ACWR = EWMA_ACWR))
 
 } # end EWMA

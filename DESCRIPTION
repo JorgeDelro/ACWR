@@ -23,3 +23,6 @@ Depends:
 RoxygenNote: 7.1.1
 URL: https://github.com/JorgeDelro/ACWR
 BugReports: https://github.com/JorgeDelro/ACWR/issues
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

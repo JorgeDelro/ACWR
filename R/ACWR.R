@@ -74,7 +74,6 @@ ACWR <- function(db,
     # Loop over the methods
     for (j in ACWR_method) {
 
-      print(j)
       # EWMA method
       if(j == "EWMA") {
 

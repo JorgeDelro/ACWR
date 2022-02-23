@@ -44,6 +44,7 @@ ACWR <- function(db,
                  ID,
                  TL,
                  weeks,
+                 days,
                  training_dates,
                  ACWR_method = c("EWMA", "RAC", "RAU")) {
 
@@ -61,6 +62,9 @@ ACWR <- function(db,
   if(is.null(weeks)){
     stop("you must provide the column name of week variable")
   }
+  if(is.null(days)){
+    stop("you must provide the column name of day variable")
+  }
   if(is.null(training_dates)){
     stop("you must provide the column name of training dates variable")
   }
@@ -69,7 +73,7 @@ ACWR <- function(db,
   for (i in unique(db[[ID]])) {
 
     # Create individual dfs
-    db_ind <- db[db[[ID]] == i,  c(ID, TL, weeks, training_dates) ]
+    db_ind <- db[db[[ID]] == i,  c(ID, TL, weeks, days, training_dates) ]
 
     # Loop over the methods
     for (j in ACWR_method) {

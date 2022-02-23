@@ -65,8 +65,6 @@ RAU <- function (TL,
       # loop over number of sessions / week
       for (j in 1:sessions_week$Freq[unique(weeks)[i]]) {
 
-        print(paste("Week:", i, " Day: ", j, sep = ""))
-
         # First training day: RAC_chronic = TL / RAC_acute = TL
         if(j == 1){
           # Count number of training sessions
@@ -97,8 +95,6 @@ RAU <- function (TL,
       # loop over number of sessions / week
       for (j in 1:sessions_week$Freq[unique(weeks)[i]]) {
 
-        print(paste("Week:", i, " Day: ", j, sep = ""))
-
         # Count number of training sessions
         n_sessions_total <- n_sessions_total + 1
 
@@ -128,8 +124,6 @@ RAU <- function (TL,
       # loop over number of sessions / week
       for (j in 1:sessions_week$Freq[unique(weeks)[i]]) {
 
-        print(paste("Week:", i, " Day: ", j, sep = ""))
-
         # Count number of training sessions
         n_sessions_total <- n_sessions_total + 1
 
@@ -153,9 +147,6 @@ RAU <- function (TL,
         # Number of sessions include in the chronic training block =
         # Number of sessions in chronic - number of sessions in acute
         RAU_chronic[n_sessions_total] = (sum(TL[acute_TB$previous_TL:chronic_TB$previous_TL]))/chronic_TB$n_session
-
-        print(paste("acute_TB$previous_TL:", acute_TB$previous_TL, sep = ""))
-        print(paste("chronic_TB$previous_TL:", chronic_TB$previous_TL, sep = ""))
       }
 
 

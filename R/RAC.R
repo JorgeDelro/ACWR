@@ -63,8 +63,6 @@ RAC <- function(TL,
       # loop over number of sessions / week
       for (j in 1:sessions_week$Freq[unique(weeks)[i]]) {
 
-        #print(paste("Day first week: ", j, sep = ""))
-
         # First training day: RAC_chronic = TL / RAC_acute = TL
         if(j == 1){
           # Count number of training sessions

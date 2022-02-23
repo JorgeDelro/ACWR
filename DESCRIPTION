@@ -1,6 +1,6 @@
 Package: ACWR
 Type: Package
-Title: Acute Chronic Worlaod Ratio Calculation
+Title: Acute Chronic Worload Ratio Calculation
 Version: 0.0.0.9000
 Authors@R: person("Jorge R",
              "Fernandez-Santos",

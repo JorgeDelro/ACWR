@@ -6,7 +6,7 @@ Authors@R: person("Jorge R",
              "Fernandez-Santos",
              role = c("aut", "cre"),
              email = "jorgedelrosario.fernandez@uca.es",
-             comment = c(ORCID = "https://orcid.org/0000-0002-5047-2976")
+             comment = c(ORCID = "https://orcid.org/0000-0002-5047-2976"))
 Maintainer: Jorge R Fernandez-Santos <jorgedelrosario.fernandez@uca.es>
 Description: functions for calculating the acute chronic workload ratio using three 
             different methods: exponentially weighted moving average (EWMA), rolling 

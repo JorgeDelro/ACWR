@@ -28,10 +28,11 @@ test_that("output of ACWR function", {
                       ID = "ID",
                       TL = "TL",
                       weeks = "Week",
+                      days = "Days",
                       training_dates = "Training_Date",
                       ACWR_method = c("EWMA", "RAC", "RAU"))
 
-  expect_equal(ncol(result_ACWR), 13)
+  expect_equal(ncol(result_ACWR), 14)
   expect_equal(class(result_ACWR$EWMA_chronic), "numeric")
   expect_equal(class(result_ACWR$EWMA_acute), "numeric")
   expect_equal(class(result_ACWR$EWMA_ACWR), "numeric")

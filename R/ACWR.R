@@ -5,6 +5,7 @@
 #' @param ID ID of the subjects
 #' @param TL training load
 #' @param weeks training weeks
+#' @param days training days
 #' @param training_dates training dates
 #' @param ACWR_method method to calculate ACWR
 #'
@@ -33,6 +34,7 @@
 #'                  ID = "ID",
 #'                  TL = "TL",
 #'                  weeks = "Week",
+#'                  days = "Day",
 #'                  training_dates = "Training_Date",
 #'                  ACWR_method = c("EWMA", "RAC", "RAU"))
 #'

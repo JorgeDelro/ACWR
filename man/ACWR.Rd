@@ -4,7 +4,15 @@
 \alias{ACWR}
 \title{Acute Chronic Workload Ratio}
 \usage{
-ACWR(db, ID, TL, weeks, training_dates, ACWR_method = c("EWMA", "RAC", "RAU"))
+ACWR(
+  db,
+  ID,
+  TL,
+  weeks,
+  days,
+  training_dates,
+  ACWR_method = c("EWMA", "RAC", "RAU")
+)
 }
 \arguments{
 \item{db}{a data frame}
@@ -14,6 +22,8 @@ ACWR(db, ID, TL, weeks, training_dates, ACWR_method = c("EWMA", "RAC", "RAU"))
 \item{TL}{training load}
 
 \item{weeks}{training weeks}
+
+\item{days}{training days}
 
 \item{training_dates}{training dates}
 
@@ -46,6 +56,7 @@ result_ACWR <- ACWR(db = training_load,
                  ID = "ID",
                  TL = "TL",
                  weeks = "Week",
+                 days = "Day",
                  training_dates = "Training_Date",
                  ACWR_method = c("EWMA", "RAC", "RAU"))
 

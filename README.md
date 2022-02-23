@@ -38,12 +38,14 @@ First, we have to load the data stored in the package
 
 ``` r
 data("training_load", package = "ACWR")
+# Convert to data.frame
+training_load <- data.frame(training_load)
 ```
 
 Then, we can calculate the ACWR:
 
 ``` r
-result_ACWR <- ACWR(db = training_load_db,
+result_ACWR <- ACWR(db = training_load,
                   ID = "ID",
                   TL = "TL",
                   weeks = "Week",
@@ -65,18 +67,18 @@ Functions for each individual method have been implemented too:
 
 ``` r
 # Select the first subject
-training_load_db_1 <- training_load_db[training_load_db[["ID"]] == 1,  ]
+training_load_1 <- training_load[training_load[["ID"]] == 1,  ]
 
 # EWMA
-result_EWMA <- EWMA(TL = training_load_db_1$TL)
+result_EWMA <- EWMA(TL = training_load_1$TL)
 
 # RAC
-result_RAC <- RAC(TL = training_load_db_1$TL,
-                  weeks = "Week",
-                  training_dates = "Training_Date")
+result_RAC <- RAC(TL = training_load_1$TL,
+                  weeks = training_load_1$Week,
+                  training_dates = training_load_1$Training_Date)
                     
 # RAU
 result_RAU <- RAU(TL = training_load_db_1$TL,
-                  weeks = "Week",
-                  training_dates = "Training_Date")
+                  weeks = training_load_1$Week,
+                  training_dates = training_load_1$Training_Date)
 ```

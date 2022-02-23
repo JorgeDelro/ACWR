@@ -26,10 +26,10 @@
 #' data("training_load", package = "ACWR")
 #'
 #' # Convert to data.frame
-#' training_load_db <- data.frame(training_load)
+#' training_load <- data.frame(training_load)
 #'
 #' # Calculate ACWR
-#' result_ACWR <- ACWR(db = training_load_db,
+#' result_ACWR <- ACWR(db = training_load,
 #'                  ID = "ID",
 #'                  TL = "TL",
 #'                  weeks = "Week",

@@ -26,15 +26,15 @@
 #' data("training_load", package = "ACWR")
 #'
 #' # Convert to data.frame
-#' training_load_db <- data.frame(training_load)
+#' training_load <- data.frame(training_load)
 #'
 #' # Select the first subject
-#' training_load_db_1 <- training_load_db[training_load_db[["ID"]] == 1,  ]
+#' training_load_1 <- training_load[training_load[["ID"]] == 1,  ]
 #'
 #' # Calculate ACWR
-#' result_RAC <- RAC(TL = training_load_db_1$TL,
-#'                    weeks = "Week",
-#'                    training_dates = "Training_Date")
+#' result_RAC <- RAC(TL = training_load_1$TL,
+#'                    weeks = training_load_1$Week,
+#'                    training_dates = training_load_1$Training_Date)
 #'
 #' # set user working directory
 #' setwd(oldwd)

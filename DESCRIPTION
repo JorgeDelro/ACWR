@@ -8,7 +8,7 @@ Authors@R: person("Jorge R",
              email = "jorgedelrosario.fernandez@uca.es",
              comment = c(ORCID = "https://orcid.org/0000-0002-5047-2976"))
 Maintainer: Jorge R Fernandez-Santos <jorgedelrosario.fernandez@uca.es>
-Description: functions for calculating the acute chronic workload ratio using three 
+Description: Functions for calculating the acute chronic workload ratio using three 
             different methods: exponentially weighted moving average (EWMA), rolling 
             average coupled (RAC) and rolling averaged uncoupled (RAU). Examples of this 
             methods can be found in Williams et al. (2017) <doi:10.1136/bjsports-2016-096589>

@@ -117,7 +117,7 @@ plot_ACWR <- function(db,
 
   # Day / TL / EWMA_ACWR
   d3_ACWR <- r2d3(data = db,
-             script = "inst/ACWR_plot.js",
+             script = system.file("ACWR_plot.js", package = "ACWR"),
              options = list(margin = 50,
                             #barPadding = 0.1,
                             colour = colour,
@@ -147,7 +147,7 @@ plot_ACWR <- function(db,
 
       # Individual plots
       d3_ACWR <- r2d3(data = db_ind,
-                      script = "inst/ACWR_plot.js",
+                      script = system.file("ACWR_plot.js", package = "ACWR"),
                       options = list(margin = 50,
                                      #barPadding = 0.1,
                                      colour = colour,

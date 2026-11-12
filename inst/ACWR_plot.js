@@ -15,7 +15,8 @@ var x = d3.scaleBand()
 
     svg.append("g")
       .attr("transform", "translate(" + 0 + "," + (height+margin) + ")")
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x)
+        .tickValues(x.domain().filter(function(d, i) { return i % 7 === 0; })));
 
     svg.append("text")
       .attr("transform", "translate(" + (width/2 + 35) + " ," + (height+1.8*margin) + ")")
@@ -92,7 +93,7 @@ var line = d3.line()
        .curve(d3.curveMonotoneX);
 
     svg.append("path")
-        .datum(data)
+        .datum(data.filter(function(d) { return d.session; }))
         .attr("class", "line")
         .attr("transform", "translate(" + 5 + "," + margin + ")")
         .attr("d", line)

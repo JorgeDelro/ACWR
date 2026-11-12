@@ -4,7 +4,9 @@
 #' @param db a data frame
 #' @param TL training load
 #' @param ACWR Acute Chronic Workload Ratio
-#' @param day training days
+#' @param day training days: day numbers (whole numbers) or dates (Date or
+#'        POSIXct). The x-axis is a continuous calendar from the first to the
+#'        last day.
 #' @param ID ID of the subjects
 #' @param colour colour of the bars. By default "#87CEEB" (skyblue)
 #' @param xLabel x-axis label. By default "Days"
@@ -16,8 +18,11 @@
 #'
 #' @return This function returns a d3.js object for a single subject.
 #'          For several subjects it returns a list of d3.js objects.
-#'          Sessions on the same day are shown as one bar (summed load), and
-#'          the ACWR line is not drawn on days where the ACWR is NA.
+#'          The x-axis has one slot per calendar day between the first and
+#'          the last day, labelled every 7 days; days without a session have
+#'          a bar of height 0. Sessions on the same day are shown as one bar
+#'          (summed load). The ACWR line joins the sessions that have a value,
+#'          across rest days, and is not drawn where the ACWR is NA.
 #' @export
 #'
 #' @examples
@@ -155,16 +160,38 @@ plot_ACWR <- function(db,
 
 }
 
-#' Aggregate sessions on the same day
+#' One bar per calendar day
 #'
 #' Several sessions on one day become one bar (summed load); the ACWR of a
-#' day is the same for all its sessions, so the first one is kept.
+#' day is the same for all its sessions, so the first one is kept. Days
+#' without a session between the first and the last day are added with a
+#' load of 0 and no ACWR (`session = FALSE`).
 #' @noRd
 one_bar_per_day <- function(db) {
-  db <- db[, c("TL", "ACWR", "day")]
-  first <- !duplicated(db$day)
-  out <- db[first, ]
-  out$TL <- as.vector(rowsum(db$TL, match(db$day, db$day[first]),
-                             reorder = TRUE))
-  out
+
+  day <- db$day
+  if (anyNA(day)) {
+    stop("the day column has missing values", call. = FALSE)
+  }
+  if (inherits(day, "POSIXt")) {
+    day <- as.Date(format(day, "%Y-%m-%d"))
+  }
+  if (inherits(day, "Date")) {
+    all_days <- seq(min(day), max(day), by = "day")
+  } else if (is.numeric(day) && all(day == round(day))) {
+    all_days <- seq(min(day), max(day))
+  } else {
+    stop("the day column must hold day numbers (whole numbers) or dates ",
+         "(Date or POSIXct) to draw a calendar axis", call. = FALSE)
+  }
+
+  first <- !duplicated(day)
+  session_TL <- as.vector(rowsum(db$TL, match(day, day[first]),
+                                 reorder = TRUE))
+  idx <- match(all_days, day[first])
+
+  data.frame(TL = ifelse(is.na(idx), 0, session_TL[idx]),
+             ACWR = db$ACWR[first][idx],
+             day = all_days,
+             session = !is.na(idx))
 }

@@ -62,8 +62,14 @@ weeks and 6 in the fourth, the coupled ratio (RAC) at the last session is now
   POSIXct, loads must be numeric and non-negative, columns must exist in `db`.
   Unsorted dates are sorted internally.
 * The internal function `training_blocks()` has been removed.
-* `plot_ACWR()` shows one bar per day when there are several sessions on the
-  same day, and does not draw the ACWR line on days where it is `NA`.
+* `plot_ACWR()`:
+  * the x-axis is a continuous calendar, with one slot per day from the first
+    to the last day, so rest days and weeks without training are visible
+    (bar of height 0); axis labels are shown every 7 days;
+  * several sessions on the same day are shown as one bar (summed load);
+  * the ACWR line joins the sessions that have a value and is not drawn
+    where the ACWR is `NA`;
+  * `day` must hold day numbers (whole numbers) or dates (Date or POSIXct).
 
 ## Other
 

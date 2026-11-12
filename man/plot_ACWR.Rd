@@ -24,7 +24,9 @@ plot_ACWR(
 
 \item{ACWR}{Acute Chronic Workload Ratio}
 
-\item{day}{training days}
+\item{day}{training days: day numbers (whole numbers) or dates (Date or
+POSIXct). The x-axis is a continuous calendar from the first to the
+last day.}
 
 \item{ID}{ID of the subjects}
 
@@ -41,8 +43,11 @@ plot_ACWR(
 \value{
 This function returns a d3.js object for a single subject.
 For several subjects it returns a list of d3.js objects.
-Sessions on the same day are shown as one bar (summed load), and
-the ACWR line is not drawn on days where the ACWR is NA.
+The x-axis has one slot per calendar day between the first and
+the last day, labelled every 7 days; days without a session have
+a bar of height 0. Sessions on the same day are shown as one bar
+(summed load). The ACWR line joins the sessions that have a value,
+across rest days, and is not drawn where the ACWR is NA.
 }
 \description{
 ACWR plots using d3.js

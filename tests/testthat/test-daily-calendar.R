@@ -241,3 +241,26 @@ test_that("ACWR() reports missing columns and emits a single NA warning", {
   )
   expect_length(w, 1)
 })
+
+test_that("matches a brute-force calculation on irregular data", {
+  set.seed(3)
+  day <- sort(sample(0:69, 45, replace = TRUE)) # gaps and double sessions
+  load <- round(runif(length(day), 50, 900))
+  s <- make_scenario(day, load)
+  r <- run_methods(s)
+  keep <- day >= min(day) + 27
+  expected <- t(sapply(day[keep], function(t) brute_force(day, load, t)))
+  expect_equal(r$RAC$RAC_ACWR[keep], unname(expected[, "RAC"]))
+  expect_equal(r$RAU$RAU_ACWR[keep], unname(expected[, "RAU"]))
+  expect_equal(r$EWMA$EWMA_ACWR[keep], unname(expected[, "EWMA"]))
+})
+
+test_that("the NA warning gives the number of NA days and advises imputation", {
+  s <- make_scenario(0:40, 500)
+  s$TL[4] <- NA # day 3: EWMA NA on days 3-40
+  expect_warning(EWMA(TL = s$TL, training_dates = s$Training_Date),
+                 "EWMA: 38 day\\(s\\).*Impute")
+  # RAC: chronic windows containing day 3 end on days 27-30 (after warm-up)
+  expect_warning(RAC(TL = s$TL, training_dates = s$Training_Date),
+                 "RAC: 4 day\\(s\\).*Impute")
+})

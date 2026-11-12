@@ -51,3 +51,17 @@ expect_near <- function(object, expected, tol = 0.01) {
 }
 
 last <- function(x) x[length(x)]
+
+# Brute-force reference: loops over calendar dates, value at day `t`
+brute_force <- function(day, load, t) {
+  w <- function(d) sum(load[day == d]) # 0 if no session that day
+  acute <- sum(sapply((t - 6):t, w))
+  ea <- ec <- w(min(day))
+  if (t > min(day)) for (d in (min(day) + 1):t) {
+    ea <- w(d) * 2 / 8 + (1 - 2 / 8) * ea
+    ec <- w(d) * 2 / 29 + (1 - 2 / 29) * ec
+  }
+  c(RAC = acute / (sum(sapply((t - 27):t, w)) / 4),
+    RAU = acute / (sum(sapply((t - 27):(t - 7), w)) / 3),
+    EWMA = ea / ec)
+}

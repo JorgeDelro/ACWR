@@ -13,7 +13,7 @@ test_that("output of EWMA function", {
     rep(x = 50, times = 7)
   )
 
-  result_EWMA <- EWMA(TL)
+  expect_message(result_EWMA <- EWMA(TL), "consecutive")
 
   expect_equal(is.list(result_EWMA), TRUE)
   expect_equal(names(result_EWMA)[1], "EWMA_acute")

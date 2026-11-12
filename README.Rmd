@@ -14,9 +14,10 @@ knitr::opts_chunk$set(
 # ACWR
 
 <!-- badges: start -->
-[![License:
-MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![R-CMD-check](https://github.com/JorgeDelro/ACWR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JorgeDelro/ACWR/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/JorgeDelro/ACWR/graph/badge.svg)](https://app.codecov.io/gh/JorgeDelro/ACWR)
+[![CRAN status](https://www.r-pkg.org/badges/version/ACWR)](https://CRAN.R-project.org/package=ACWR)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
 
 ## Overview

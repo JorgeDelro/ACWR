@@ -1,0 +1,45 @@
+url: https://jorgedelro.github.io/ACWR/
+template:
+  bootstrap: 5
+
+# Home page: README.md (pkgdown's default)
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+  components:
+    intro:
+      text: Get started
+      href: articles/daily-calendar.html
+
+articles:
+- title: Daily calendar
+  navbar: ~
+  contents:
+  - daily-calendar
+
+reference:
+- title: Main function
+  desc: >
+    Acute and chronic loads and the ACWR for one or several athletes, with
+    one or more methods.
+  contents:
+  - ACWR
+- title: Calculation methods
+  desc: >
+    One athlete: exponentially weighted moving average (Williams et al.,
+    2017) and coupled and uncoupled rolling averages (Windt & Gabbett, 2019),
+    on a daily calendar.
+  contents:
+  - EWMA
+  - RAC
+  - RAU
+- title: Plotting
+  desc: Training load and ACWR per day, drawn with d3.js.
+  contents:
+  - plot_ACWR
+- title: Datasets
+  desc: Simulated training loads of three athletes.
+  contents:
+  - training_load
+  - training_load_rest

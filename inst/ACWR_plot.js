@@ -88,6 +88,7 @@ svg.selectAll('rect')
 var line = d3.line()
         .x(function(d) { return x(d.day); })
         .y(function(d) { return y1(d.ACWR); })
+       .defined(function(d) { return d.ACWR != null; })
        .curve(d3.curveMonotoneX);
 
     svg.append("path")
@@ -104,7 +105,7 @@ svg.append("circle")
   .attr("cx",margin + 20)
   .attr("cy",(margin/2 - 10))
   .attr("r", 6)
-  .style("fill", "#black");
+  .style("fill", "black");
 
 svg.append("circle")
   .attr("cx", margin + 20)

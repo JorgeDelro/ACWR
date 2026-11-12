@@ -27,6 +27,9 @@
 #'
 #' @details A missing load (NA) makes every window that contains its day NA,
 #'          and a warning is given.
+#'          The ratio is NA when the chronic load is 0 (e.g. no training
+#'          in the chronic window): a ratio to zero load is undefined, and
+#'          returning NA avoids infinite values in summaries and plots.
 #'
 #' @references Windt J, Gabbett TJ (2019). Is it all for naught? What does
 #'   mathematical coupling mean for acute:chronic workload ratios? British

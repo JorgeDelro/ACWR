@@ -264,3 +264,10 @@ test_that("the NA warning gives the number of NA days and advises imputation", {
   expect_warning(RAC(TL = s$TL, training_dates = s$Training_Date),
                  "RAC: 4 day\\(s\\).*Impute")
 })
+
+test_that("the ratio is NA when the chronic load is 0", {
+  s <- make_scenario(0:27, c(rep(0, 21), rep(500, 7)))
+  r <- RAU(TL = s$TL, training_dates = s$Training_Date)
+  expect_equal(last(r$RAU_chronic), 0)
+  expect_true(is.na(last(r$RAU_ACWR)))
+})

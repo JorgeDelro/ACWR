@@ -41,37 +41,26 @@ plot_ACWR(
 \value{
 This function returns a d3.js object for a single subject.
          For several subjects it returns a list of d3.js objects.
+         Sessions on the same day are shown as one bar (summed load), and
+         the ACWR line is not drawn on days where the ACWR is NA.
 }
 \description{
 ACWR plots using d3.js
 }
 \examples{
-
-\dontrun{
-# Get old working directory
-oldwd <- getwd()
-
-# Set temporary directory
-setwd(tempdir())
-
-# Read db
 data("training_load", package = "ACWR")
 
-# Convert to data.frame
-training_load_db <- data.frame(training_load)
-
 # Calculate ACWR
-result_ACWR <- ACWR(db = training_load_db,
-                 ID = "ID",
-                 TL = "TL",
-                 weeks = "Week",
-                 days = "Day",
-                 training_dates = "Training_Date",
-                 ACWR_method = c("EWMA", "RAC", "RAU"))
+result_ACWR <- ACWR(db = training_load,
+                    ID = "ID",
+                    TL = "TL",
+                    days = "Day",
+                    training_dates = "Training_Date",
+                    ACWR_method = c("EWMA", "RAC", "RAU"))
 
 # Plot for 1 subject
 # Select the first subject
-result_ACWR_1 <- result_ACWR[result_ACWR[["ID"]] == 1,  ]
+result_ACWR_1 <- result_ACWR[result_ACWR[["ID"]] == 1, ]
 
 # plot ACWR (e.g. EWMA)
 ACWR_plot_1 <- plot_ACWR(db = result_ACWR_1,
@@ -82,13 +71,9 @@ ACWR_plot_1 <- plot_ACWR(db = result_ACWR_1,
 # Plot for several subjects
 # plot ACWR (e.g. RAC)
 ACWR_plot <- plot_ACWR(db = result_ACWR,
-                         TL = "TL",
-                         ACWR = "RAC_ACWR",
-                         day = "Day",
-                         ID = "ID")
-
-# set user working directory
-setwd(oldwd)
-}
+                       TL = "TL",
+                       ACWR = "RAC_ACWR",
+                       day = "Day",
+                       ID = "ID")
 
 }

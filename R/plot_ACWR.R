@@ -16,35 +16,24 @@
 #'
 #' @return This function returns a d3.js object for a single subject.
 #'          For several subjects it returns a list of d3.js objects.
+#'          Sessions on the same day are shown as one bar (summed load), and
+#'          the ACWR line is not drawn on days where the ACWR is NA.
 #' @export
 #'
 #' @examples
-#'
-#' \dontrun{
-#' # Get old working directory
-#' oldwd <- getwd()
-#'
-#' # Set temporary directory
-#' setwd(tempdir())
-#'
-#' # Read db
 #' data("training_load", package = "ACWR")
 #'
-#' # Convert to data.frame
-#' training_load_db <- data.frame(training_load)
-#'
 #' # Calculate ACWR
-#' result_ACWR <- ACWR(db = training_load_db,
-#'                  ID = "ID",
-#'                  TL = "TL",
-#'                  weeks = "Week",
-#'                  days = "Day",
-#'                  training_dates = "Training_Date",
-#'                  ACWR_method = c("EWMA", "RAC", "RAU"))
+#' result_ACWR <- ACWR(db = training_load,
+#'                     ID = "ID",
+#'                     TL = "TL",
+#'                     days = "Day",
+#'                     training_dates = "Training_Date",
+#'                     ACWR_method = c("EWMA", "RAC", "RAU"))
 #'
 #' # Plot for 1 subject
 #' # Select the first subject
-#' result_ACWR_1 <- result_ACWR[result_ACWR[["ID"]] == 1,  ]
+#' result_ACWR_1 <- result_ACWR[result_ACWR[["ID"]] == 1, ]
 #'
 #' # plot ACWR (e.g. EWMA)
 #' ACWR_plot_1 <- plot_ACWR(db = result_ACWR_1,
@@ -55,14 +44,10 @@
 #' # Plot for several subjects
 #' # plot ACWR (e.g. RAC)
 #' ACWR_plot <- plot_ACWR(db = result_ACWR,
-#'                          TL = "TL",
-#'                          ACWR = "RAC_ACWR",
-#'                          day = "Day",
-#'                          ID = "ID")
-#'
-#' # set user working directory
-#' setwd(oldwd)
-#' }
+#'                        TL = "TL",
+#'                        ACWR = "RAC_ACWR",
+#'                        day = "Day",
+#'                        ID = "ID")
 #'
 plot_ACWR <- function(db,
                       TL,
@@ -116,7 +101,7 @@ plot_ACWR <- function(db,
   if(is.null(ID)){
 
   # Day / TL / EWMA_ACWR
-  d3_ACWR <- r2d3(data = db,
+  d3_ACWR <- r2d3(data = one_bar_per_day(db),
              script = system.file("ACWR_plot.js", package = "ACWR"),
              options = list(margin = 50,
                             #barPadding = 0.1,
@@ -143,7 +128,7 @@ plot_ACWR <- function(db,
     for (i in unique(db[[ID]])) {
 
       # Create individual dfs
-      db_ind <- db[db[[ID]] == i,  c("TL", "ACWR", "day") ]
+      db_ind <- one_bar_per_day(db[db[[ID]] == i, ])
 
       # Individual plots
       d3_ACWR <- r2d3(data = db_ind,
@@ -168,4 +153,18 @@ plot_ACWR <- function(db,
   } # end if !is.null(ID)
 
 
+}
+
+#' Aggregate sessions on the same day
+#'
+#' Several sessions on one day become one bar (summed load); the ACWR of a
+#' day is the same for all its sessions, so the first one is kept.
+#' @noRd
+one_bar_per_day <- function(db) {
+  db <- db[, c("TL", "ACWR", "day")]
+  first <- !duplicated(db$day)
+  out <- db[first, ]
+  out$TL <- as.vector(rowsum(db$TL, match(db$day, db$day[first]),
+                             reorder = TRUE))
+  out
 }

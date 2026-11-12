@@ -29,6 +29,9 @@
 #'
 #' @details A missing load (NA) makes every window that contains its day NA,
 #'          and a single warning is given for the whole data frame.
+#'          The ratio is NA when the chronic load is 0 (e.g. no training
+#'          in the chronic window): a ratio to zero load is undefined, and
+#'          returning NA avoids infinite values in summaries and plots.
 #'
 #' @export
 #'

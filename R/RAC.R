@@ -1,143 +1,90 @@
 
 #' Rolling Average Coupled
 #'
-#' @param TL training load
-#' @param weeks training weeks
-#' @param training_dates training dates
+#' Calculates the acute chronic workload ratio with rolling averages, where
+#' the acute week is included in the chronic period (coupled ratio).
 #'
-#' @return {This function returns the following variables:
+#' Sessions are first turned into a daily series from the first to the last
+#' date: sessions on the same day are summed and days without a session count
+#' as a load of 0. Then, for each day \eqn{t}:
 #' \itemize{
-#' \item RAC_chronic: RAC - chronic training load.
+#' \item Acute load: sum of the daily load over days \eqn{t-6} to \eqn{t}.
+#' \item Chronic load: sum of the daily load over days \eqn{t-27} to \eqn{t},
+#'       divided by 4 (weekly-equivalent).
+#' \item ACWR: acute / chronic.
+#' }
+#' Each session gets the value of its day. Values are not rounded.
+#'
+#' @param TL training load of each session (numeric, >= 0).
+#' @param weeks deprecated and ignored. Kept for backwards compatibility;
+#'        the calculation now uses `training_dates` only.
+#' @param training_dates date of each session (Date or POSIXct). Sessions do
+#'        not need to be sorted.
+#' @param partial if `FALSE` (default), acute values are NA until 7 days of
+#'        history exist, and chronic values and ACWR until 28 days exist.
+#'        If `TRUE`, the days available are used and expressed per 7 days.
+#'
+#' @return {A list with one value per session, in the input order:
+#' \itemize{
 #' \item RAC_acute: RAC - acute training load.
-#' \item RAC_ACWR: RAC - Acute-Chronic Workload Ratio.
+#' \item RAC_chronic: RAC - chronic training load.
+#' \item RAC_ACWR: RAC - Acute-Chronic Workload Ratio (NA when the chronic
+#'       load is 0).
 #' }}
+#'
+#' @details A missing load (NA) makes every window that contains its day NA,
+#'          and a warning is given.
+#'
+#' @section Package decisions:
+#' The following choices are made by this package; they are not taken from
+#' the cited sources:
+#' \itemize{
+#' \item Windows move day by day. The sources define acute and chronic
+#'   loads by weeks (the most recent week, and the average of the last 4
+#'   weeks or of the 3 preceding weeks). This package interprets them as
+#'   rolling windows of 7, 28 and 21 calendar days that end on each day, so
+#'   every day has its own value.
+#' \item With `partial = TRUE`, a window that starts before the first day
+#'   uses only the days available and is rescaled to 7 days (sum x 7 /
+#'   number of days available). The sources do not cover incomplete windows.
+#' \item The ratio is NA when the chronic load is 0 (e.g. no training in the
+#'   chronic window): a ratio to zero load is undefined, and returning NA
+#'   avoids infinite values in summaries and plots.
+#' }
+#'
+#' @references Windt J, Gabbett TJ (2019). Is it all for naught? What does
+#'   mathematical coupling mean for acute:chronic workload ratios? British
+#'   Journal of Sports Medicine, 53(16), 988-990. \doi{10.1136/bjsports-2017-098925}
+#'
 #' @export
 #'
 #' @examples
-#'
-#' \dontrun{
-#' # Get old working directory
-#' oldwd <- getwd()
-#'
-#' # Set temporary directory
-#' setwd(tempdir())
-#'
-#' # Read db
 #' data("training_load", package = "ACWR")
 #'
-#' # Convert to data.frame
-#' training_load <- data.frame(training_load)
-#'
 #' # Select the first subject
-#' training_load_1 <- training_load[training_load[["ID"]] == 1,  ]
+#' training_load_1 <- training_load[training_load[["ID"]] == 1, ]
 #'
 #' # Calculate ACWR
 #' result_RAC <- RAC(TL = training_load_1$TL,
-#'                    weeks = training_load_1$Week,
-#'                    training_dates = training_load_1$Training_Date)
-#'
-#' # set user working directory
-#' setwd(oldwd)
-#' }
+#'                   training_dates = training_load_1$Training_Date)
 #'
 RAC <- function(TL,
-                weeks,
-                training_dates) {
+                weeks = NULL,
+                training_dates,
+                partial = FALSE) {
 
-  # Count number of sessions / week
-  sessions_week <- as.data.frame(table(weeks))
+  if (missing(training_dates)) {
+    stop("you must provide `training_dates`", call. = FALSE)
+  }
+  check_partial(partial)
+  TL <- check_TL(TL)
+  day <- as_calendar_days(training_dates, length(TL))
 
-  # Initialize variables
-  RAC_chronic <- c()
-  RAC_acute <- c()
-  RAC_ACWR <- c()
-  # Initialize number of training sessions
-  n_sessions_total <- 0
+  res <- session_ACWR(TL, day, "RAC", partial)
+  warn_missing_TL(list(RAC = list(res$missing)), sum(is.na(TL)))
 
-  # Loop over the total days of training
-  for (i in unique(weeks)) {
+  list(RAC_acute = res$values$acute,
+       RAC_chronic = res$values$chronic,
+       RAC_ACWR = res$values$ACWR)
 
-    # First training week: RAC_chronic = RAC_acute
-    if(i == 1){
-
-      # loop over number of sessions / week
-      for (j in 1:sessions_week$Freq[unique(weeks)[i]]) {
-
-        # First training day: RAC_chronic = TL / RAC_acute = TL
-        if(j == 1){
-          # Count number of training sessions
-          n_sessions_total <- n_sessions_total + 1
-          RAC_chronic[n_sessions_total] = TL[n_sessions_total]
-          RAC_acute[n_sessions_total] = TL[n_sessions_total]
-        }
-
-        # Rest of the week
-        else if(j >= 2){
-          # Count number of training sessions
-          n_sessions_total <- n_sessions_total + 1
-          RAC_chronic[n_sessions_total] = (sum(TL[1:n_sessions_total]))/n_sessions_total
-          RAC_acute[n_sessions_total] = (sum(TL[1:n_sessions_total]))/n_sessions_total
-        }
-
-      }
-    } # end first week
-
-    # from second week to end of first month
-    else if(i >= 2 && i < 5){
-
-      # loop over number of sessions / week
-      for (j in 1:sessions_week$Freq[unique(weeks)[i]]) {
-
-        # Count number of training sessions
-        n_sessions_total <- n_sessions_total + 1
-        RAC_chronic[n_sessions_total] = (sum(TL[1:n_sessions_total]))/n_sessions_total
-
-        # RAC acute each 7 CALENDAR days
-        # Calculate 7 days training blocks
-        # Returns:
-        # n_sessions_acute = Number of training sessions include in the acute block
-        # previous_TL_acute = Position of the first session of the acute training block
-        acute_TB <- training_blocks(training_dates = training_dates,
-                                    actual_TL = n_sessions_total,
-                                    diff_dates = 6)
-
-        RAC_acute[n_sessions_total] = (sum(TL[acute_TB$previous_TL:n_sessions_total]))/acute_TB$n_sessions
-      }
-
-    } # end first month
-
-    # from second moth to end of data
-    else if(i >= 5){
-
-      # loop over number of sessions / week
-      for (j in 1:sessions_week$Freq[unique(weeks)[i]]) {
-        # Count number of training sessions
-        n_sessions_total <- n_sessions_total + 1
-
-        # RAC chronic each 28 CALENDAR days
-        # Calculate 28 days training blocks
-        chronic_TB <- training_blocks(training_dates = training_dates,
-                                      actual_TL = n_sessions_total,
-                                      diff_dates = 27)
-        RAC_chronic[n_sessions_total] = (sum(TL[chronic_TB$previous_TL:n_sessions_total]))/chronic_TB$n_sessions
-
-        # RAC acute each 7 CALENDAR days
-        # Calculate 7 days training blocks
-        acute_TB <- training_blocks(training_dates = training_dates,
-                                    actual_TL = n_sessions_total,
-                                    diff_dates = 6)
-        RAC_acute[n_sessions_total] = (sum(TL[acute_TB$previous_TL:n_sessions_total]))/acute_TB$n_sessions
-      }
-
-    } # end >= second moth
-
-  } # end of loop over the data
-
-  # Calculate ACWR
-  RAC_ACWR <- RAC_acute / RAC_chronic
-
-  return(list(RAC_acute = round(RAC_acute, 2),
-              RAC_chronic = round(RAC_chronic, 2),
-              RAC_ACWR = round(RAC_ACWR, 2)))
-
-}# end RAC function
+} # end RAC function

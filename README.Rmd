@@ -14,81 +14,145 @@ knitr::opts_chunk$set(
 # ACWR
 
 <!-- badges: start -->
-[![License:
-MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![R-CMD-check](https://github.com/JorgeDelro/ACWR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JorgeDelro/ACWR/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/JorgeDelro/ACWR/graph/badge.svg)](https://app.codecov.io/gh/JorgeDelro/ACWR)
+[![CRAN status](https://www.r-pkg.org/badges/version/ACWR)](https://CRAN.R-project.org/package=ACWR)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
 
 ## Overview
 
-The **ACWR** package have been designed to calculate the the acute chronic workload ratio using three different methods: exponentially weighted moving average (EWMA), rolling 
-average coupled (RAC) and rolling averaged uncoupled (RAU).
+The **ACWR** package has been designed to calculate the acute chronic
+workload ratio using three different methods: exponentially weighted moving
+average (EWMA), rolling average coupled (RAC) and rolling average uncoupled
+(RAU).
+
+Sessions are placed on a daily calendar: sessions on the same day are summed
+and days without a session count as a load of 0. Acute and chronic loads are
+then computed over calendar days, not over sessions:
+
+  - Acute load: sum of the daily load over the last 7 days.
+  - RAC chronic load: sum over the last 28 days / 4 (coupled).
+  - RAU chronic load: sum over days 8 to 28 before today / 3 (uncoupled).
+  - EWMA: exponentially weighted moving averages with time-decay constants of
+    7 and 28 days, updated every calendar day (Williams et al., 2017).
+
+Version 0.2.0 fixed a bug: results of earlier versions are only correct when
+there was exactly one session every day. See `NEWS.md`.
 
 ## Resources
 
-  - [Application of ACWR](https://bjsm.bmj.com/content/50/5/273)
-    (European Journal of Sport Science)
-  - [Rolling average method](https://bjsm.bmj.com/content/53/16/988)
-    (British Journal of Sports Medicine)
-  - [Exponentially weighted moving averages method](https://bjsm.bmj.com/content/51/9/749.long)
-    (British Journal of Sports Medicine)
+  - Application of ACWR: Gabbett TJ (2016). The training-injury prevention
+    paradox: should athletes be training smarter and harder? *British Journal
+    of Sports Medicine*, 50(5), 273-280. doi:10.1136/bjsports-2015-095788
+  - Rolling average method: Windt J, Gabbett TJ (2019). Is it all for naught?
+    What does mathematical coupling mean for acute:chronic workload ratios?
+    *British Journal of Sports Medicine*, 53(16), 988-990.
+    doi:10.1136/bjsports-2017-098925
+  - Exponentially weighted moving averages method: Williams S, West S, Cross
+    MJ, Stokes KA (2017). Better way to determine the acute:chronic workload
+    ratio? *British Journal of Sports Medicine*, 51(3), 209-210.
+    doi:10.1136/bjsports-2016-096589; and Murray NB, Gabbett TJ, Townshend AD
+    (2017). Calculating acute:chronic workload ratios using exponentially
+    weighted moving averages provides a more sensitive indicator of injury
+    likelihood than rolling averages. *British Journal of Sports Medicine*,
+    51(9), 749-754. doi:10.1136/bjsports-2016-097152
 
 ## Example
 
 This is a basic example which shows you how to use the ACWR package:
 
 ``` r
-library(devtools)
-install_github("JorgeDelro/ACWR")
+install.packages("ACWR")
 library(ACWR)
 ```
 
-First, we have to load the data stored in the package
+First, we have to load the data stored in the package. `training_load` has
+one session every day; `training_load_rest` has rest days, a day with two
+sessions and a week without training.
 
 ``` r
 data("training_load", package = "ACWR")
-# Convert to data.frame
-training_load <- data.frame(training_load)
+data("training_load_rest", package = "ACWR")
 ```
 
 Then, we can calculate the ACWR:
 
 ``` r
-result_ACWR <- ACWR(db = training_load,
-                  ID = "ID",
-                  TL = "TL",
-                  weeks = "Week",
-                  training_dates = "Training_Date",
-                  ACWR_method = c("EWMA", "RAC", "RAU"))
+result_ACWR <- ACWR(db = training_load_rest,
+                    ID = "ID",
+                    TL = "TL",
+                    days = "Day",
+                    training_dates = "Training_Date",
+                    ACWR_method = c("EWMA", "RAC", "RAU"))
 ```
 
-Additionally, individual plot can be obtained:
+RAC and RAU are `NA` until 28 days of history exist. Use `partial = TRUE` to
+use the days available instead.
+
+Additionally, individual plots can be obtained:
 
 ``` r
 ACWR_plot <- plot_ACWR(db = result_ACWR,
-                        TL = "TL",
-                        ACWR = "RAC_ACWR",
-                        day = "Day",
-                        ID = "ID")
+                       TL = "TL",
+                       ACWR = "RAC_ACWR",
+                       day = "Day",
+                       ID = "ID")
 ```
 
 Functions for each individual method have been implemented too:
 
 ``` r
 # Select the first subject
-training_load_1 <- training_load[training_load[["ID"]] == 1,  ]
+training_load_1 <- training_load_rest[training_load_rest[["ID"]] == 1, ]
 
 # EWMA
-result_EWMA <- EWMA(TL = training_load_1$TL)
+result_EWMA <- EWMA(TL = training_load_1$TL,
+                    training_dates = training_load_1$Training_Date)
 
 # RAC
 result_RAC <- RAC(TL = training_load_1$TL,
-                  weeks = training_load_1$Week,
                   training_dates = training_load_1$Training_Date)
-                    
+
 # RAU
-result_RAU <- RAU(TL = training_load_db_1$TL,
-                  weeks = training_load_1$Week,
+result_RAU <- RAU(TL = training_load_1$TL,
                   training_dates = training_load_1$Training_Date)
 ```
 
+## Limitations of the ACWR
 
+The package calculates the ACWR as it is described in the literature, but the
+ratio has well-documented limitations that should be considered before using
+it to make decisions:
+
+  - **Mathematical coupling.** In the coupled ratio, the acute week is also
+    part of the chronic load, which creates a spurious correlation between the
+    two and reduces the between-athlete variability of the chronic load
+    (Lolli et al., 2019); the coupled ratio can never exceed 4 (Windt &
+    Gabbett, 2019). The uncoupled
+    ratio removes the overlap, but not the other problems below.
+  - **Ratio artefacts.** The ACWR behaves as a rescaling of the acute load:
+    similar associations with injury are obtained when the acute load is
+    divided by fixed or random "chronic" loads, and the ratio adds no
+    predictive value over the acute load alone (Impellizzeri et al., 2021).
+    A ratio may not always be an appropriate way to represent changes in
+    activity, and EWMA values depend on the initial load in the first weeks
+    (Wang et al., 2020).
+  - **No validated thresholds.** Recommended ACWR thresholds (e.g. a "sweet
+    spot" of 0.8-1.3) are affected by these limitations and by problems such
+    as discretization and sparse data, which undermine their validity as
+    cut-offs for injury risk (Wang et al., 2020; Impellizzeri et al., 2021).
+
+References:
+
+  - Lolli L, Batterham AM, Hawkins R, et al. (2019). Mathematical coupling
+    causes spurious correlation within the conventional acute-to-chronic
+    workload ratio calculations. *British Journal of Sports Medicine*, 53(15),
+    921-922. doi:10.1136/bjsports-2017-098110
+  - Impellizzeri FM, Woodcock S, Coutts AJ, et al. (2021). What role do
+    chronic workloads play in the acute to chronic workload ratio? Time to
+    dismiss ACWR and its underlying theory. *Sports Medicine*, 51(3), 581-592.
+    doi:10.1007/s40279-020-01378-6
+  - Wang C, Vargas JT, Stokes T, et al. (2020). Analyzing activity and injury:
+    lessons learned from the acute:chronic workload ratio. *Sports Medicine*,
+    50(7), 1243-1254. doi:10.1007/s40279-020-01280-1

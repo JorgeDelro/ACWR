@@ -9,7 +9,7 @@
 #' @param colour colour of the bars. By default "#87CEEB" (skyblue)
 #' @param xLabel x-axis label. By default "Days"
 #' @param y0Label left y-axis label. By default "Load [AU]"
-#' @param y1Label right y-axis label. By default "Acute:chronic worload ratio"
+#' @param y1Label right y-axis label. By default "Acute:chronic workload ratio"
 #' @param plotTitle Title of the plot. By default "ACWR"
 #'
 #' @import r2d3
@@ -83,7 +83,7 @@ plot_ACWR <- function(db,
     y0Label <- "Load [AU]"
   }
   if(is.null(y1Label)){
-    y1Label <- "Acute:chronic worload ratio"
+    y1Label <- "Acute:chronic workload ratio"
   }
   if(is.null(plotTitle)){
     plotTitle <- "ACWR"

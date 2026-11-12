@@ -3,6 +3,7 @@
 ^LICENSE\.md$
 ^README\.Rmd$
 ^cran-comments\.md$
-^CRAN-RELEASE$
 (^|/)\.DS_Store$
 ^data-raw$
+^\.github$
+^[^/]*\.pdf$

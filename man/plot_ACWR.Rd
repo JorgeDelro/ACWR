@@ -34,7 +34,7 @@ plot_ACWR(
 
 \item{y0Label}{left y-axis label. By default "Load [AU]"}
 
-\item{y1Label}{right y-axis label. By default "Acute:chronic worload ratio"}
+\item{y1Label}{right y-axis label. By default "Acute:chronic workload ratio"}
 
 \item{plotTitle}{Title of the plot. By default "ACWR"}
 }

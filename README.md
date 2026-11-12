@@ -5,6 +5,7 @@
 
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![R-CMD-check](https://github.com/JorgeDelro/ACWR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JorgeDelro/ACWR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Overview
@@ -116,8 +117,10 @@ before using it to make decisions:
 
 - **Mathematical coupling.** In the coupled ratio, the acute week is
   also part of the chronic load, which creates a spurious correlation
-  between the two (Lolli et al., 2019). The uncoupled ratio removes the
-  overlap, but not the other problems below.
+  between the two and reduces the between-athlete variability of the
+  chronic load (Lolli et al., 2019); the coupled ratio can never exceed
+  4 (Windt & Gabbett, 2019). The uncoupled ratio removes the overlap,
+  but not the other problems below.
 - **Ratio artefacts.** The ACWR behaves as a rescaling of the acute
   load: similar associations with injury are obtained when the acute
   load is divided by fixed or random “chronic” loads, and the ratio adds

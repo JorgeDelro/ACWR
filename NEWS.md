@@ -30,8 +30,10 @@ weeks and 6 in the fourth, the coupled ratio (RAC) at the last session is now
   * acute: sum of the daily load over the last 7 days (including today);
   * RAC chronic: sum over the last 28 days / 4 (coupled);
   * RAU chronic: sum over days 8 to 28 before today / 3 (uncoupled).
-  This follows the usual definition of acute and chronic workloads (weekly
-  load and average weekly load), and it is the only way to count rest days.
+  This follows the definitions of coupled and uncoupled ratios in Windt &
+  Gabbett (2019) <doi:10.1136/bjsports-2017-098925> (most recent week divided
+  by the average of the last 4 weeks, or of the 3 preceding weeks). Summing
+  over calendar days counts rest days as zero load.
 * `EWMA()` applies the decay to every calendar day, including rest days with
   zero load, as in Williams et al. (2017) <doi:10.1136/bjsports-2016-096589>.
   Its acute and chronic loads are on the scale of a daily load.

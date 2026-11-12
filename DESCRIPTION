@@ -13,7 +13,7 @@ Description: Functions for calculating the acute chronic workload ratio using th
             average coupled (RAC) and rolling averaged uncoupled (RAU). Sessions are
             placed on a daily calendar, so rest days count as zero load. Examples of
             these methods can be found in Williams et al. (2017) <doi:10.1136/bjsports-2016-096589>
-            for EWMA and Windt & Gabbett (2018) <doi:10.1136/bjsports-2017-098925> for
+            for EWMA and Windt & Gabbett (2019) <doi:10.1136/bjsports-2017-098925> for
             RAC and RAU.
 License: MIT + file LICENSE
 Encoding: UTF-8

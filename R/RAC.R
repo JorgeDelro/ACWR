@@ -34,9 +34,23 @@
 #'
 #' @details A missing load (NA) makes every window that contains its day NA,
 #'          and a warning is given.
-#'          The ratio is NA when the chronic load is 0 (e.g. no training
-#'          in the chronic window): a ratio to zero load is undefined, and
-#'          returning NA avoids infinite values in summaries and plots.
+#'
+#' @section Package decisions:
+#' The following choices are made by this package; they are not taken from
+#' the cited sources:
+#' \itemize{
+#' \item Windows move day by day. The sources define acute and chronic
+#'   loads by weeks (the most recent week, and the average of the last 4
+#'   weeks or of the 3 preceding weeks). This package interprets them as
+#'   rolling windows of 7, 28 and 21 calendar days that end on each day, so
+#'   every day has its own value.
+#' \item With `partial = TRUE`, a window that starts before the first day
+#'   uses only the days available and is rescaled to 7 days (sum x 7 /
+#'   number of days available). The sources do not cover incomplete windows.
+#' \item The ratio is NA when the chronic load is 0 (e.g. no training in the
+#'   chronic window): a ratio to zero load is undefined, and returning NA
+#'   avoids infinite values in summaries and plots.
+#' }
 #'
 #' @references Windt J, Gabbett TJ (2019). Is it all for naught? What does
 #'   mathematical coupling mean for acute:chronic workload ratios? British

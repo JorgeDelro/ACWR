@@ -26,7 +26,7 @@ ACWR(
 column is kept in the output.}
 
 \item{days}{deprecated and ignored in the calculation. If given, the
-column is kept in the output (e.g. for [plot_ACWR()]).}
+column is kept in the output (e.g. for \code{\link[=plot_ACWR]{plot_ACWR()}}).}
 
 \item{training_dates}{name of the column with the training dates (Date or
 POSIXct). Rows do not need to be sorted.}
@@ -34,18 +34,18 @@ POSIXct). Rows do not need to be sorted.}
 \item{ACWR_method}{method(s) to calculate ACWR: any of "EWMA", "RAC" and
 "RAU".}
 
-\item{partial}{passed to [RAC()] and [RAU()]. If `FALSE` (default), values
-are NA until enough history exists; if `TRUE`, the days available
+\item{partial}{passed to \code{\link[=RAC]{RAC()}} and \code{\link[=RAU]{RAU()}}. If \code{FALSE} (default), values
+are NA until enough history exists; if \code{TRUE}, the days available
 are used.}
 }
 \value{
 a data frame with the ID, TL, weeks, days and training dates
-        columns, followed by the acute & chronic training load and ACWR of
-        the selected method/s. Rows are in the same order as in `db`.
+columns, followed by the acute & chronic training load and ACWR of
+the selected method/s. Rows are in the same order as in \code{db}.
 }
 \description{
 Calculates the acute chronic workload ratio for one or several athletes
-with one or more methods (see [EWMA()], [RAC()] and [RAU()]).
+with one or more methods (see \code{\link[=EWMA]{EWMA()}}, \code{\link[=RAC]{RAC()}} and \code{\link[=RAU]{RAU()}}).
 }
 \details{
 Each athlete's sessions are turned into a daily series from their first to
@@ -53,11 +53,29 @@ their last date: sessions on the same day are summed and days without a
 session count as a load of 0.
 
 A missing load (NA) makes every window that contains its day NA,
-         and a single warning is given for the whole data frame.
-         The ratio is NA when the chronic load is 0 (e.g. no training
-         in the chronic window): a ratio to zero load is undefined, and
-         returning NA avoids infinite values in summaries and plots.
+and a single warning is given for the whole data frame.
 }
+\section{Package decisions}{
+
+The following choices are made by this package; they are not taken from
+the cited sources:
+\itemize{
+\item RAC and RAU windows move day by day. The sources define acute and chronic
+loads by weeks (the most recent week, and the average of the last 4
+weeks or of the 3 preceding weeks). This package interprets them as
+rolling windows of 7, 28 and 21 calendar days that end on each day, so
+every day has its own value.
+\item With \code{partial = TRUE}, a window that starts before the first day
+uses only the days available and is rescaled to 7 days (sum x 7 /
+number of days available). The sources do not cover incomplete windows.
+\item For all methods, the ratio is NA when the chronic load is 0 (e.g. no training in the
+chronic window): a ratio to zero load is undefined, and returning NA
+avoids infinite values in summaries and plots.
+}
+EWMA is updated every calendar day, as defined by Williams et al.
+(2017); this is not a package interpretation.
+}
+
 \examples{
 data("training_load", package = "ACWR")
 

@@ -32,7 +32,7 @@ plot_ACWR(
 
 \item{xLabel}{x-axis label. By default "Days"}
 
-\item{y0Label}{left y-axis label. By default "Load [AU]"}
+\item{y0Label}{left y-axis label. By default \code{"Load [AU]"}}
 
 \item{y1Label}{right y-axis label. By default "Acute:chronic workload ratio"}
 
@@ -40,9 +40,9 @@ plot_ACWR(
 }
 \value{
 This function returns a d3.js object for a single subject.
-         For several subjects it returns a list of d3.js objects.
-         Sessions on the same day are shown as one bar (summed load), and
-         the ACWR line is not drawn on days where the ACWR is NA.
+For several subjects it returns a list of d3.js objects.
+Sessions on the same day are shown as one bar (summed load), and
+the ACWR line is not drawn on days where the ACWR is NA.
 }
 \description{
 ACWR plots using d3.js

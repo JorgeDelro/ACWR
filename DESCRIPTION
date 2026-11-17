@@ -1,7 +1,7 @@
 Package: ACWR
 Type: Package
 Title: Acute Chronic Workload Ratio Calculation
-Version: 0.2.0
+Version: 0.2.0.9000
 Authors@R: person("Jorge R",
              "Fernandez-Santos",
              role = c("aut", "cre"),

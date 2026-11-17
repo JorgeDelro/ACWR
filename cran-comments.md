@@ -12,19 +12,20 @@ still accepted.
 
 ## Test environments
 
-* local macOS (Darwin 24.4.0, aarch64), R 4.5.3
+* local macOS Sequoia 15.4.1 (aarch64-apple-darwin20), R 4.5.3, with
+  devtools::check(args = "--as-cran", remote = TRUE, incoming = TRUE)
+  (R CMD check --as-cran --no-manual)
 
 ## R CMD check results
 
-0 errors | 0 warnings | 2 notes
-
-Both notes come from the local check machine, not from the package:
+0 errors | 0 warnings | 1 note
 
 * checking for future file timestamps ... NOTE
   unable to verify current time
-* checking HTML version of manual ... NOTE
-  Skipping checking HTML validation: 'tidy' doesn't look like recent enough
-  HTML Tidy.
+
+This note comes from the local check machine, not from the package.
+"checking CRAN incoming feasibility" was OK, and all URLs in the package
+were checked with urlchecker::url_check().
 
 ## CRAN check results for 0.1.0
 

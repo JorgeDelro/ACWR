@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/JorgeDelro/ACWR/blob/master/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/JorgeDelro/ACWR/blob/v0.2.0/DESCRIPTION)
 
 Fernandez-Santos J (2026). *ACWR: Acute Chronic Workload Ratio
 Calculation*. R package version 0.2.0,

@@ -3,7 +3,7 @@
 ## Authors
 
 - **Jorge R Fernandez-Santos**. Author, maintainer.
-  [](https://orcid.org/https://orcid.org/0000-0002-5047-2976)
+  [](https://orcid.org/0000-0002-5047-2976)
 
 ## Citation
 

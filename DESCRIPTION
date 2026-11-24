@@ -19,7 +19,8 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    r2d3
+    r2d3,
+    tibble
 Depends: 
     R (>= 2.10)
 Roxygen: list(markdown = TRUE)
@@ -27,6 +28,7 @@ RoxygenNote: 7.3.3
 URL: https://jorgedelro.github.io/ACWR/, https://github.com/JorgeDelro/ACWR
 BugReports: https://github.com/JorgeDelro/ACWR/issues
 Suggests: 
+    ggplot2,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)

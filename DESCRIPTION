@@ -28,9 +28,15 @@ RoxygenNote: 7.3.3
 URL: https://jorgedelro.github.io/ACWR/, https://github.com/JorgeDelro/ACWR
 BugReports: https://github.com/JorgeDelro/ACWR/issues
 Suggests: 
+    bslib,
+    DT,
     ggplot2,
     knitr,
+    plotly,
     rmarkdown,
-    testthat (>= 3.0.0)
+    shiny,
+    shinyWidgets,
+    testthat (>= 3.0.0),
+    writexl
 Config/testthat/edition: 3
 VignetteBuilder: knitr

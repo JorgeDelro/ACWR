@@ -1,0 +1,133 @@
+<div style="max-width: 900px; margin: 0 auto; padding: 20px 30px;">
+
+  <h2 style="text-align:center; margin-bottom: 5px;">Footballer Workload Footprint (FWF)</h2>
+  <p style="text-align:center; color: var(--bs-secondary); margin-bottom: 30px;">
+    Representación generalizada de la carga de entrenamiento
+  </p>
+  <hr>
+
+  <!-- 1. Introducción -->
+  <h3>1. Introducción</h3>
+  <p>El Footballer Workload Footprint (FWF) es un método propuesto por
+    Matas-Bustos et al. (1) que generaliza el concepto de carga de
+    entrenamiento utilizando herramientas del cálculo integral y diferencial.
+    A diferencia del ACWR clásico, que reduce toda la información a un único
+    ratio entre dos ventanas fijas, el FWF genera un conjunto completo de
+    features que capturan la dinámica temporal del entrenamiento.</p>
+  <p>El modelo parte de representar el historial de entrenamiento como una
+    matriz temporal discreta (la <em>matriz FWF</em>), donde cada fila
+    corresponde a una variable de carga y cada columna a un evento (día)
+    de entrenamiento.</p>
+
+  <!-- 2. Matriz FWF -->
+  <hr>
+  <h3>2. La matriz FWF</h3>
+  <p>Para un deportista con \(V\) variables de carga monitorizadas a lo largo
+    de \(n\) eventos de entrenamiento, la matriz FWF se define como:</p>
+  <p style="text-align:center;">
+    $$FWF = \begin{pmatrix} x_1(e_1) & x_1(e_2) & \cdots & x_1(e_n) \\
+    x_2(e_1) & x_2(e_2) & \cdots & x_2(e_n) \\
+    \vdots & \vdots & \ddots & \vdots \\
+    x_V(e_1) & x_V(e_2) & \cdots & x_V(e_n) \end{pmatrix}$$
+  </p>
+  <p>Donde \(x_v(e_j)\) es el valor de la variable \(v\) en el evento \(j\).
+    Con una única variable de carga (como en esta aplicación), la matriz se
+    reduce a un vector fila.</p>
+
+  <!-- 3. Variaciones acumulativas -->
+  <hr>
+  <h3>3. Variaciones acumulativas (&#8721;&#7488;FWF)</h3>
+  <p>Las variaciones acumulativas generalizan el concepto de
+    <strong>Carga Aguda</strong>. Para cada variable \(v\), cada día \(e_j\)
+    y cada tamaño de ventana \(\tau\), se define:</p>
+  <p style="text-align:center;">
+    $$AW_v(e_j, \tau) = \sum_{z=e_j-(\tau-1)}^{e_j} x_v(z)$$
+  </p>
+  <p>Es decir, la suma de la carga en los últimos \(\tau\) días.
+    Para \(\tau = 7\) se obtiene exactamente la carga aguda tradicional
+    (suma de 7 días). Para \(\tau = 28\), la carga crónica acumulada.</p>
+  <p>La matriz &#8721;&#7488;FWF contiene todas las combinaciones posibles de
+    \(\tau \in \{1, 2, \ldots, 28\}\), generando 28 features por variable
+    que capturan la acumulación de carga a distintas escalas temporales.</p>
+
+  <!-- 4. Variaciones temporales -->
+  <hr>
+  <h3>4. Variaciones temporales (&#916;&#7488;FWF)</h3>
+  <p>Las variaciones temporales generalizan el concepto de
+    <strong>cambio en la carga</strong>. Se definen como la diferencia
+    entre la carga actual y la carga de hace \(\tau\) días:</p>
+  <p style="text-align:center;">
+    $$\Delta_v(e_j, \tau) = x_v(e_j) - x_v(e_j - \tau)$$
+  </p>
+  <p>Esta expresión se obtiene a partir de la propiedad telescópica:</p>
+  <p style="text-align:center;">
+    $$\Delta_v(e_j, \tau) = AW_v(e_j, \tau) - AW_v(e_{j-1}, \tau)$$
+  </p>
+  <p>Es decir, la variación temporal es la diferencia entre la carga acumulada
+    de hoy y la de ayer para la misma ventana \(\tau\). Esto captura el
+    <strong>cambio neto</strong> en la carga respecto a hace \(\tau\) días:</p>
+  <ul>
+    <li>\(\Delta > 0\): la carga de hoy es mayor que hace \(\tau\) días (incremento).</li>
+    <li>\(\Delta = 0\): la carga se mantiene estable.</li>
+    <li>\(\Delta < 0\): la carga de hoy es menor que hace \(\tau\) días (descarga).</li>
+  </ul>
+
+  <!-- 5. Ventajas -->
+  <hr>
+  <h3>5. Ventajas frente al ACWR clásico</h3>
+  <p>El enfoque FWF supera las limitaciones del ACWR convencional en varios aspectos:</p>
+  <ul>
+    <li><strong>No requiere un ratio: </strong>
+      Evita la problemática de la división por cero y el acoplamiento matemático
+      inherente al ACWR acoplado.</li>
+    <li><strong>Múltiples escalas temporales: </strong>
+      En lugar de dos ventanas fijas (7 y 28 días), analiza 28 escalas
+      simultáneamente, capturando patrones a corto, medio y largo plazo.</li>
+    <li><strong>Mejor capacidad predictiva: </strong>
+      Matas-Bustos et al. (1) demostraron que las features derivadas del FWF
+      superan consistentemente al ACWR (acoplado, desacoplado y EWMA)
+      en modelos de machine learning para predicción de lesiones.</li>
+    <li><strong>Multivariable: </strong>
+      El método está diseñado para trabajar simultáneamente con múltiples
+      variables de carga (sRPE, distancia, alta intensidad, aceleraciones, etc.),
+      aunque también funciona con una sola variable.</li>
+    <li><strong>Fundamentación matemática: </strong>
+      Se basa en los conceptos rigurosos del cálculo integral (sumas acumulativas)
+      y diferencial (variaciones temporales), proporcionando una generalización
+      formal del paradigma agudo:crónico.</li>
+  </ul>
+
+  <!-- 6. Interpretación -->
+  <hr>
+  <h3>6. Interpretación de los heatmaps</h3>
+  <h4>6.1. Heatmap &#8721;&#7488;FWF</h4>
+  <p>Cada celda (día, \(\tau\)) muestra la carga acumulada en los últimos
+    \(\tau\) días. Las columnas de \(\tau\) bajo (1-7) reflejan la carga
+    reciente; las de \(\tau\) alto (21-28) reflejan la carga acumulada.
+    Un gradiente pronunciado de izquierda a derecha indica una acumulación
+    progresiva de carga.</p>
+  <h4>6.2. Heatmap &#916;&#7488;FWF</h4>
+  <p>Cada celda muestra el cambio neto respecto a hace \(\tau\) días.
+    Los colores rojos indican incrementos; los azules, descensos; el blanco,
+    estabilidad. Un patrón de rojos intensos en las filas recientes indica
+    picos de carga que podrían asociarse a mayor riesgo de lesión.</p>
+
+  <!-- 7. Bibliografía -->
+  <hr>
+  <h3>7. Referencias bibliográficas</h3>
+  <p style="font-style: italic; color: var(--bs-secondary);">Formato Vancouver</p>
+  <ol>
+    <li>Matas-Bustos JB, Mora-García AM, de Hoyo Lora M, Nieto-Alarcón A,
+      Gonzalez-Fernández FT. Advanced feature engineering in Acute:Chronic
+      Workload Ratio (ACWR) calculation for injury forecasting in elite soccer.
+      PLoS One. 2025;20(7):e0327960. doi: 10.1371/journal.pone.0327960</li>
+    <li>Gabbett TJ. The training-injury prevention paradox: should athletes be
+      training smarter and harder? Br J Sports Med. 2016;50(5):273-80.</li>
+    <li>Williams S, West S, Cross MJ, Stokes KA. Better way to determine the
+      acute:chronic workload ratio? Br J Sports Med. 2017;51(3):209-10.</li>
+    <li>Lolli L, Batterham AM, Hawkins R, et al. Mathematical coupling causes
+      spurious correlation within the conventional acute-to-chronic workload
+      ratio calculations. Br J Sports Med. 2019;53(15):921-2.</li>
+  </ol>
+
+</div>

@@ -1,7 +1,13 @@
 # `acute` and `chronic` window arguments.
-# fixtures/default_results.rds holds the outputs of RAC(), RAU(), EWMA() and
-# ACWR() computed before these arguments existed
-# (data-raw/fixture_default_results.R).
+#
+# Default results are checked in two ways:
+# * identical() to the 0.2.0 functions (tag v0.2.0, see
+#   helper-reference-0.2.0.R), run on the same machine;
+# * against fixtures/default_results.rds, outputs saved with the 0.2.0 code
+#   (data-raw/fixture_default_results.R). The fixture was made on arm64, and
+#   sum() rounds differently on x86_64 (80-bit long double), so this
+#   cross-platform anchor uses a tolerance (1e-12 relative) far below any
+#   real change but well above that rounding (about 1e-16).
 
 ref <- readRDS(test_path("fixtures", "default_results.rds"))
 
@@ -15,29 +21,49 @@ inputs$missing$TL[c(5, 40)] <- NA
 inputs$same_day <- scenario_C
 inputs$same_day$Training_Date[3] <- inputs$same_day$Training_Date[2]
 
-run_all <- function(db, partial, ...) {
+# Outputs of ACWR(), RAC(), RAU() and EWMA() for one input; `fns` is an
+# environment with these functions (the package's, or the 0.2.0 ones)
+run_all <- function(db, partial, ..., fns = asNamespace("ACWR")) {
   one <- db[db$ID == db$ID[1], ]
   suppressWarnings(list(
-    ACWR = ACWR(db, "ID", "TL", training_dates = "Training_Date",
-                partial = partial, ...),
-    RAC = RAC(one$TL, training_dates = one$Training_Date, partial = partial,
-              ...),
-    RAU = RAU(one$TL, training_dates = one$Training_Date, partial = partial,
-              ...),
-    EWMA = EWMA(one$TL, training_dates = one$Training_Date, ...)
+    ACWR = fns$ACWR(db, "ID", "TL", training_dates = "Training_Date",
+                    partial = partial, ...),
+    RAC = fns$RAC(one$TL, training_dates = one$Training_Date,
+                  partial = partial, ...),
+    RAU = fns$RAU(one$TL, training_dates = one$Training_Date,
+                  partial = partial, ...),
+    EWMA = fns$EWMA(one$TL, training_dates = one$Training_Date, ...)
   ))
 }
 
 test_that("default windows give exactly the results of version 0.2.0", {
+  v020 <- reference_0.2.0()
+  # The reference is the 0.2.0 code, without the window arguments
+  expect_false("acute" %in% names(formals(v020$RAC)))
+  expect_true("acute" %in% names(formals(RAC)))
+  for (nm in names(inputs)) {
+    for (partial in c(FALSE, TRUE)) {
+      key <- paste(nm, partial)
+      old <- run_all(inputs[[nm]], partial, fns = v020)
+      expect_identical(run_all(inputs[[nm]], partial), old,
+                       label = paste("defaults:", key))
+      expect_identical(run_all(inputs[[nm]], partial,
+                               acute = 7, chronic = 28),
+                       old, label = paste("acute 7, chronic 28:", key))
+    }
+  }
+})
+
+test_that("default windows match the outputs saved with 0.2.0", {
   expect_length(ref, 16)
   for (nm in names(inputs)) {
     for (partial in c(FALSE, TRUE)) {
       key <- paste(nm, partial)
-      expect_identical(run_all(inputs[[nm]], partial), ref[[key]],
-                       label = paste("defaults:", key))
-      expect_identical(run_all(inputs[[nm]], partial,
-                               acute = 7, chronic = 28),
-                       ref[[key]], label = paste("acute 7, chronic 28:", key))
+      expect_equal(run_all(inputs[[nm]], partial), ref[[key]],
+                   tolerance = 1e-12, label = paste("defaults:", key))
+      expect_equal(run_all(inputs[[nm]], partial, acute = 7, chronic = 28),
+                   ref[[key]], tolerance = 1e-12,
+                   label = paste("acute 7, chronic 28:", key))
     }
   }
 })

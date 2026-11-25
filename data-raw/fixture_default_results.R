@@ -1,8 +1,11 @@
 # Reference outputs of RAC(), RAU(), EWMA() and ACWR() with their default
 # windows, saved before the `acute` and `chronic` arguments were added
-# (commit 31d57a6). test-default-windows.R checks that the defaults still
-# give identical results. Run from the package root with the old code
-# loaded: devtools::load_all(); source("data-raw/fixture_default_results.R")
+# (commit 31d57a6). test-default-windows.R compares the defaults with it
+# using a tolerance of 1e-12, as a cross-platform anchor: it was made on
+# arm64, and sum() rounds slightly differently on x86_64. The exact check is
+# identical() against the v0.2.0 code (helper-reference-0.2.0.R).
+# Run from the package root with the old code loaded:
+# devtools::load_all(); source("data-raw/fixture_default_results.R")
 
 source("tests/testthat/helper-scenarios.R")
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ACWR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,10 +38,30 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="acwr-development-version">ACWR (development version)<a class="anchor" aria-label="anchor" href="#acwr-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.0" id="acwr-030">ACWR 0.3.0<a class="anchor" aria-label="anchor" href="#acwr-030"></a></h2>
+<p>Results of <code><a href="../reference/RAC.html">RAC()</a></code>, <code><a href="../reference/RAU.html">RAU()</a></code>, <code><a href="../reference/EWMA.html">EWMA()</a></code> and <code><a href="../reference/ACWR.html">ACWR()</a></code> with their default arguments are unchanged from 0.2.0 (checked by a test against outputs saved before the changes).</p>
+<div class="section level3">
+<h3 id="new-features-0-3-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
+<ul><li>
+<code><a href="../reference/fwf_cumulative.html">fwf_cumulative()</a></code> and <code><a href="../reference/fwf_cumulative.html">fwf_delta()</a></code> compute the cumulative and delta variations of the Footballer Workload Footprint (Matas-Bustos et al., 2025, <a href="doi:10.1371/journal.pone.0327960" class="uri">doi:10.1371/journal.pone.0327960</a>) for one or several athletes and load variables: the sum of each variable over the last tau calendar days, and x(t) - x(t - tau). They use the same daily calendar as the ACWR functions and return a long tibble (<code>ID</code>, <code>date</code>, <code>variable</code>, <code>window</code>, <code>value</code>). Windows are calendar days, whereas the article uses events, and the features are descriptive, not a validated injury-prediction tool.</li>
+<li>
+<code><a href="../reference/plot_fwf.html">plot_fwf()</a></code> draws the FWF of one athlete on one day as a heatmap (ggplot2, in Suggests).</li>
+<li>
+<code><a href="../reference/RAC.html">RAC()</a></code>, <code><a href="../reference/RAU.html">RAU()</a></code>, <code><a href="../reference/EWMA.html">EWMA()</a></code> and <code><a href="../reference/ACWR.html">ACWR()</a></code> gain <code>acute</code> and <code>chronic</code> arguments (window lengths in days, defaults 7 and 28). In <code><a href="../reference/RAU.html">RAU()</a></code> the chronic window is the chronic window minus the acute days. Loads are still weekly-equivalent, so the ratio equals the ratio of the mean daily loads.</li>
+<li>
+<code><a href="../reference/run_app.html">run_app()</a></code> launches a Shiny app for teaching that computes everything with the package functions: ACWR with the three methods, adjustable windows, optional partial windows, a step-by-step calculation table, and FWF heatmaps. It accepts dates or numeric days and an optional athlete column; the Spanish column names <code>fecha</code>, <code>dia</code>, <code>carga</code> and <code>atleta</code> are accepted as aliases. The app’s packages (shiny, bslib, ggplot2, plotly, DT, writexl) are in Suggests.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-3-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-3-0"></a></h3>
+<ul><li>The README and the vignette cite the cluster randomised trial of Dalen-Lorentsen et al. (2021) <a href="doi:10.1136/bjsports-2020-103003" class="uri">doi:10.1136/bjsports-2020-103003</a> among the limitations of the ACWR, and the README has sections on the FWF and the app.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="dependencies-0-3-0">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-3-0"></a></h3>
+<ul><li>tibble is now imported (FWF output).</li>
+</ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.0" id="acwr-020">ACWR 0.2.0<a class="anchor" aria-label="anchor" href="#acwr-020"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.0" id="acwr-020">ACWR 0.2.0<a class="anchor" aria-label="anchor" href="#acwr-020"></a></h2><p class="text-muted">CRAN release: 2026-11-17</p>
 <p>This is a bug-fix release that <strong>changes numerical results</strong>.</p>
 <div class="section level3">
 <h3 id="results-differ-from-whenever-sessions-are-not-daily-0-2-0">Results differ from 0.1.0 whenever sessions are not daily<a class="anchor" aria-label="anchor" href="#results-differ-from-whenever-sessions-are-not-daily-0-2-0"></a></h3>

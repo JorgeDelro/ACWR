@@ -9,7 +9,7 @@ the acute week is included in the chronic period (coupled ratio)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">ACWR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@ the acute week is included in the chronic period (coupled ratio).</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">RAC</span><span class="op">(</span><span class="va">TL</span>, weeks <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">training_dates</span>, partial <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">RAC</span><span class="op">(</span><span class="va">TL</span>, weeks <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">training_dates</span>, partial <span class="op">=</span> <span class="cn">FALSE</span>, acute <span class="op">=</span> <span class="fl">7</span>, chronic <span class="op">=</span> <span class="fl">28</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -73,6 +73,15 @@ not need to be sorted.</p></dd>
 history exist, and chronic values and ACWR until 28 days exist.
 If <code>TRUE</code>, the days available are used and expressed per 7 days.</p></dd>
 
+
+<dt id="arg-acute">acute<a class="anchor" aria-label="anchor" href="#arg-acute"></a></dt>
+<dd><p>length of the acute window, in days (default 7).</p></dd>
+
+
+<dt id="arg-chronic">chronic<a class="anchor" aria-label="anchor" href="#arg-chronic"></a></dt>
+<dd><p>length of the chronic window, in days (default 28). Must be
+longer than <code>acute</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -86,11 +95,13 @@ load is 0).</p></li>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Sessions are first turned into a daily series from the first to the last
 date: sessions on the same day are summed and days without a session count
-as a load of 0. Then, for each day \(t\):</p><ul><li><p>Acute load: sum of the daily load over days \(t-6\) to \(t\).</p></li>
+as a load of 0. Then, for each day \(t\) (default windows):</p><ul><li><p>Acute load: sum of the daily load over days \(t-6\) to \(t\).</p></li>
 <li><p>Chronic load: sum of the daily load over days \(t-27\) to \(t\),
 divided by 4 (weekly-equivalent).</p></li>
 <li><p>ACWR: acute / chronic.</p></li>
-</ul><p>Each session gets the value of its day. Values are not rounded.</p>
+</ul><p>With other windows, acute and chronic loads are the sums over the last
+<code>acute</code> and <code>chronic</code> days, times 7 / number of days (weekly-equivalent).
+Each session gets the value of its day. Values are not rounded.</p>
 <p>A missing load (NA) makes every window that contains its day NA,
 and a warning is given.</p>
     </div>
@@ -104,6 +115,10 @@ loads by weeks (the most recent week, and the average of the last 4
 weeks or of the 3 preceding weeks). This package interprets them as
 rolling windows of 7, 28 and 21 calendar days that end on each day, so
 every day has its own value.</p></li>
+<li><p>The <code>acute</code> and <code>chronic</code> arguments (other than 7 and 28 days)
+are an extension of this package. Loads are still expressed per 7 days
+(sum x 7 / number of days in the window), so the ratio is the same as
+the ratio of the mean daily loads.</p></li>
 <li><p>With <code>partial = TRUE</code>, a window that starts before the first day
 uses only the days available and is rescaled to 7 days (sum x 7 /
 number of days available). The sources do not cover incomplete windows.</p></li>

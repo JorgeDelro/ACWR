@@ -9,7 +9,7 @@ moving averages (Williams et al., 2017)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">ACWR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@ moving averages (Williams et al., 2017).</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">EWMA</span><span class="op">(</span><span class="va">TL</span>, training_dates <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">EWMA</span><span class="op">(</span><span class="va">TL</span>, training_dates <span class="op">=</span> <span class="cn">NULL</span>, acute <span class="op">=</span> <span class="fl">7</span>, chronic <span class="op">=</span> <span class="fl">28</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -62,6 +62,15 @@ moving averages (Williams et al., 2017).</p>
 <dd><p>date of each session (Date or POSIXct). Sessions do
 not need to be sorted. If <code>NULL</code> (default), sessions are assumed to
 be on consecutive days, in the order given, and a message is shown.</p></dd>
+
+
+<dt id="arg-acute">acute<a class="anchor" aria-label="anchor" href="#arg-acute"></a></dt>
+<dd><p>\(N\) of the acute EWMA, in days (default 7).</p></dd>
+
+
+<dt id="arg-chronic">chronic<a class="anchor" aria-label="anchor" href="#arg-chronic"></a></dt>
+<dd><p>\(N\) of the chronic EWMA, in days (default 28). Must be
+longer than <code>acute</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -79,7 +88,8 @@ date: sessions on the same day are summed and days without a session count
 as a load of 0. Then, for every calendar day \(t\) with daily load
 \(w_t\):
 $$E_t = w_t \lambda + (1 - \lambda) E_{t-1}, \quad \lambda = 2 / (N + 1)$$
-with \(N = 7\) (acute) and \(N = 28\) (chronic), and \(E_1 = w_1\).
+with \(N = 7\) (acute) and \(N = 28\) (chronic) by default (see
+<code>acute</code> and <code>chronic</code>), and \(E_1 = w_1\).
 Acute and chronic loads are on the scale of a daily load. Each session gets
 the value of its day. Values are not rounded.</p>
 <p>EWMA is recursive: a missing load (NA) makes that day and every
@@ -91,7 +101,9 @@ calling the function.</p>
 
 
 <p>The following choices are made by this package; they are not taken from
-the cited sources:</p><ul><li><p>The ratio is NA when the chronic load is 0 (e.g. no training in the
+the cited sources:</p><ul><li><p>Values of <code>acute</code> and <code>chronic</code> other than 7 and 28 days are an
+extension of this package.</p></li>
+<li><p>The ratio is NA when the chronic load is 0 (e.g. no training in the
 chronic window): a ratio to zero load is undefined, and returning NA
 avoids infinite values in summaries and plots.</p></li>
 </ul><p>Updating the EWMA every calendar day, including rest days, follows the

@@ -1,8 +1,65 @@
 # Changelog
 
-## ACWR (development version)
+## ACWR 0.3.0
+
+Results of
+[`RAC()`](https://jorgedelro.github.io/ACWR/reference/RAC.md),
+[`RAU()`](https://jorgedelro.github.io/ACWR/reference/RAU.md),
+[`EWMA()`](https://jorgedelro.github.io/ACWR/reference/EWMA.md) and
+[`ACWR()`](https://jorgedelro.github.io/ACWR/reference/ACWR.md) with
+their default arguments are unchanged from 0.2.0 (checked by a test
+against outputs saved before the changes).
+
+### New features
+
+- [`fwf_cumulative()`](https://jorgedelro.github.io/ACWR/reference/fwf_cumulative.md)
+  and
+  [`fwf_delta()`](https://jorgedelro.github.io/ACWR/reference/fwf_cumulative.md)
+  compute the cumulative and delta variations of the Footballer Workload
+  Footprint (Matas-Bustos et al., 2025,
+  <doi:10.1371/journal.pone.0327960>) for one or several athletes and
+  load variables: the sum of each variable over the last tau calendar
+  days, and x(t) - x(t - tau). They use the same daily calendar as the
+  ACWR functions and return a long tibble (`ID`, `date`, `variable`,
+  `window`, `value`). Windows are calendar days, whereas the article
+  uses events, and the features are descriptive, not a validated
+  injury-prediction tool.
+- [`plot_fwf()`](https://jorgedelro.github.io/ACWR/reference/plot_fwf.md)
+  draws the FWF of one athlete on one day as a heatmap (ggplot2, in
+  Suggests).
+- [`RAC()`](https://jorgedelro.github.io/ACWR/reference/RAC.md),
+  [`RAU()`](https://jorgedelro.github.io/ACWR/reference/RAU.md),
+  [`EWMA()`](https://jorgedelro.github.io/ACWR/reference/EWMA.md) and
+  [`ACWR()`](https://jorgedelro.github.io/ACWR/reference/ACWR.md) gain
+  `acute` and `chronic` arguments (window lengths in days, defaults 7
+  and 28). In
+  [`RAU()`](https://jorgedelro.github.io/ACWR/reference/RAU.md) the
+  chronic window is the chronic window minus the acute days. Loads are
+  still weekly-equivalent, so the ratio equals the ratio of the mean
+  daily loads.
+- [`run_app()`](https://jorgedelro.github.io/ACWR/reference/run_app.md)
+  launches a Shiny app for teaching that computes everything with the
+  package functions: ACWR with the three methods, adjustable windows,
+  optional partial windows, a step-by-step calculation table, and FWF
+  heatmaps. It accepts dates or numeric days and an optional athlete
+  column; the Spanish column names `fecha`, `dia`, `carga` and `atleta`
+  are accepted as aliases. The app’s packages (shiny, bslib, ggplot2,
+  plotly, DT, writexl) are in Suggests.
+
+### Documentation
+
+- The README and the vignette cite the cluster randomised trial of
+  Dalen-Lorentsen et al. (2021) <doi:10.1136/bjsports-2020-103003> among
+  the limitations of the ACWR, and the README has sections on the FWF
+  and the app.
+
+### Dependencies
+
+- tibble is now imported (FWF output).
 
 ## ACWR 0.2.0
+
+CRAN release: 2026-11-17
 
 This is a bug-fix release that **changes numerical results**.
 

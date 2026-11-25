@@ -10,8 +10,8 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Acute Chronic Workload Ratio Calculation">
-<meta name="description" content="Functions for calculating the acute chronic workload ratio using three different methods: exponentially weighted moving average (EWMA), rolling average coupled (RAC) and rolling averaged uncoupled (RAU). Sessions are placed on a daily calendar, so rest days count as zero load. Examples of these methods can be found in Williams et al. (2017) &lt;doi:10.1136/bjsports-2016-096589&gt; for EWMA and Windt &amp; Gabbett (2019) &lt;doi:10.1136/bjsports-2017-098925&gt; for RAC and RAU.">
-<meta property="og:description" content="Functions for calculating the acute chronic workload ratio using three different methods: exponentially weighted moving average (EWMA), rolling average coupled (RAC) and rolling averaged uncoupled (RAU). Sessions are placed on a daily calendar, so rest days count as zero load. Examples of these methods can be found in Williams et al. (2017) &lt;doi:10.1136/bjsports-2016-096589&gt; for EWMA and Windt &amp; Gabbett (2019) &lt;doi:10.1136/bjsports-2017-098925&gt; for RAC and RAU.">
+<meta name="description" content="Functions for calculating the acute chronic workload ratio using three different methods: exponentially weighted moving average (EWMA), rolling average coupled (RAC) and rolling averaged uncoupled (RAU). Sessions are placed on a daily calendar, so rest days count as zero load. Examples of these methods can be found in Williams et al. (2017) &lt;doi:10.1136/bjsports-2016-096589&gt; for EWMA and Windt &amp; Gabbett (2019) &lt;doi:10.1136/bjsports-2017-098925&gt; for RAC and RAU. Also computes the cumulative and delta variations of the Footballer Workload Footprint (Matas-Bustos et al., 2025) &lt;doi:10.1371/journal.pone.0327960&gt;, and includes a Shiny app for teaching.">
+<meta property="og:description" content="Functions for calculating the acute chronic workload ratio using three different methods: exponentially weighted moving average (EWMA), rolling average coupled (RAC) and rolling averaged uncoupled (RAU). Sessions are placed on a daily calendar, so rest days count as zero load. Examples of these methods can be found in Williams et al. (2017) &lt;doi:10.1136/bjsports-2016-096589&gt; for EWMA and Windt &amp; Gabbett (2019) &lt;doi:10.1136/bjsports-2017-098925&gt; for RAC and RAU. Also computes the cumulative and delta variations of the Footballer Workload Footprint (Matas-Bustos et al., 2025) &lt;doi:10.1371/journal.pone.0327960&gt;, and includes a Shiny app for teaching.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -21,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ACWR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,7 +89,7 @@
 <span>                    days <span class="op">=</span> <span class="st">"Day"</span>,</span>
 <span>                    training_dates <span class="op">=</span> <span class="st">"Training_Date"</span>,</span>
 <span>                    ACWR_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EWMA"</span>, <span class="st">"RAC"</span>, <span class="st">"RAU"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>RAC and RAU are <code>NA</code> until 28 days of history exist. Use <code>partial = TRUE</code> to use the days available instead.</p>
+<p>RAC and RAU are <code>NA</code> until 28 days of history exist. Use <code>partial = TRUE</code> to use the days available instead. The windows can be changed with <code>acute</code> and <code>chronic</code> (in days; 7 and 28 by default), e.g. to explore how the choice changes the ratio.</p>
 <p>Additionally, individual plots can be obtained:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ACWR_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/plot_ACWR.html">plot_ACWR</a></span><span class="op">(</span>db <span class="op">=</span> <span class="va">result_ACWR</span>,</span>
@@ -115,6 +115,25 @@
 <span>                  training_dates <span class="op">=</span> <span class="va">training_load_1</span><span class="op">$</span><span class="va">Training_Date</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="footballer-workload-footprint">Footballer Workload Footprint<a class="anchor" aria-label="anchor" href="#footballer-workload-footprint"></a>
+</h2>
+<p><code><a href="reference/fwf_cumulative.html">fwf_cumulative()</a></code> and <code><a href="reference/fwf_cumulative.html">fwf_delta()</a></code> compute the cumulative and delta variations of the Footballer Workload Footprint (Matas-Bustos et al., 2025) for one or several load variables, over windows of 1 to 28 calendar days, and <code><a href="reference/plot_fwf.html">plot_fwf()</a></code> draws them as a heatmap. They are descriptive features: the article defines the windows in events (sessions), whereas this package uses calendar days, and its results come from a single team over one season.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fwf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fwf_cumulative.html">fwf_cumulative</a></span><span class="op">(</span>db <span class="op">=</span> <span class="va">training_load_rest</span>,</span>
+<span>                      ID <span class="op">=</span> <span class="st">"ID"</span>,</span>
+<span>                      vars <span class="op">=</span> <span class="st">"TL"</span>,</span>
+<span>                      training_dates <span class="op">=</span> <span class="st">"Training_Date"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/plot_fwf.html">plot_fwf</a></span><span class="op">(</span><span class="va">fwf</span>, ID <span class="op">=</span> <span class="fl">1</span>, date <span class="op">=</span> <span class="st">"2022-02-26"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="shiny-app">Shiny app<a class="anchor" aria-label="anchor" href="#shiny-app"></a>
+</h2>
+<p>The package includes an interactive app, designed for teaching, to upload or choose a dataset, compute the ACWR with the three methods, see each step of the calculation, and explore the Footballer Workload Footprint:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ACWR</span><span class="fu">::</span><span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>All values shown in the app are computed with the functions of this package. The app needs a few extra packages (shiny, bslib, ggplot2, plotly, DT and writexl); <code><a href="reference/run_app.html">run_app()</a></code> tells you which ones are missing and how to install them.</p>
+</div>
+<div class="section level2">
 <h2 id="limitations-of-the-acwr">Limitations of the ACWR<a class="anchor" aria-label="anchor" href="#limitations-of-the-acwr"></a>
 </h2>
 <p>The package calculates the ACWR as it is described in the literature, but the ratio has well-documented limitations that should be considered before using it to make decisions:</p>
@@ -125,17 +144,23 @@
 <strong>Ratio artefacts.</strong> The ACWR behaves as a rescaling of the acute load: similar associations with injury are obtained when the acute load is divided by fixed or random “chronic” loads, and the ratio adds no predictive value over the acute load alone (Impellizzeri et al., 2021). A ratio may not always be an appropriate way to represent changes in activity, and EWMA values depend on the initial load in the first weeks (Wang et al., 2020).</li>
 <li>
 <strong>No validated thresholds.</strong> Recommended ACWR thresholds (e.g. a “sweet spot” of 0.8-1.3) are affected by these limitations and by problems such as discretization and sparse data, which undermine their validity as cut-offs for injury risk (Wang et al., 2020; Impellizzeri et al., 2021).</li>
+<li>
+<strong>No benefit in a randomised trial.</strong> In a cluster randomised trial of 34 elite youth football teams (18 intervention, 16 control) over a 10-month season, planning training with the ACWR did not reduce health problems (Dalen-Lorentsen et al., 2021). The result refers to that specific intervention in youth footballers.</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <ul>
+<li>Dalen-Lorentsen T, Bjørneboe J, Clarsen B, Vagle M, Fagerland MW, Andersen TE (2021). Does load management using the acute:chronic workload ratio prevent health problems? A cluster randomised trial of 482 elite youth footballers of both sexes. <em>British Journal of Sports Medicine</em>, 55(2), 108-114. <a href="https://doi.org/10.1136/bjsports-2020-103003" class="external-link uri">https://doi.org/10.1136/bjsports-2020-103003</a>
+</li>
 <li>Gabbett TJ (2016). The training-injury prevention paradox: should athletes be training smarter and harder? <em>British Journal of Sports Medicine</em>, 50(5), 273-280. <a href="https://doi.org/10.1136/bjsports-2015-095788" class="external-link uri">https://doi.org/10.1136/bjsports-2015-095788</a>
 </li>
 <li>Impellizzeri FM, Woodcock S, Coutts AJ, et al. (2021). What role do chronic workloads play in the acute to chronic workload ratio? Time to dismiss ACWR and its underlying theory. <em>Sports Medicine</em>, 51(3), 581-592. <a href="https://doi.org/10.1007/s40279-020-01378-6" class="external-link uri">https://doi.org/10.1007/s40279-020-01378-6</a>
 </li>
 <li>Lolli L, Batterham AM, Hawkins R, et al. (2019). Mathematical coupling causes spurious correlation within the conventional acute-to-chronic workload ratio calculations. <em>British Journal of Sports Medicine</em>, 53(15), 921-922. <a href="https://doi.org/10.1136/bjsports-2017-098110" class="external-link uri">https://doi.org/10.1136/bjsports-2017-098110</a>
+</li>
+<li>Matas-Bustos JB, Mora-García AM, de Hoyo Lora M, Nieto-Alarcón A, Gonzalez-Fernández FT (2025). Advanced feature engineering in Acute:Chronic Workload Ratio (ACWR) calculation for injury forecasting in elite soccer. <em>PLoS One</em>, 20(7), e0327960. <a href="https://doi.org/10.1371/journal.pone.0327960" class="external-link uri">https://doi.org/10.1371/journal.pone.0327960</a>
 </li>
 <li>Murray NB, Gabbett TJ, Townshend AD, Blanch P (2017). Calculating acute:chronic workload ratios using exponentially weighted moving averages provides a more sensitive indicator of injury likelihood than rolling averages. <em>British Journal of Sports Medicine</em>, 51(9), 749-754. <a href="https://doi.org/10.1136/bjsports-2016-097152" class="external-link uri">https://doi.org/10.1136/bjsports-2016-097152</a>
 </li>

@@ -17,7 +17,9 @@ ACWR(
   days = NULL,
   training_dates,
   ACWR_method = c("EWMA", "RAC", "RAU"),
-  partial = FALSE
+  partial = FALSE,
+  acute = 7,
+  chronic = 28
 )
 ```
 
@@ -62,6 +64,11 @@ ACWR(
   [`RAU()`](https://jorgedelro.github.io/ACWR/reference/RAU.md). If
   `FALSE` (default), values are NA until enough history exists; if
   `TRUE`, the days available are used.
+
+- acute, chronic:
+
+  window lengths in days (defaults 7 and 28), passed to the selected
+  methods. `chronic` must be longer than `acute`.
 
 ## Value
 

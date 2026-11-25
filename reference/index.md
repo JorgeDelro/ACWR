@@ -28,6 +28,25 @@ Training load and ACWR per day, drawn with d3.js.
 - [`plot_ACWR()`](https://jorgedelro.github.io/ACWR/reference/plot_ACWR.md)
   : ACWR plots using d3.js
 
+## Footballer Workload Footprint
+
+Cumulative and delta variations of one or several load variables over
+windows of calendar days (Matas-Bustos et al., 2025), and their heatmap.
+Descriptive features, not a validated injury-prediction tool.
+
+- [`fwf_cumulative()`](https://jorgedelro.github.io/ACWR/reference/fwf_cumulative.md)
+  [`fwf_delta()`](https://jorgedelro.github.io/ACWR/reference/fwf_cumulative.md)
+  : Footballer Workload Footprint: cumulative and delta variations
+- [`plot_fwf()`](https://jorgedelro.github.io/ACWR/reference/plot_fwf.md)
+  : Heatmap of the Footballer Workload Footprint
+
+## Shiny app
+
+Interactive app for teaching, built on the functions above.
+
+- [`run_app()`](https://jorgedelro.github.io/ACWR/reference/run_app.md)
+  : Run the ACWR Shiny app
+
 ## Datasets
 
 Simulated training loads of three athletes.

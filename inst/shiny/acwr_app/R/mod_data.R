@@ -272,7 +272,7 @@ dataInputServer <- function(id) {
         options = list(
           pageLength = 15,
           scrollX = TRUE,
-          language = list(url = "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"),
+          language = DT_LANGUAGE,
           dom = "tip"
         ),
         rownames = FALSE

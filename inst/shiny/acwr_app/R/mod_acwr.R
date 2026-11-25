@@ -42,6 +42,7 @@ acwrUI <- function(id) {
                   min = 3, max = 14, value = 7, step = 1),
       sliderInput(ns("chronic_window"), "Ventana cr\u00f3nica (d\u00edas):",
                   min = 14, max = 56, value = 28, step = 1),
+      uiOutput(ns("window_ratio_warning")),
       tags$p(
         class = "text-muted", style = "font-size: 0.8em; margin-top: -6px;",
         icon("info-circle"),
@@ -211,6 +212,21 @@ acwrServer <- function(id, current_data, plot_theme) {
           type = "warning", duration = 6
         )
       }
+    })
+
+    # --- Aviso: crónica menor que el doble de la aguda ---
+    output$window_ratio_warning <- renderUI({
+      aw <- input$acute_window
+      cw <- input$chronic_window
+      if (cw <= aw || cw >= 2 * aw) return(NULL)
+      tags$div(
+        style = "padding: 6px 10px; border-radius: 8px; border-left: 4px solid var(--bs-warning); background: var(--bs-tertiary-bg); font-size: 0.8em; margin: -6px 0 10px 0;",
+        icon("triangle-exclamation"),
+        paste0(" La ventana cr\u00f3nica (", cw, " d\u00edas) es menor que el doble de la ",
+               "aguda (", aw, " d\u00edas): la cr\u00f3nica apenas se diferencia de la ",
+               "aguda (en el m\u00e9todo desacoplado se basa en solo ", cw - aw,
+               " d\u00edas) y el ratio se vuelve muy variable.")
+      )
     })
 
     output$zone_warning_plot <- renderUI({
@@ -391,7 +407,7 @@ acwrServer <- function(id, current_data, plot_theme) {
         options = list(
           pageLength = 30,
           scrollX = TRUE,
-          language = list(url = "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"),
+          language = DT_LANGUAGE,
           dom = "tip"
         ),
         rownames = FALSE
@@ -533,7 +549,7 @@ acwrServer <- function(id, current_data, plot_theme) {
         options = list(
           pageLength = 50,
           scrollX = TRUE,
-          language = list(url = "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"),
+          language = DT_LANGUAGE,
           dom = "tip",
           columnDefs = list(list(className = "dt-center", targets = "_all"))
         ),

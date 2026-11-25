@@ -426,7 +426,7 @@ fwfServer <- function(id, current_data, plot_theme) {
           pageLength = 28,
           scrollX = TRUE,
           dom = "t",
-          language = list(url = "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"),
+          language = DT_LANGUAGE,
           columnDefs = list(list(className = "dt-center", targets = "_all"))
         ),
         rownames = FALSE

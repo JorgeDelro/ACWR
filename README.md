@@ -120,9 +120,20 @@ before using it to make decisions:
   problems such as discretization and sparse data, which undermine their
   validity as cut-offs for injury risk (Wang et al., 2020; Impellizzeri
   et al., 2021).
+- **No benefit in a randomised trial.** In a cluster randomised trial of
+  34 elite youth football teams (18 intervention, 16 control) over a
+  10-month season, planning training with the ACWR did not reduce health
+  problems (Dalen-Lorentsen et al., 2021). The result refers to that
+  specific intervention in youth footballers.
 
 ## References
 
+- Dalen-Lorentsen T, Bjørneboe J, Clarsen B, Vagle M, Fagerland MW,
+  Andersen TE (2021). Does load management using the acute:chronic
+  workload ratio prevent health problems? A cluster randomised trial of
+  482 elite youth footballers of both sexes. *British Journal of Sports
+  Medicine*, 55(2), 108-114.
+  <https://doi.org/10.1136/bjsports-2020-103003>
 - Gabbett TJ (2016). The training-injury prevention paradox: should
   athletes be training smarter and harder? *British Journal of Sports
   Medicine*, 50(5), 273-280.

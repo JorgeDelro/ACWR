@@ -1,0 +1,134 @@
+<div style="max-width: 900px; margin: 0 auto; padding: 20px 30px;">
+
+  <h2 style="text-align:center; margin-bottom: 5px;">Footballer Workload Footprint (FWF)</h2>
+  <p style="text-align:center; color: var(--bs-secondary); margin-bottom: 30px;">
+    A generalised representation of training load
+  </p>
+  <hr>
+
+  <!-- 1. Introduction -->
+  <h3>1. Introduction</h3>
+  <p>The Footballer Workload Footprint (FWF) is a method proposed by
+    Matas-Bustos et al. (1) that generalises the concept of training load
+    using tools from integral and differential calculus. Unlike the classic
+    ACWR, which reduces all the information to a single ratio between two
+    fixed windows, the FWF produces a full set of features that capture the
+    time dynamics of training.</p>
+  <p>The model starts by representing the training history as a discrete
+    time matrix (the <em>FWF matrix</em>), where each row is a load variable
+    and each column a training event. In this app, each column is a calendar
+    day.</p>
+
+  <!-- 2. FWF matrix -->
+  <hr>
+  <h3>2. The FWF matrix</h3>
+  <p>For an athlete with \(V\) load variables monitored over \(n\) training
+    events, the FWF matrix is defined as:</p>
+  <p style="text-align:center;">
+    $$FWF = \begin{pmatrix} x_1(e_1) & x_1(e_2) & \cdots & x_1(e_n) \\
+    x_2(e_1) & x_2(e_2) & \cdots & x_2(e_n) \\
+    \vdots & \vdots & \ddots & \vdots \\
+    x_V(e_1) & x_V(e_2) & \cdots & x_V(e_n) \end{pmatrix}$$
+  </p>
+  <p>where \(x_v(e_j)\) is the value of variable \(v\) at event \(j\).
+    With a single load variable, the matrix reduces to a row vector.</p>
+
+  <!-- 3. Cumulative variations -->
+  <hr>
+  <h3>3. Cumulative variations (&#8721;&#7488;FWF)</h3>
+  <p>Cumulative variations generalise the concept of <strong>acute
+    load</strong>. For each variable \(v\), each day \(e_j\) and each window
+    size \(\tau\), it is defined as:</p>
+  <p style="text-align:center;">
+    $$AW_v(e_j, \tau) = \sum_{z=e_j-(\tau-1)}^{e_j} x_v(z)$$
+  </p>
+  <p>That is, the sum of the load over the last \(\tau\) days. For
+    \(\tau = 7\) this is exactly the traditional acute load (sum of 7 days).
+    For \(\tau = 28\), it is the accumulated chronic load.</p>
+  <p>The &#8721;&#7488;FWF matrix contains every window
+    \(\tau \in \{1, 2, \ldots, 28\}\), giving 28 features per variable that
+    capture load accumulation at different time scales.</p>
+
+  <!-- 4. Temporary variations -->
+  <hr>
+  <h3>4. Temporary variations (&#916;&#7488;FWF)</h3>
+  <p>Temporary variations generalise the concept of <strong>change in
+    load</strong>. They are defined as the difference between the current
+    load and the load \(\tau\) days earlier:</p>
+  <p style="text-align:center;">
+    $$\Delta_v(e_j, \tau) = x_v(e_j) - x_v(e_j - \tau)$$
+  </p>
+  <p>This expression follows from the telescoping property:</p>
+  <p style="text-align:center;">
+    $$\Delta_v(e_j, \tau) = AW_v(e_j, \tau) - AW_v(e_{j-1}, \tau)$$
+  </p>
+  <p>That is, the temporary variation is the difference between today's and
+    yesterday's accumulated load for the same window \(\tau\). It captures
+    the <strong>net change</strong> in load relative to \(\tau\) days
+    earlier:</p>
+  <ul>
+    <li>\(\Delta > 0\): today's load is higher than \(\tau\) days earlier (increase).</li>
+    <li>\(\Delta = 0\): the load is stable.</li>
+    <li>\(\Delta < 0\): today's load is lower than \(\tau\) days earlier (unloading).</li>
+  </ul>
+
+  <!-- 5. Advantages -->
+  <hr>
+  <h3>5. Advantages over the classic ACWR</h3>
+  <p>The FWF approach addresses several limitations of the conventional ACWR:</p>
+  <ul>
+    <li><strong>No ratio needed: </strong>
+      It avoids the problems of division by zero and the mathematical
+      coupling inherent in the coupled ACWR.</li>
+    <li><strong>Multiple time scales: </strong>
+      Instead of two fixed windows (7 and 28 days), it analyses 28 scales
+      at once, capturing short-, medium- and long-term patterns.</li>
+    <li><strong>Predictive ability (limited evidence): </strong>
+      In the data of Matas-Bustos et al. (1), features derived from the FWF
+      performed better than the ACWR (coupled, uncoupled and EWMA) in machine
+      learning models for injury prediction. Those data come from a single
+      team over one season and the result has not been validated externally:
+      the FWF is a descriptive tool, not a validated injury predictor.</li>
+    <li><strong>Multivariable: </strong>
+      The method is designed to work with several load variables at once
+      (sRPE, distance, high-intensity running, accelerations, etc.), although
+      it also works with a single variable.</li>
+    <li><strong>Mathematical basis: </strong>
+      It rests on concepts from integral calculus (cumulative sums) and
+      differential calculus (temporary variations), giving a formal
+      generalisation of the acute:chronic paradigm.</li>
+  </ul>
+
+  <!-- 6. Interpretation -->
+  <hr>
+  <h3>6. Interpreting the heatmaps</h3>
+  <h4>6.1. &#8721;&#7488;FWF heatmap</h4>
+  <p>Each cell (day, \(\tau\)) shows the load accumulated over the last
+    \(\tau\) days. Low \(\tau\) values (1-7) reflect recent load; high
+    \(\tau\) values (21-28) reflect accumulated load. A marked gradient from
+    left to right indicates a progressive build-up of load.</p>
+  <h4>6.2. &#916;&#7488;FWF heatmap</h4>
+  <p>Each cell shows the net change relative to \(\tau\) days earlier.
+    Red indicates increases, blue decreases and white stability. A pattern of
+    intense red in the recent rows indicates load spikes that might be
+    associated with a higher injury risk.</p>
+
+  <!-- 7. References -->
+  <hr>
+  <h3>7. References</h3>
+  <p style="font-style: italic; color: var(--bs-secondary);">Vancouver style</p>
+  <ol>
+    <li>Matas-Bustos JB, Mora-García AM, de Hoyo Lora M, Nieto-Alarcón A,
+      Gonzalez-Fernández FT. Advanced feature engineering in Acute:Chronic
+      Workload Ratio (ACWR) calculation for injury forecasting in elite soccer.
+      PLoS One. 2025;20(7):e0327960. doi: 10.1371/journal.pone.0327960</li>
+    <li>Gabbett TJ. The training-injury prevention paradox: should athletes be
+      training smarter and harder? Br J Sports Med. 2016;50(5):273-80.</li>
+    <li>Williams S, West S, Cross MJ, Stokes KA. Better way to determine the
+      acute:chronic workload ratio? Br J Sports Med. 2017;51(3):209-10.</li>
+    <li>Lolli L, Batterham AM, Hawkins R, et al. Mathematical coupling causes
+      spurious correlation within the conventional acute-to-chronic workload
+      ratio calculations. Br J Sports Med. 2019;53(15):921-2.</li>
+  </ol>
+
+</div>

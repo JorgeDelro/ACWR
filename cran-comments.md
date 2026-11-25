@@ -1,41 +1,45 @@
 ## Submission
 
-This is a bug-fix release (0.1.0 -> 0.2.0) that changes numerical results.
+This is a feature release (0.2.0 -> 0.3.0). Results of the existing exported
+functions (`ACWR()`, `EWMA()`, `RAC()`, `RAU()`) with their default
+arguments are unchanged; a test compares them with outputs saved before the
+changes.
 
-In 0.1.0, the rolling average methods (RAC, RAU) averaged the training load
-per session, and EWMA decayed per session, ignoring the dates. Results were
-only correct when athletes trained exactly once every day. 0.2.0 computes all
-methods on a daily calendar (rest days count as zero load). Results differ
-from 0.1.0 whenever sessions are not daily; this is documented in NEWS.md.
-Exported functions and their arguments are kept; deprecated arguments are
-still accepted.
+New features:
+
+* `fwf_cumulative()` and `fwf_delta()`: cumulative and delta variations of
+  the Footballer Workload Footprint (Matas-Bustos et al., 2025,
+  <doi:10.1371/journal.pone.0327960>), and `plot_fwf()` to draw them.
+* `acute` and `chronic` arguments (window lengths in days, defaults 7 and
+  28) in `ACWR()`, `EWMA()`, `RAC()` and `RAU()`.
+* `run_app()`: a Shiny app for teaching, installed in `inst/shiny/`, that
+  uses only the package functions. Its example runs only in interactive
+  sessions.
+
+Dependencies:
+
+* New import: tibble.
+* New suggested packages: bslib (>= 0.6.0), chromote, DT, ggplot2, plotly,
+  shiny, shinytest2, withr, writexl. They are used by `plot_fwf()`,
+  `run_app()` and the tests, and are checked with `requireNamespace()` or
+  `skip_if_not_installed()`. The browser-based app test is skipped on CRAN.
 
 ## Test environments
 
 * local macOS Sequoia 15.4.1 (aarch64-apple-darwin20), R 4.5.3:
-  R CMD check --as-cran on ACWR_0.2.0.tar.gz built with devtools::build()
-* win-builder (Windows Server 2022, x86_64), R-devel (2026-11-16 r90914)
+  `devtools::check()` (R CMD check --as-cran --no-manual) on ACWR 0.3.0
+
+<!-- Before submitting: add win-builder (R-devel) results for 0.3.0 and
+     re-run the check with the manual. -->
 
 ## R CMD check results
 
 On local macOS (R 4.5.3): 0 errors | 0 warnings | 1 note
 
-* checking HTML version of manual ... NOTE
-  Skipping checking HTML validation: 'tidy' doesn't look like recent enough
-  HTML Tidy.
-  This note comes from the local check machine (its HTML Tidy is too old),
-  not from the package.
-
-On win-builder (R-devel): 0 errors | 0 warnings | 1 note
-
-* checking CRAN incoming feasibility ... NOTE
-  Possibly misspelled words in DESCRIPTION: Gabbett (16:34)
-  "Gabbett" is the surname of a cited author (Windt & Gabbett, 2019) and is
-  spelled correctly.
-
-## CRAN check results for 0.1.0
-
-OK on all 13 flavors (as of 2026-11-17).
+* checking for future file timestamps ... NOTE
+  unable to verify current time
+  This note comes from the local check machine (it could not reach the time
+  server), not from the package.
 
 ## Reverse dependencies
 

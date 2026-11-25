@@ -22,6 +22,8 @@
 #' @param partial passed to [RAC()] and [RAU()]. If `FALSE` (default), values
 #'        are NA until enough history exists; if `TRUE`, the days available
 #'        are used.
+#' @param acute,chronic window lengths in days (defaults 7 and 28), passed to
+#'        the selected methods. `chronic` must be longer than `acute`.
 #'
 #' @return a data frame with the ID, TL, weeks, days and training dates
 #'         columns, followed by the acute & chronic training load and ACWR of
@@ -76,7 +78,9 @@ ACWR <- function(db,
                  days = NULL,
                  training_dates,
                  ACWR_method = c("EWMA", "RAC", "RAU"),
-                 partial = FALSE) {
+                 partial = FALSE,
+                 acute = 7,
+                 chronic = 28) {
 
   ## Checks
   if (missing(db) || is.null(db) || !is.data.frame(db)) {
@@ -95,6 +99,7 @@ ACWR <- function(db,
   }
   ACWR_method <- match.arg(ACWR_method, several.ok = TRUE)
   check_partial(partial)
+  windows <- check_acute_chronic(acute, chronic)
 
   columns <- c(ID, TL, weeks, days, training_dates)
   if (!is.character(columns)) {
@@ -125,7 +130,8 @@ ACWR <- function(db,
     for (i in unique(db[[ID]])) {
 
       rows <- which(db[[ID]] == i)
-      res <- session_ACWR(load[rows], day[rows], j, partial)
+      res <- session_ACWR(load[rows], day[rows], j, partial,
+                          windows$acute, windows$chronic)
 
       acute[rows] <- res$values$acute
       chronic[rows] <- res$values$chronic

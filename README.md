@@ -65,7 +65,9 @@ result_ACWR <- ACWR(db = training_load_rest,
 ```
 
 RAC and RAU are `NA` until 28 days of history exist. Use
-`partial = TRUE` to use the days available instead.
+`partial = TRUE` to use the days available instead. The windows can be
+changed with `acute` and `chronic` (in days; 7 and 28 by default),
+e.g. to explore how the choice changes the ratio.
 
 Additionally, individual plots can be obtained:
 
@@ -96,6 +98,40 @@ result_RAU <- RAU(TL = training_load_1$TL,
                   training_dates = training_load_1$Training_Date)
 ```
 
+## Footballer Workload Footprint
+
+`fwf_cumulative()` and `fwf_delta()` compute the cumulative and delta
+variations of the Footballer Workload Footprint (Matas-Bustos et al.,
+2025) for one or several load variables, over windows of 1 to 28
+calendar days, and `plot_fwf()` draws them as a heatmap. They are
+descriptive features: the article defines the windows in events
+(sessions), whereas this package uses calendar days, and its results
+come from a single team over one season.
+
+``` r
+fwf <- fwf_cumulative(db = training_load_rest,
+                      ID = "ID",
+                      vars = "TL",
+                      training_dates = "Training_Date")
+plot_fwf(fwf, ID = 1, date = "2022-02-26")
+```
+
+## Shiny app
+
+The package includes an interactive app, designed for teaching, to
+upload or choose a dataset, compute the ACWR with the three methods, see
+each step of the calculation, and explore the Footballer Workload
+Footprint:
+
+``` r
+ACWR::run_app()
+```
+
+All values shown in the app are computed with the functions of this
+package. The app needs a few extra packages (shiny, bslib, ggplot2,
+plotly, DT and writexl); `run_app()` tells you which ones are missing
+and how to install them.
+
 ## Limitations of the ACWR
 
 The package calculates the ACWR as it is described in the literature,
@@ -120,9 +156,20 @@ before using it to make decisions:
   problems such as discretization and sparse data, which undermine their
   validity as cut-offs for injury risk (Wang et al., 2020; Impellizzeri
   et al., 2021).
+- **No benefit in a randomised trial.** In a cluster randomised trial of
+  34 elite youth football teams (18 intervention, 16 control) over a
+  10-month season, planning training with the ACWR did not reduce health
+  problems (Dalen-Lorentsen et al., 2021). The result refers to that
+  specific intervention in youth footballers.
 
 ## References
 
+- Dalen-Lorentsen T, Bjørneboe J, Clarsen B, Vagle M, Fagerland MW,
+  Andersen TE (2021). Does load management using the acute:chronic
+  workload ratio prevent health problems? A cluster randomised trial of
+  482 elite youth footballers of both sexes. *British Journal of Sports
+  Medicine*, 55(2), 108-114.
+  <https://doi.org/10.1136/bjsports-2020-103003>
 - Gabbett TJ (2016). The training-injury prevention paradox: should
   athletes be training smarter and harder? *British Journal of Sports
   Medicine*, 50(5), 273-280.
@@ -135,6 +182,11 @@ before using it to make decisions:
   causes spurious correlation within the conventional acute-to-chronic
   workload ratio calculations. *British Journal of Sports Medicine*,
   53(15), 921-922. <https://doi.org/10.1136/bjsports-2017-098110>
+- Matas-Bustos JB, Mora-García AM, de Hoyo Lora M, Nieto-Alarcón A,
+  Gonzalez-Fernández FT (2025). Advanced feature engineering in
+  Acute:Chronic Workload Ratio (ACWR) calculation for injury forecasting
+  in elite soccer. *PLoS One*, 20(7), e0327960.
+  <https://doi.org/10.1371/journal.pone.0327960>
 - Murray NB, Gabbett TJ, Townshend AD, Blanch P (2017). Calculating
   acute:chronic workload ratios using exponentially weighted moving
   averages provides a more sensitive indicator of injury likelihood than

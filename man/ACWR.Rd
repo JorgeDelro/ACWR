@@ -12,7 +12,9 @@ ACWR(
   days = NULL,
   training_dates,
   ACWR_method = c("EWMA", "RAC", "RAU"),
-  partial = FALSE
+  partial = FALSE,
+  acute = 7,
+  chronic = 28
 )
 }
 \arguments{
@@ -37,6 +39,9 @@ POSIXct). Rows do not need to be sorted.}
 \item{partial}{passed to \code{\link[=RAC]{RAC()}} and \code{\link[=RAU]{RAU()}}. If \code{FALSE} (default), values
 are NA until enough history exists; if \code{TRUE}, the days available
 are used.}
+
+\item{acute, chronic}{window lengths in days (defaults 7 and 28), passed to
+the selected methods. \code{chronic} must be longer than \code{acute}.}
 }
 \value{
 a data frame with the ID, TL, weeks, days and training dates

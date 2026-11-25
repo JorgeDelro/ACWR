@@ -4,7 +4,7 @@
 \alias{EWMA}
 \title{Exponentially Weighted Moving Average}
 \usage{
-EWMA(TL, training_dates = NULL)
+EWMA(TL, training_dates = NULL, acute = 7, chronic = 28)
 }
 \arguments{
 \item{TL}{training load of each session (numeric, >= 0).}
@@ -12,6 +12,11 @@ EWMA(TL, training_dates = NULL)
 \item{training_dates}{date of each session (Date or POSIXct). Sessions do
 not need to be sorted. If \code{NULL} (default), sessions are assumed to
 be on consecutive days, in the order given, and a message is shown.}
+
+\item{acute}{\eqn{N} of the acute EWMA, in days (default 7).}
+
+\item{chronic}{\eqn{N} of the chronic EWMA, in days (default 28). Must be
+longer than \code{acute}.}
 }
 \value{
 {A list with one value per session, in the input order:
@@ -32,7 +37,8 @@ date: sessions on the same day are summed and days without a session count
 as a load of 0. Then, for every calendar day \eqn{t} with daily load
 \eqn{w_t}:
 \deqn{E_t = w_t \lambda + (1 - \lambda) E_{t-1}, \quad \lambda = 2 / (N + 1)}
-with \eqn{N = 7} (acute) and \eqn{N = 28} (chronic), and \eqn{E_1 = w_1}.
+with \eqn{N = 7} (acute) and \eqn{N = 28} (chronic) by default (see
+\code{acute} and \code{chronic}), and \eqn{E_1 = w_1}.
 Acute and chronic loads are on the scale of a daily load. Each session gets
 the value of its day. Values are not rounded.
 
@@ -45,6 +51,8 @@ calling the function.
 The following choices are made by this package; they are not taken from
 the cited sources:
 \itemize{
+\item Values of \code{acute} and \code{chronic} other than 7 and 28 days are an
+extension of this package.
 \item The ratio is NA when the chronic load is 0 (e.g. no training in the
 chronic window): a ratio to zero load is undefined, and returning NA
 avoids infinite values in summaries and plots.

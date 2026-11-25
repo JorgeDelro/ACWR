@@ -20,11 +20,12 @@ before the changes).
   arguments (window lengths in days, defaults 7 and 28). In `RAU()` the
   chronic window is the chronic window minus the acute days. Loads are still
   weekly-equivalent, so the ratio equals the ratio of the mean daily loads.
-* `run_app()` launches a Shiny app (in Spanish, for teaching) that computes
-  everything with the package functions: ACWR with the three methods,
-  adjustable windows, optional partial windows, a step-by-step calculation
-  table, and FWF heatmaps. It accepts dates or numeric days and an optional
-  athlete column. The app's packages (shiny, bslib, ggplot2, plotly, DT,
+* `run_app()` launches a Shiny app for teaching that computes everything
+  with the package functions: ACWR with the three methods, adjustable
+  windows, optional partial windows, a step-by-step calculation table, and
+  FWF heatmaps. It accepts dates or numeric days and an optional athlete
+  column; the Spanish column names `fecha`, `dia`, `carga` and `atleta` are
+  accepted as aliases. The app's packages (shiny, bslib, ggplot2, plotly, DT,
   writexl) are in Suggests.
 
 ## Documentation

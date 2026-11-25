@@ -79,8 +79,8 @@ test_that("app ACWR values equal ACWR() for every preloaded athlete", {
 test_that("detailed-calculation tables are built from the package values", {
   env <- app_env()
   athletes <- app_athletes(env)
-  for (nm in c("Equipo con descansos (3 atletas, fechas) 2",
-               "Atleta 7 (FWF Demo 1) 1")) {
+  for (nm in c("Team with rest days (3 athletes, dates) 2",
+               "Athlete 7 (FWF Demo 1) 1")) {
     for (w in list(c(7, 28), c(5, 21))) {
       res <- env$acwr_daily(env$daily_series(athletes[[nm]]),
                             acute = w[1], chronic = w[2])
@@ -91,19 +91,19 @@ test_that("detailed-calculation tables are built from the package values", {
       ewma <- env$detail_ewma(res, 0.8, 1.3, 1.5, w[1], w[2])
 
       # Columns shown are the package's values...
-      expect_identical(rac$Aguda, res$RAC_acute)
-      expect_identical(rac$Cronica, res$RAC_chronic)
+      expect_identical(rac$Acute, res$RAC_acute)
+      expect_identical(rac$Chronic, res$RAC_chronic)
       expect_identical(rac$ACWR, res$RAC_ACWR)
-      expect_identical(rau$Cronica, res$RAU_chronic)
+      expect_identical(rau$Chronic, res$RAU_chronic)
       expect_identical(ewma$EWMA_Acute, res$EWMA_acute)
       expect_identical(ewma$ACWR, res$EWMA_ACWR)
       # ...and the intermediate sums lead to them
-      expect_equal(rac$Suma_Acute * 7 / w[1], res$RAC_acute)
-      expect_equal(rac$Suma_Chronic * 7 / w[2], res$RAC_chronic)
-      expect_equal(rau$Suma_Chronic * 7 / (w[2] - w[1]), res$RAU_chronic)
-      expect_equal((ewma$la_x_Carga + ewma$Decay_Acute)[-1],
+      expect_equal(rac$Acute_sum * 7 / w[1], res$RAC_acute)
+      expect_equal(rac$Chronic_sum * 7 / w[2], res$RAC_chronic)
+      expect_equal(rau$Chronic_sum * 7 / (w[2] - w[1]), res$RAU_chronic)
+      expect_equal((ewma$la_x_Load + ewma$Decay_Acute)[-1],
                    res$EWMA_acute[-1])
-      expect_equal((ewma$lc_x_Carga + ewma$Decay_Chronic)[-1],
+      expect_equal((ewma$lc_x_Load + ewma$Decay_Chronic)[-1],
                    res$EWMA_chronic[-1])
     }
   }
@@ -112,8 +112,8 @@ test_that("detailed-calculation tables are built from the package values", {
 test_that("app FWF values equal fwf_cumulative() and fwf_delta()", {
   env <- app_env()
   athletes <- app_athletes(env)
-  for (nm in c("Atleta 8 (FWF Demo 2) 1",
-               "Equipo con descansos (3 atletas, fechas) 2")) {
+  for (nm in c("Athlete 8 (FWF Demo 2) 1",
+               "Team with rest days (3 athletes, dates) 2")) {
     s <- athletes[[nm]]
     vars <- setdiff(names(s), "date")
     db <- cbind(ID = 1, s)
@@ -129,7 +129,7 @@ test_that("app FWF values equal fwf_cumulative() and fwf_delta()", {
   }
 })
 
-test_that("uploaded file with dates, athletes and a missing load", {
+test_that("uploaded file with Spanish column names (aliases)", {
   env <- app_env()
   raw <- data.frame(
     Atleta = c("Ana", "Ana", "Ana", "Ana", "Ana", "Luis", "Luis"),
@@ -154,6 +154,24 @@ test_that("uploaded file with dates, athletes and a missing load", {
   expect_app_matches_package(env, ana, "upload", partial = TRUE)
 })
 
+test_that("uploaded file with English column names", {
+  env <- app_env()
+  raw <- data.frame(
+    athlete_id = c(1, 1, 1, 2),
+    date = c("2024-09-02", "2024-09-02", "2024-09-04", "2024-09-02"),
+    load = c(300, 100, 250, 500),
+    hsr = c(50, 10, 40, 90)
+  )
+  sessions <- env$prepare_input(raw)
+  expect_identical(attr(sessions, "time"), "date")
+  expect_true(attr(sessions, "has_id"))
+  expect_named(sessions, c("ID", "date", "load", "hsr"))
+  one <- sessions[sessions$ID == "1", c("date", "load")]
+  attr(one, "time") <- "date"
+  expect_equal(env$daily_series(one)$load, c(400, 0, 250))
+  expect_app_matches_package(env, one, "upload (English names)")
+})
+
 test_that("numeric days: absent days are rest days", {
   env <- app_env()
   s <- env$prepare_input(data.frame(day = c(1, 2, 4, 4), load = c(10, 20, 5, 5)))
@@ -163,12 +181,12 @@ test_that("numeric days: absent days are rest days", {
   expect_equal(daily$load, c(10, 20, 0, 10))
 })
 
-test_that("input errors are given in Spanish", {
+test_that("input errors are explained to the user", {
   env <- app_env()
   expect_error(env$prepare_input(data.frame(fecha = "2024-13-45", load = 1)),
-               "formato de la columna de fechas")
+               "date column format is not recognised")
   expect_error(env$prepare_input(data.frame(day = 1.5, load = 1)),
-               "d\u00edas enteros")
+               "whole days")
   expect_error(env$prepare_input(data.frame(day = 1, load = -1)),
-               "negativa")
+               "cannot be negative")
 })

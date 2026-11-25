@@ -1,211 +1,207 @@
 <div style="max-width: 900px; margin: 0 auto; padding: 20px 30px;">
 
-  <!-- 1. Introducción -->
+  <!-- 1. Introduction -->
   <h2 style="text-align:center; margin-bottom: 5px;">Acute:Chronic Workload Ratio (ACWR)</h2>
   <p style="text-align:center; color: var(--bs-secondary); margin-bottom: 30px;">
-    Fundamentos teóricos y métodos de cálculo
+    Theoretical background and calculation methods
   </p>
   <hr>
 
-  <h3>1. Introducción</h3>
-  <p>El ACWR es un índice utilizado en ciencias del deporte para cuantificar
-    la relación entre la carga de entrenamiento reciente (aguda) y la carga
-    acumulada a largo plazo (crónica). Este ratio permite monitorizar el riesgo
-    de lesión asociado a cambios bruscos en la carga de entrenamiento.</p>
-  <p>El modelo se fundamenta en el paradigma de fitness-fatiga propuesto
-    inicialmente por Banister et al. (1) y desarrollado posteriormente en
-    el contexto de la prevención de lesiones por Gabbett (2) y Hulin et al. (3).</p>
+  <h3>1. Introduction</h3>
+  <p>The ACWR is an index used in sports science to quantify the relationship
+    between recent training load (acute) and the load accumulated over a
+    longer period (chronic). The ratio is used to monitor the injury risk
+    associated with sudden changes in training load.</p>
+  <p>The model is based on the fitness-fatigue paradigm first proposed by
+    Banister et al. (1) and later developed in the context of injury
+    prevention by Gabbett (2) and Hulin et al. (3).</p>
 
-  <h4>1.1. Zonas propuestas originalmente</h4>
-  <p>Los trabajos que popularizaron el ACWR (2, 4) propusieron los siguientes
-    umbrales. Se presentan aquí como la propuesta original, <strong>no como
-    evidencia establecida</strong>: estudios posteriores han cuestionado tanto
-    el ratio como estos puntos de corte (ver la sección 5, "Limitaciones y
-    críticas").</p>
+  <h4>1.1. Originally proposed zones</h4>
+  <p>The studies that popularised the ACWR (2, 4) proposed the following
+    thresholds. They are presented here as the original proposal, <strong>not
+    as established evidence</strong>: later studies have questioned both the
+    ratio and these cut-offs (see section 5, "Limitations and criticisms").</p>
   <ul>
-    <li><strong>ACWR &lt; 0.8:</strong> zona propuesta como "infraentrenamiento": la carga aguda es claramente inferior a la habitual.</li>
-    <li><strong>ACWR 0.8 - 1.3:</strong> zona propuesta como "sweet spot", en la que se planteó que el riesgo de lesión sería menor.</li>
-    <li><strong>ACWR 1.3 - 1.5:</strong> zona propuesta como de precaución.</li>
-    <li><strong>ACWR &gt; 1.5:</strong> zona propuesta como de alto riesgo: la carga aguda supera con creces la carga crónica habitual.</li>
+    <li><strong>ACWR &lt; 0.8:</strong> zone proposed as "undertraining": the acute load is clearly lower than usual.</li>
+    <li><strong>ACWR 0.8 - 1.3:</strong> zone proposed as the "sweet spot", in which the injury risk was suggested to be lower.</li>
+    <li><strong>ACWR 1.3 - 1.5:</strong> zone proposed as a caution zone.</li>
+    <li><strong>ACWR &gt; 1.5:</strong> zone proposed as high risk: the acute load far exceeds the usual chronic load.</li>
   </ul>
-  <p>Es importante destacar que el ACWR es una herramienta de apoyo a la toma de
-    decisiones, no un valor diagnóstico absoluto. Debe interpretarse siempre en
-    el contexto del atleta individual, la modalidad deportiva y otros indicadores
-    de carga interna y externa (5).</p>
+  <p>It is important to stress that the ACWR is a decision-support tool, not
+    an absolute diagnostic value. It should always be interpreted in the
+    context of the individual athlete, the sport and other internal and
+    external load indicators (5).</p>
 
   <!-- 2. Coupled -->
   <hr>
-  <h3>2. Rolling Average - Método Acoplado (Coupled)</h3>
-  <p>Este fue el primer método propuesto para el cálculo del ACWR, utilizado
-    ampliamente en los trabajos pioneros de Hulin et al. (3) y Blanch &amp; Gabbett (4).</p>
+  <h3>2. Rolling Average - Coupled method</h3>
+  <p>This was the first method proposed to calculate the ACWR, widely used in
+    the pioneering work of Hulin et al. (3) and Blanch &amp; Gabbett (4).</p>
 
-  <h4>2.1. Definición</h4>
-  <p>En el método acoplado, la ventana aguda está <strong>incluida</strong>
-    dentro de la ventana crónica:</p>
+  <h4>2.1. Definition</h4>
+  <p>In the coupled method, the acute window is <strong>included</strong>
+    in the chronic window:</p>
   <p style="text-align:center;">
-    $$\text{Carga aguda} = \frac{1}{N_a} \sum_{i=d-N_a+1}^{d} L_i$$
+    $$\text{Acute load} = \frac{1}{N_a} \sum_{i=d-N_a+1}^{d} L_i$$
   </p>
   <p style="text-align:center;">
-    $$\text{Carga crónica} = \frac{1}{N_c} \sum_{i=d-N_c+1}^{d} L_i$$
+    $$\text{Chronic load} = \frac{1}{N_c} \sum_{i=d-N_c+1}^{d} L_i$$
   </p>
   <p style="text-align:center;">
-    $$ACWR = \frac{\text{Carga aguda}}{\text{Carga crónica}}$$
+    $$ACWR = \frac{\text{Acute load}}{\text{Chronic load}}$$
   </p>
-  <p>Donde:</p>
+  <p>Where:</p>
   <ul>
-    <li>\(L_i\) = carga del día \(i\) (en unidades arbitrarias, UA)</li>
-    <li>\(d\) = día actual</li>
-    <li>\(N_a\) = tamaño de la ventana aguda (típicamente 7 días)</li>
-    <li>\(N_c\) = tamaño de la ventana crónica (típicamente 28 días)</li>
+    <li>\(L_i\) = load on day \(i\) (in arbitrary units, AU)</li>
+    <li>\(d\) = current day</li>
+    <li>\(N_a\) = length of the acute window (typically 7 days)</li>
+    <li>\(N_c\) = length of the chronic window (typically 28 days)</li>
   </ul>
 
-  <h4>2.2. Limitaciones</h4>
-  <p>El principal problema de este método es el <strong>acoplamiento matemático</strong>:
-    al incluir la ventana aguda dentro de la crónica, ambas variables comparten
-    datos, lo que genera una correlación espuria entre ellas. Esto fue demostrado
-    por Lolli et al. (6), quienes evidenciaron que este acoplamiento puede inflar
-    artificialmente la asociación entre el ACWR y el riesgo de lesión.</p>
+  <h4>2.2. Limitations</h4>
+  <p>The main problem of this method is <strong>mathematical coupling</strong>:
+    because the acute window is included in the chronic window, both variables
+    share data, which creates a spurious correlation between them. This was
+    shown by Lolli et al. (6), who found that coupling can artificially inflate
+    the association between the ACWR and injury risk.</p>
 
-  <h4>2.3. Cómo muestra la app las cargas</h4>
-  <p>La app (y el paquete ACWR) expresa las cargas aguda y crónica como
-    <strong>sumas semanales equivalentes</strong>: la suma de la ventana
-    multiplicada por \(7 / N\). Con las ventanas habituales, la carga aguda es
-    la suma de los últimos 7 días y la crónica es la suma de los últimos 28
-    días dividida entre 4:</p>
+  <h4>2.3. How the app shows the loads</h4>
+  <p>The app (and the ACWR package) expresses acute and chronic loads as
+    <strong>weekly-equivalent sums</strong>: the sum over the window
+    multiplied by \(7 / N\). With the usual windows, the acute load is the sum
+    of the last 7 days and the chronic load is the sum of the last 28 days
+    divided by 4:</p>
   <p style="text-align:center;">
-    $$\text{Aguda} = \frac{7}{N_a} \sum_{i=d-N_a+1}^{d} L_i \qquad
-      \text{Crónica} = \frac{7}{N_c} \sum_{i=d-N_c+1}^{d} L_i$$
+    $$\text{Acute} = \frac{7}{N_a} \sum_{i=d-N_a+1}^{d} L_i \qquad
+      \text{Chronic} = \frac{7}{N_c} \sum_{i=d-N_c+1}^{d} L_i$$
   </p>
-  <p>Como las dos cargas se multiplican por 7, el factor se cancela y
-    <strong>el ACWR es idéntico al que se obtiene con las medias
-    diarias</strong> de las fórmulas anteriores; solo cambia la escala en que
-    se muestran las cargas (UA por 7 días en lugar de UA por día). Los días sin
-    sesión cuentan como carga 0. En el método desacoplado la crónica es la suma
-    de los días \(d-N_c+1\) a \(d-N_a\) multiplicada por \(7 / (N_c - N_a)\).
-    El EWMA se muestra en la escala de una carga diaria.</p>
+  <p>Because both loads are multiplied by 7, the factor cancels and
+    <strong>the ACWR is identical to the one obtained with the daily
+    means</strong> of the formulas above; only the scale in which the loads
+    are shown changes (AU per 7 days instead of AU per day). Days without a
+    session count as load 0. In the uncoupled method, the chronic load is the
+    sum of days \(d-N_c+1\) to \(d-N_a\) multiplied by \(7 / (N_c - N_a)\).
+    EWMA is shown on the scale of a daily load.</p>
 
   <!-- 3. Uncoupled -->
   <hr>
-  <h3>3. Rolling Average - Método Desacoplado (Uncoupled)</h3>
-  <p>Para resolver el problema del acoplamiento matemático, se propuso el
-    método desacoplado, donde la ventana aguda se <strong>excluye</strong>
-    de la ventana crónica (6).</p>
+  <h3>3. Rolling Average - Uncoupled method</h3>
+  <p>To solve the problem of mathematical coupling, the uncoupled method was
+    proposed, in which the acute window is <strong>excluded</strong> from the
+    chronic window (6).</p>
 
-  <h4>3.1. Definición</h4>
-  <p>La carga aguda se calcula igual que en el método acoplado:</p>
+  <h4>3.1. Definition</h4>
+  <p>The acute load is calculated as in the coupled method:</p>
   <p style="text-align:center;">
-    $$\text{Carga aguda} = \frac{1}{N_a} \sum_{i=d-N_a+1}^{d} L_i$$
+    $$\text{Acute load} = \frac{1}{N_a} \sum_{i=d-N_a+1}^{d} L_i$$
   </p>
-  <p>La carga crónica se calcula <strong>excluyendo</strong> los días de la ventana aguda:</p>
+  <p>The chronic load is calculated <strong>excluding</strong> the days of the acute window:</p>
   <p style="text-align:center;">
-    $$\text{Carga crónica} = \frac{1}{N_c - N_a} \sum_{i=d-N_c+1}^{d-N_a} L_i$$
+    $$\text{Chronic load} = \frac{1}{N_c - N_a} \sum_{i=d-N_c+1}^{d-N_a} L_i$$
   </p>
   <p style="text-align:center;">
-    $$ACWR = \frac{\text{Carga aguda}}{\text{Carga crónica}}$$
+    $$ACWR = \frac{\text{Acute load}}{\text{Chronic load}}$$
   </p>
 
-  <h4>3.2. Ventajas</h4>
+  <h4>3.2. Advantages</h4>
   <ul>
-    <li>Elimina la correlación espuria causada por el acoplamiento matemático.</li>
-    <li>Proporciona una estimación más independiente de la relación agudo:crónico.</li>
-    <li>Ha sido recomendado como alternativa preferible al método acoplado (6).</li>
+    <li>It removes the spurious correlation caused by mathematical coupling.</li>
+    <li>It gives a more independent estimate of the acute:chronic relationship.</li>
+    <li>It has been recommended as a preferable alternative to the coupled method (6).</li>
   </ul>
 
-  <h4>3.3. Limitaciones</h4>
-  <p>Al igual que el método acoplado, sigue utilizando medias móviles simples,
-    lo que implica que todos los días dentro de cada ventana reciben la misma
-    ponderación. No tiene en cuenta la naturaleza decreciente de los efectos
-    de fitness y fatiga a lo largo del tiempo (7, 8).</p>
+  <h4>3.3. Limitations</h4>
+  <p>Like the coupled method, it still uses simple moving averages, so every
+    day within each window has the same weight. It does not account for the
+    decaying nature of fitness and fatigue effects over time (7, 8).</p>
 
   <!-- 4. EWMA -->
   <hr>
   <h3>4. Exponentially Weighted Moving Average (EWMA)</h3>
-  <p>El método EWMA fue propuesto por Williams et al. (8) como alternativa
-    a las medias móviles para el cálculo de cargas agudas y crónicas.
-    Se basa en el concepto de la media móvil exponencialmente ponderada,
-    originalmente descrito por Hunter (9).</p>
+  <p>The EWMA method was proposed by Williams et al. (8) as an alternative to
+    moving averages for calculating acute and chronic loads. It is based on
+    the exponentially weighted moving average, originally described by
+    Hunter (9).</p>
 
-  <h4>4.1. Definición</h4>
-  <p>El EWMA para un día dado se calcula como:</p>
+  <h4>4.1. Definition</h4>
+  <p>The EWMA for a given day is calculated as:</p>
   <p style="text-align:center;">
-    $$EWMA_{hoy} = L_{hoy} \times \lambda_a + (1 - \lambda_a) \times EWMA_{ayer}$$
+    $$EWMA_{today} = L_{today} \times \lambda_a + (1 - \lambda_a) \times EWMA_{yesterday}$$
   </p>
-  <p>Donde la constante de decaimiento \(\lambda_a\) se define como:</p>
+  <p>where the decay constant \(\lambda_a\) is defined as:</p>
   <p style="text-align:center;">
     $$\lambda_a = \frac{2}{N + 1}$$
   </p>
-  <p>Se calculan dos series EWMA:</p>
+  <p>Two EWMA series are calculated:</p>
   <ul>
-    <li>\(EWMA_{agudo}\): con \(N = N_a\) (típicamente 7 días) -&gt; \(\lambda_a = 2/8 = 0.25\)</li>
-    <li>\(EWMA_{crónico}\): con \(N = N_c\) (típicamente 28 días) -&gt; \(\lambda_c = 2/29 \approx 0.069\)</li>
+    <li>\(EWMA_{acute}\): with \(N = N_a\) (typically 7 days) -&gt; \(\lambda_a = 2/8 = 0.25\)</li>
+    <li>\(EWMA_{chronic}\): with \(N = N_c\) (typically 28 days) -&gt; \(\lambda_c = 2/29 \approx 0.069\)</li>
   </ul>
   <p style="text-align:center;">
-    $$ACWR_{EWMA} = \frac{EWMA_{agudo}}{EWMA_{crónico}}$$
+    $$ACWR_{EWMA} = \frac{EWMA_{acute}}{EWMA_{chronic}}$$
   </p>
 
-  <h4>4.2. Inicialización</h4>
-  <p>El valor inicial del EWMA (día 1) se establece igual a la carga del primer día:</p>
+  <h4>4.2. Initialisation</h4>
+  <p>The initial EWMA value (day 1) is set equal to the load of the first day:</p>
   <p style="text-align:center;">
     $$EWMA_1 = L_1$$
   </p>
 
-  <h4>4.3. Ventajas</h4>
+  <h4>4.3. Advantages</h4>
   <ul>
-    <li>Asigna mayor ponderación a las cargas más recientes, reflejando mejor
-      la naturaleza decreciente de los efectos de fitness y fatiga (7).</li>
-    <li>Es sensible a la forma en que se acumulan las cargas, no solo al total.</li>
-    <li>Diferencia entre atletas que alcanzan la misma carga total pero con
-      distribuciones temporales distintas (8).</li>
-    <li>Murray et al. (10) demostraron que el EWMA proporciona un indicador
-      más sensible de la probabilidad de lesión que las medias móviles.</li>
+    <li>It gives more weight to the most recent loads, better reflecting the
+      decaying nature of fitness and fatigue effects (7).</li>
+    <li>It is sensitive to how loads are accumulated, not only to the total.</li>
+    <li>It distinguishes between athletes who reach the same total load with
+      different time distributions (8).</li>
+    <li>Murray et al. (10) showed that the EWMA provides a more sensitive
+      indicator of injury likelihood than rolling averages.</li>
   </ul>
 
-  <h4>4.4. Ejemplo clave (Williams et al., 2017)</h4>
-  <p>Williams et al. (8) demostraron que tres atletas ficticios con la misma
-    carga total en 28 días y la misma carga en los últimos 7 días obtienen
-    un ACWR idéntico por rolling average (1.43), pero valores diferentes
-    por EWMA (1.25, 1.41 y 1.55, respectivamente). Esto ilustra que el EWMA
-    captura la <em>distribución temporal</em> de la carga, mientras que
-    el rolling average solo captura el promedio.</p>
+  <h4>4.4. Key example (Williams et al., 2017)</h4>
+  <p>Williams et al. (8) showed that three hypothetical athletes with the same
+    total load over 28 days and the same load over the last 7 days have an
+    identical rolling-average ACWR (1.43) but different EWMA values (1.25,
+    1.41 and 1.55, respectively). This illustrates that the EWMA captures the
+    <em>time distribution</em> of the load, whereas the rolling average only
+    captures the mean.</p>
 
-  <!-- 5. Limitaciones y críticas -->
+  <!-- 5. Limitations and criticisms -->
   <hr>
-  <h3>5. Limitaciones y críticas</h3>
-  <p>El ACWR se calcula aquí tal como se describe en la literatura, pero el
-    ratio tiene limitaciones bien documentadas que conviene conocer antes de
-    usarlo para tomar decisiones:</p>
+  <h3>5. Limitations and criticisms</h3>
+  <p>The ACWR is calculated here as described in the literature, but the
+    ratio has well-documented limitations that should be known before using
+    it to make decisions:</p>
   <ul>
-    <li><strong>Acoplamiento matemático.</strong> En el método acoplado, la
-      semana aguda forma parte también de la carga crónica. Esto genera una
-      correlación espuria entre ambas y reduce la variabilidad entre atletas
-      de la carga crónica (6). Además, el ratio acoplado nunca puede superar
-      el valor 4 (15). El método desacoplado elimina el solapamiento, pero no
-      los problemas siguientes.</li>
-    <li><strong>Artefactos del ratio.</strong> El ACWR se comporta como un
-      reescalado de la carga aguda: se obtienen asociaciones con las lesiones
-      similares cuando la carga aguda se divide por cargas "crónicas" fijas o
-      aleatorias, y el ratio no aporta valor predictivo sobre la carga aguda
-      sola (13). Un ratio no siempre es una forma adecuada de representar los
-      cambios de actividad, y los valores del EWMA dependen de la carga inicial
-      en las primeras semanas (14).</li>
-    <li><strong>Umbrales no validados.</strong> Los umbrales recomendados (por
-      ejemplo, el "sweet spot" de 0,8-1,3 de la sección 1.1) están afectados
-      por estas limitaciones y por problemas como la discretización y los datos
-      escasos, que comprometen su validez como puntos de corte del riesgo de
-      lesión (13, 14). Por eso la app marca las zonas como orientativas.</li>
-    <li><strong>Sin beneficio en un ensayo aleatorizado.</strong> En un ensayo
-      aleatorizado por conglomerados con 34 equipos juveniles de élite (18 de
-      intervención y 16 de control) durante una temporada de 10 meses,
-      planificar el entrenamiento con el ACWR no redujo los problemas de salud:
-      diferencia de prevalencia de 1,8 puntos porcentuales (IC 95 % -4,1 a 7,7);
-      riesgo relativo 1,01 (IC 95 % 0,91 a 1,12) (16). El resultado se refiere
-      a esa intervención concreta en futbolistas juveniles.</li>
+    <li><strong>Mathematical coupling.</strong> In the coupled method, the
+      acute week is also part of the chronic load. This creates a spurious
+      correlation between the two and reduces the between-athlete variability
+      of the chronic load (6). Moreover, the coupled ratio can never exceed 4
+      (15). The uncoupled method removes the overlap, but not the problems
+      below.</li>
+    <li><strong>Ratio artefacts.</strong> The ACWR behaves as a rescaling of
+      the acute load: similar associations with injury are obtained when the
+      acute load is divided by fixed or random "chronic" loads, and the ratio
+      adds no predictive value over the acute load alone (13). A ratio is not
+      always an appropriate way to represent changes in activity, and EWMA
+      values depend on the initial load in the first weeks (14).</li>
+    <li><strong>No validated thresholds.</strong> The recommended thresholds
+      (e.g. the "sweet spot" of 0.8-1.3 in section 1.1) are affected by these
+      limitations and by problems such as discretisation and sparse data,
+      which undermine their validity as cut-offs for injury risk (13, 14).
+      This is why the app marks the zones as indicative.</li>
+    <li><strong>No benefit in a randomised trial.</strong> In a cluster
+      randomised trial of 34 elite youth football teams (18 intervention, 16
+      control) over a 10-month season, planning training with the ACWR did not
+      reduce health problems: prevalence difference 1.8 percentage points
+      (95% CI -4.1 to 7.7); relative risk 1.01 (95% CI 0.91 to 1.12) (16). The
+      result refers to that specific intervention in youth footballers.</li>
   </ul>
 
-  <!-- 6. Bibliografía -->
+  <!-- 6. References -->
   <hr>
-  <h3>6. Referencias bibliográficas</h3>
-  <p style="font-style: italic; color: var(--bs-secondary);">Formato Vancouver</p>
+  <h3>6. References</h3>
+  <p style="font-style: italic; color: var(--bs-secondary);">Vancouver style</p>
   <ol>
     <li>Banister EW, Calvert TW, Savage MV, Bach T. A systems model of training for athletic performance. Aust J Sports Med. 1975;7(3):57-61.</li>
     <li>Gabbett TJ. The training-injury prevention paradox: should athletes be training smarter and harder? Br J Sports Med. 2016;50(5):273-80.</li>

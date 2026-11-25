@@ -1,34 +1,34 @@
 # ============================================================
-# Módulo: Análisis FWF (Footballer Workload Footprint)
+# Module: FWF analysis (Footballer Workload Footprint)
 # ============================================================
 
 fwfUI <- function(id) {
   ns <- NS(id)
   layout_sidebar(
     sidebar = sidebar(
-      title = "FWF - Par\u00e1metros",
+      title = "FWF - Settings",
       width = 350,
-      sliderInput(ns("fwf_day_select"), "D\u00eda para tabla de features:",
+      sliderInput(ns("fwf_day_select"), "Day for the feature table:",
                   min = 1, max = 28, value = 28, step = 1),
       hr(),
       uiOutput(ns("fwf_var_info")),
       hr(),
-      tags$strong("Descargar resultados:"),
+      tags$strong("Download results:"),
       tags$div(
         style = "margin-top: 6px;",
         tags$p(class = "text-muted mb-1", style = "font-size: 0.85em;", "Heatmaps (PNG)"),
         tags$div(
           class = "d-flex flex-column gap-2 mb-2",
-          downloadButton(ns("download_fwf_sigma_png"), "\u2211\u1d40FWF Acumulativas", class = "btn-outline-secondary btn-sm"),
-          downloadButton(ns("download_fwf_delta_png"), "\u0394\u1d40FWF Temporales", class = "btn-outline-secondary btn-sm"),
-          downloadButton(ns("download_fwf_combined_png"), "FWF Combinado", class = "btn-outline-secondary btn-sm")
+          downloadButton(ns("download_fwf_sigma_png"), "\u2211\u1d40FWF cumulative", class = "btn-outline-secondary btn-sm"),
+          downloadButton(ns("download_fwf_delta_png"), "\u0394\u1d40FWF temporary", class = "btn-outline-secondary btn-sm"),
+          downloadButton(ns("download_fwf_combined_png"), "Combined FWF", class = "btn-outline-secondary btn-sm")
         ),
-        tags$p(class = "text-muted mb-1 mt-2", style = "font-size: 0.85em;", "Tabla de features"),
-        downloadButton(ns("download_fwf_xlsx"), "XLSX Features", class = "btn-outline-success btn-sm w-100")
+        tags$p(class = "text-muted mb-1 mt-2", style = "font-size: 0.85em;", "Feature table"),
+        downloadButton(ns("download_fwf_xlsx"), "Features XLSX", class = "btn-outline-success btn-sm w-100")
       )
     ),
 
-    # Panel principal con sub-pestañas
+    # Main panel with sub-tabs
     navset_card_tab(
       id = ns("fwf_tabs"),
       title = "FWF",
@@ -39,15 +39,8 @@ fwfUI <- function(id) {
         card_body(
           card(
             card_header(tags$span(style = "font-size: 0.95em; font-weight: 600;",
-              "\u2211\u1d40FWF \u2014 Variaciones acumulativas")),
+              "\u2211\u1d40FWF \u2014 Cumulative variations")),
             card_body(uiOutput(ns("fwf_sigma_heatmap_ui")))
-          ),
-          tags$p(
-            class = "text-muted mt-2",
-            style = "font-size: 0.8em; font-style: italic;",
-            "Referencia: Matas-Bustos JB, Mora-Garc\u00eda AM, de Hoyo Lora M, ",
-            "Nieto-Alarc\u00f3n A, Gonzalez-Fern\u00e1ndez FT (2025). ",
-            "PLoS One 20(7): e0327960. doi: 10.1371/journal.pone.0327960"
           )
         )
       ),
@@ -58,15 +51,8 @@ fwfUI <- function(id) {
         card_body(
           card(
             card_header(tags$span(style = "font-size: 0.95em; font-weight: 600;",
-              "\u0394\u1d40FWF \u2014 Variaciones temporales")),
+              "\u0394\u1d40FWF \u2014 Temporary variations")),
             card_body(uiOutput(ns("fwf_delta_heatmap_ui")))
-          ),
-          tags$p(
-            class = "text-muted mt-2",
-            style = "font-size: 0.8em; font-style: italic;",
-            "Referencia: Matas-Bustos JB, Mora-Garc\u00eda AM, de Hoyo Lora M, ",
-            "Nieto-Alarc\u00f3n A, Gonzalez-Fern\u00e1ndez FT (2025). ",
-            "PLoS One 20(7): e0327960. doi: 10.1371/journal.pone.0327960"
           )
         )
       ),
@@ -79,21 +65,14 @@ fwfUI <- function(id) {
           card(
             fill = FALSE,
             card_header(tags$span(style = "font-size: 0.95em; font-weight: 600;",
-              "\u2211\u1d40FWF + \u0394\u1d40FWF \u2014 D\u00eda seleccionado (todas las variables)")),
+              "\u2211\u1d40FWF + \u0394\u1d40FWF \u2014 Selected day (all variables)")),
             card_body(
               fillable = FALSE,
               tags$p(class = "text-muted", style = "font-size: 0.85em;",
-                "Representaci\u00f3n estilo art\u00edculo: X = variables GPS, Y = \u03c4 (ventanas), ",
-                "valores normalizados (z-score). Usa el slider del panel lateral para cambiar el d\u00eda."),
+                "Article-style layout: X = GPS variables, Y = \u03c4 (windows), ",
+                "normalised values (z-score). Use the slider in the side panel to change the day."),
               uiOutput(ns("fwf_combined_heatmap_ui"))
             )
-          ),
-          tags$p(
-            class = "text-muted mt-2",
-            style = "font-size: 0.8em; font-style: italic;",
-            "Referencia: Matas-Bustos JB, Mora-Garc\u00eda AM, de Hoyo Lora M, ",
-            "Nieto-Alarc\u00f3n A, Gonzalez-Fern\u00e1ndez FT (2025). ",
-            "PLoS One 20(7): e0327960. doi: 10.1371/journal.pone.0327960"
           )
         )
       ),
@@ -103,21 +82,12 @@ fwfUI <- function(id) {
         icon = icon("table"),
         card_body(
           tags$h6(class = "mb-2", textOutput(ns("fwf_table_title"))),
-          DTOutput(ns("fwf_table")),
-          tags$p(
-            class = "text-muted mt-3",
-            style = "font-size: 0.8em; font-style: italic;",
-            "Referencia: Matas-Bustos JB, Mora-Garc\u00eda AM, de Hoyo Lora M, ",
-            "Nieto-Alarc\u00f3n A, Gonzalez-Fern\u00e1ndez FT (2025). ",
-            "Advanced feature engineering in Acute:Chronic Workload Ratio (ACWR) ",
-            "calculation for injury forecasting in elite soccer. ",
-            "PLoS One 20(7): e0327960. doi: 10.1371/journal.pone.0327960"
-          )
+          DTOutput(ns("fwf_table"))
         )
       ),
 
       nav_panel(
-        title = "Teor\u00eda",
+        title = "Theory",
         icon = icon("book"),
         card_body(
           withMathJax(),
@@ -131,7 +101,7 @@ fwfUI <- function(id) {
 fwfServer <- function(id, current_data, plot_theme) {
   moduleServer(id, function(input, output, session) {
 
-    # Detectar variables de carga disponibles
+    # Detect the available load variables
     fwf_load_vars <- reactive({
       req(current_data())
       df <- current_data()
@@ -147,23 +117,24 @@ fwfServer <- function(id, current_data, plot_theme) {
       }
     })
 
-    # Nombres legibles para variables
+    # Readable variable names
     fwf_var_labels <- reactive({
       vars <- fwf_load_vars()
       labels <- c(
-        "sRPE_UA"      = "sRPE (UA)",
-        "distancia_m"  = "Distancia (m)",
+        "sRPE_UA"      = "sRPE (AU)",
+        "distance_m"   = "Distance (m)",
+        "distancia_m"  = "Distance (m)",
         "dist_21_kmh"  = "Dist >21 km/h (m)",
         "player_load"  = "Player Load",
-        "n_acc_3"      = "Acel >3 m/s\u00b2",
+        "n_acc_3"      = "Acc >3 m/s\u00b2",
         "dist_hmld"    = "HMLD (m)",
-        "load"         = "UA"
+        "load"         = "Load (AU)"
       )
       ifelse(vars %in% names(labels), labels[vars], vars)
     })
 
-    # Sigma y delta para TODAS las variables, con el paquete ACWR
-    # (días de calendario: sesiones del mismo día sumadas, descanso = 0)
+    # Sigma and delta for ALL variables, with the ACWR package
+    # (calendar days: same-day sessions summed, rest = 0)
     fwf_db <- reactive({
       req(current_data())
       df <- current_data()
@@ -175,11 +146,11 @@ fwfServer <- function(id, current_data, plot_theme) {
 
     time_unit <- reactive(attr(current_data(), "time"))
 
-    # Día mostrado -> fecha (solo para los títulos con datos con fechas)
+    # Day shown -> date (only for the titles of data with dates)
     day_label <- function(day) {
       df <- current_data()
-      if (!identical(time_unit(), "date")) return(paste("D\u00eda", day))
-      paste0("D\u00eda ", day, " (", format(min(df$date) + day - 1), ")")
+      if (!identical(time_unit(), "date")) return(paste("Day", day))
+      paste0("Day ", day, " (", format(min(df$date) + day - 1), ")")
     }
 
     fwf_sigma_list <- reactive({
@@ -203,7 +174,7 @@ fwfServer <- function(id, current_data, plot_theme) {
         min = min(days), max = max(days), value = max(days))
     })
 
-    # Info dinámica en sidebar
+    # Dynamic info in the sidebar
     output$fwf_var_info <- renderUI({
       vars <- fwf_load_vars()
       labels <- fwf_var_labels()
@@ -212,14 +183,14 @@ fwfServer <- function(id, current_data, plot_theme) {
         tags$div(
           style = "padding: 10px; border-radius: 8px; border-left: 4px solid var(--bs-info); background: var(--bs-tertiary-bg); font-size: 0.85em;",
           icon("info-circle"),
-          " Variable de carga: UA (unidades arbitrarias). ",
-          "El FWF alcanza su m\u00e1ximo potencial con m\u00faltiples m\u00e9tricas GPS."
+          " Load variable: AU (arbitrary units). ",
+          "The FWF is most informative with several GPS metrics."
         )
       } else {
         tags$div(
           style = "padding: 10px; border-radius: 8px; border-left: 4px solid var(--bs-success); background: var(--bs-tertiary-bg); font-size: 0.85em;",
           icon("check-circle"),
-          tags$strong(paste0(n, " variables de carga detectadas:")),
+          tags$strong(paste0(n, " load variables detected:")),
           tags$ul(style = "margin-bottom: 0; padding-left: 18px;",
             lapply(labels, function(lb) tags$li(lb))
           ),
@@ -229,7 +200,7 @@ fwfServer <- function(id, current_data, plot_theme) {
       }
     })
 
-    # Altura dinámica de heatmaps
+    # Dynamic heatmap height
     fwf_heatmap_height <- reactive({
       n <- length(fwf_load_vars())
       paste0(max(120, n * 55 + 80), "px")
@@ -243,7 +214,7 @@ fwfServer <- function(id, current_data, plot_theme) {
       plotOutput(session$ns("fwf_delta_heatmap"), height = fwf_heatmap_height())
     })
 
-    # Función interna: construir ggplot sigma heatmap
+    # Internal function: build the sigma heatmap (ggplot)
     build_fwf_sigma_plot <- function(sigma_list, vars, labels, sel_day) {
       plot_rows <- list()
       for (k in seq_along(vars)) {
@@ -272,11 +243,11 @@ fwfServer <- function(id, current_data, plot_theme) {
           geom_text(aes(label = ifelse(is.na(value), "", round(value, 0))),
                     size = txt_size, color = "white") +
           scale_fill_gradient(low = "#A8A4CE", high = "#2D2780",
-                              name = "Normalizado", na.value = "#E0E0E0",
+                              name = "Normalised", na.value = "#E0E0E0",
                               labels = c("Min", "Max"), breaks = c(0, 1)) +
           scale_x_discrete(breaks = seq(2, 28, by = 2)) +
-          labs(x = expression(paste("Ventana ", tau, " (d\u00edas)")),
-               y = NULL, title = paste("\u2211\u1d40FWF \u2014 D\u00eda", sel_day)) +
+          labs(x = expression(paste("Window ", tau, " (days)")),
+               y = NULL, title = paste("\u2211\u1d40FWF \u2014 Day", sel_day)) +
           theme_minimal(base_size = 13) +
           theme(axis.text.y = element_text(face = "bold", size = 10),
                 panel.grid = element_blank(),
@@ -286,10 +257,10 @@ fwfServer <- function(id, current_data, plot_theme) {
           geom_tile(color = "white", linewidth = 0.5) +
           geom_text(aes(label = round(value, 0)), size = 3, color = "white") +
           scale_fill_gradient(low = "#A8A4CE", high = "#2D2780",
-                              name = "Carga (UA)", na.value = "#E0E0E0") +
+                              name = "Load (AU)", na.value = "#E0E0E0") +
           scale_x_discrete(breaks = seq(2, 28, by = 2)) +
-          labs(x = expression(paste("Ventana ", tau, " (d\u00edas)")),
-               y = NULL, title = paste("\u2211\u1d40FWF \u2014 D\u00eda", sel_day)) +
+          labs(x = expression(paste("Window ", tau, " (days)")),
+               y = NULL, title = paste("\u2211\u1d40FWF \u2014 Day", sel_day)) +
           theme_minimal(base_size = 13) +
           theme(axis.text.y = element_text(face = "bold"),
                 panel.grid = element_blank(),
@@ -297,7 +268,7 @@ fwfServer <- function(id, current_data, plot_theme) {
       }
     }
 
-    # Función interna: construir ggplot delta heatmap
+    # Internal function: build the delta heatmap (ggplot)
     build_fwf_delta_plot <- function(delta_list, vars, labels, sel_day) {
       plot_rows <- list()
       for (k in seq_along(vars)) {
@@ -326,10 +297,10 @@ fwfServer <- function(id, current_data, plot_theme) {
                     size = txt_size) +
           scale_fill_gradient2(low = "#6C63FF", mid = "#FFFFFF", high = "#EF476F",
                                midpoint = 0, limits = c(-1, 1),
-                               name = "Normalizado", na.value = "#E0E0E0") +
+                               name = "Normalised", na.value = "#E0E0E0") +
           scale_x_discrete(breaks = seq(2, 28, by = 2)) +
-          labs(x = expression(paste("Ventana ", tau, " (d\u00edas)")),
-               y = NULL, title = paste("\u0394\u1d40FWF \u2014 D\u00eda", sel_day)) +
+          labs(x = expression(paste("Window ", tau, " (days)")),
+               y = NULL, title = paste("\u0394\u1d40FWF \u2014 Day", sel_day)) +
           theme_minimal(base_size = 13) +
           theme(axis.text.y = element_text(face = "bold", size = 10),
                 panel.grid = element_blank(),
@@ -343,10 +314,10 @@ fwfServer <- function(id, current_data, plot_theme) {
                     size = 3) +
           scale_fill_gradient2(low = "#6C63FF", mid = "#FFFFFF", high = "#EF476F",
                                midpoint = 0, limits = c(-abs_max, abs_max),
-                               name = "\u0394 Carga", na.value = "#E0E0E0") +
+                               name = "\u0394 Load", na.value = "#E0E0E0") +
           scale_x_discrete(breaks = seq(2, 28, by = 2)) +
-          labs(x = expression(paste("Ventana ", tau, " (d\u00edas)")),
-               y = NULL, title = paste("\u0394\u1d40FWF \u2014 D\u00eda", sel_day)) +
+          labs(x = expression(paste("Window ", tau, " (days)")),
+               y = NULL, title = paste("\u0394\u1d40FWF \u2014 Day", sel_day)) +
           theme_minimal(base_size = 13) +
           theme(axis.text.y = element_text(face = "bold"),
                 panel.grid = element_blank(),
@@ -366,18 +337,18 @@ fwfServer <- function(id, current_data, plot_theme) {
                            fwf_var_labels(), input$fwf_day_select)
     })
 
-    # --- Tab FWF Combinado (estilo artículo) ---
+    # --- Combined FWF tab (article style) ---
 
-    # Altura: 56 filas (28 Σ + 28 Δ) → fija, no depende de n_days
+    # Height: 56 rows (28 Σ + 28 Δ), fixed, does not depend on n_days
     output$fwf_combined_heatmap_ui <- renderUI({
       n_vars <- length(fwf_load_vars())
-      # Ancho proporcional a variables, alto fijo para 56 filas
+      # Width proportional to the variables, fixed height for 56 rows
       w <- paste0(max(400, n_vars * 120 + 100), "px")
       plotOutput(session$ns("fwf_combined_heatmap"),
                  height = "900px", width = "100%")
     })
 
-    # Build plot (nueva firma: pasa todas las variables a la vez)
+    # Build plot (all variables at once)
     build_current_combined_plot <- function() {
       req(fwf_sigma_list(), fwf_delta_list())
       build_fwf_combined_plot(
@@ -426,17 +397,16 @@ fwfServer <- function(id, current_data, plot_theme) {
           pageLength = 28,
           scrollX = TRUE,
           dom = "t",
-          language = DT_LANGUAGE,
           columnDefs = list(list(className = "dt-center", targets = "_all"))
         ),
         rownames = FALSE
       ) |> formatStyle(names(tbl), fontSize = "0.85em")
     })
 
-    # Descarga heatmap sigma como PNG
+    # Download the sigma heatmap as PNG
     output$download_fwf_sigma_png <- downloadHandler(
       filename = function() {
-        paste0("FWF_sigma_dia_", input$fwf_day_select, "_", Sys.Date(), ".png")
+        paste0("FWF_sigma_day_", input$fwf_day_select, "_", Sys.Date(), ".png")
       },
       content = function(file) {
         req(fwf_sigma_list())
@@ -449,10 +419,10 @@ fwfServer <- function(id, current_data, plot_theme) {
       }
     )
 
-    # Descarga heatmap delta como PNG
+    # Download the delta heatmap as PNG
     output$download_fwf_delta_png <- downloadHandler(
       filename = function() {
-        paste0("FWF_delta_dia_", input$fwf_day_select, "_", Sys.Date(), ".png")
+        paste0("FWF_delta_day_", input$fwf_day_select, "_", Sys.Date(), ".png")
       },
       content = function(file) {
         req(fwf_delta_list())
@@ -465,10 +435,10 @@ fwfServer <- function(id, current_data, plot_theme) {
       }
     )
 
-    # Descarga heatmap combinado como PNG
+    # Download the combined heatmap as PNG
     output$download_fwf_combined_png <- downloadHandler(
       filename = function() {
-        paste0("FWF_combinado_dia_", input$fwf_day_select, "_", Sys.Date(), ".png")
+        paste0("FWF_combined_day_", input$fwf_day_select, "_", Sys.Date(), ".png")
       },
       content = function(file) {
         p <- build_current_combined_plot()
@@ -479,10 +449,10 @@ fwfServer <- function(id, current_data, plot_theme) {
       }
     )
 
-    # Descarga tabla features como XLSX
+    # Download the feature table as XLSX
     output$download_fwf_xlsx <- downloadHandler(
       filename = function() {
-        paste0("FWF_features_dia_", input$fwf_day_select, "_", Sys.Date(), ".xlsx")
+        paste0("FWF_features_day_", input$fwf_day_select, "_", Sys.Date(), ".xlsx")
       },
       content = function(file) {
         req(fwf_sigma_list(), fwf_delta_list())
@@ -493,7 +463,7 @@ fwfServer <- function(id, current_data, plot_theme) {
         sigma_list <- fwf_sigma_list()
         delta_list <- fwf_delta_list()
 
-        tbl <- data.frame(tau_dias = 1:28)
+        tbl <- data.frame(tau_days = 1:28)
 
         for (k in seq_along(vars)) {
           df_s <- sigma_list[[vars[k]]]

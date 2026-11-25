@@ -1,5 +1,5 @@
 # ============================================================
-# Tema de gráficos compartido (dark/light mode)
+# Shared plot theme (dark/light mode)
 # ============================================================
 
 get_plot_theme <- function(is_dark = FALSE) {

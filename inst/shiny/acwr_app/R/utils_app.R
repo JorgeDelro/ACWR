@@ -1,26 +1,26 @@
 # ============================================================
-# Utilidades de la app (sin dependencias Shiny)
+# App helpers (no Shiny dependencies)
 #
-# La app NO calcula cargas por su cuenta: todos los valores vienen del
-# paquete ACWR (RAC, RAU, EWMA, fwf_cumulative, fwf_delta). Aquí solo se
-# preparan los datos y se da formato a los resultados.
+# The app does NOT compute loads itself: every value comes from the ACWR
+# package (RAC, RAU, EWMA, fwf_cumulative, fwf_delta). These helpers only
+# prepare the data and format the results.
 # ============================================================
 
-# --- Entrada de datos ---
+# --- Data input ---
 
-# Día numérico -> fecha (el día 1 es 2000-01-01; solo sirve para colocar
-# las sesiones en el calendario, la app muestra el número de día)
+# Numeric day -> date (day 1 is 2000-01-01; only used to place the
+# sessions on the calendar, the app shows the day number)
 DAY_ORIGIN <- as.Date("2000-01-01")
 
 day_to_date <- function(day) DAY_ORIGIN + (day - 1)
 
 date_to_day <- function(date) as.numeric(date - DAY_ORIGIN) + 1
 
-# Nombres de columna reconocidos (sin distinguir mayúsculas/minúsculas)
-COL_ID   <- c("athlete_id", "id", "athlete", "atleta", "jugador", "player")
-COL_DATE <- c("date", "fecha", "training_date")
-COL_DAY  <- c("day", "dia", "día")
-COL_LOAD <- c("load", "carga", "tl")
+# Accepted column names (case-insensitive); the Spanish names are aliases
+COL_ID   <- c("athlete_id", "id", "athlete", "player", "atleta", "jugador")
+COL_DATE <- c("date", "training_date", "fecha")
+COL_DAY  <- c("day", "dia", "d\u00eda")
+COL_LOAD <- c("load", "tl", "carga")
 
 DATE_FORMATS <- c("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d")
 
@@ -37,14 +37,14 @@ parse_dates <- function(x) {
     d <- as.Date(x, format = f)
     if (all(is.na(d) == (is.na(x) | x == ""))) return(d)
   }
-  stop("No se reconoce el formato de la columna de fechas. Usa AAAA-MM-DD ",
-       "(p. ej. 2024-09-02) o DD/MM/AAAA (p. ej. 02/09/2024).", call. = FALSE)
+  stop("The date column format is not recognised. Use YYYY-MM-DD ",
+       "(e.g. 2024-09-02) or DD/MM/YYYY (e.g. 02/09/2024).", call. = FALSE)
 }
 
-# Archivo (o dataset pre-cargado) -> sesiones con columnas ID, date, load
-# y las variables numéricas extra. Atributo "time": "date" si el archivo
-# tiene fechas, "day" si tiene días numéricos. Los errores se dan con stop()
-# en español para mostrarlos en la app.
+# File (or preloaded dataset) -> sessions with columns ID, date, load and
+# the extra numeric variables. Attribute "time": "date" if the file has
+# dates, "day" if it has numeric days. Errors are given with stop() so that
+# the app can show them.
 prepare_input <- function(df) {
   names(df) <- trimws(names(df))
   i_id   <- find_col(df, COL_ID)
@@ -52,22 +52,22 @@ prepare_input <- function(df) {
   i_day  <- find_col(df, COL_DAY)
   i_load <- find_col(df, COL_LOAD)
 
-  # Compatibilidad: sin nombres reconocidos, las dos primeras columnas son
-  # día y carga
+  # Backwards compatibility: without recognised names, the first two
+  # columns are day and load
   if (is.na(i_load) && is.na(i_date) && is.na(i_day)) {
     if (ncol(df) < 2) {
-      stop("El archivo debe tener una columna de fecha (o 'day') y una ",
-           "columna 'load'.", call. = FALSE)
+      stop("The file must have a date (or 'day') column and a 'load' ",
+           "column.", call. = FALSE)
     }
     i_day <- 1L
     i_load <- 2L
   }
   if (is.na(i_load)) {
-    stop("No se encuentra la columna de carga ('load').", call. = FALSE)
+    stop("The load column ('load') was not found.", call. = FALSE)
   }
   if (is.na(i_date) && is.na(i_day)) {
-    stop("No se encuentra una columna de fecha ('date' o 'fecha') ni de ",
-         "día ('day').", call. = FALSE)
+    stop("No date column ('date') or day column ('day') was found.",
+         call. = FALSE)
   }
 
   if (!is.na(i_date)) {
@@ -77,7 +77,7 @@ prepare_input <- function(df) {
     time <- "day"
     day <- suppressWarnings(as.numeric(df[[i_day]]))
     if (any(!is.na(day) & day != round(day))) {
-      stop("La columna 'day' debe contener días enteros (1, 2, 3...).",
+      stop("The 'day' column must contain whole days (1, 2, 3...).",
            call. = FALSE)
     }
     date <- day_to_date(day)
@@ -85,7 +85,7 @@ prepare_input <- function(df) {
 
   load <- suppressWarnings(as.numeric(df[[i_load]]))
   if (any(load < 0, na.rm = TRUE)) {
-    stop("La carga no puede ser negativa.", call. = FALSE)
+    stop("The load cannot be negative.", call. = FALSE)
   }
   id <- if (is.na(i_id)) rep("1", nrow(df)) else as.character(df[[i_id]])
 
@@ -100,7 +100,7 @@ prepare_input <- function(df) {
   dropped <- sum(is.na(out$date) | is.na(out$ID))
   out <- out[!is.na(out$date) & !is.na(out$ID), , drop = FALSE]
   if (nrow(out) == 0) {
-    stop("No se encontraron datos válidos.", call. = FALSE)
+    stop("No valid data were found.", call. = FALSE)
   }
   out <- out[order(out$ID, out$date), , drop = FALSE]
   rownames(out) <- NULL
@@ -111,7 +111,7 @@ prepare_input <- function(df) {
   out
 }
 
-# Resumen del calendario de un atleta (para avisar al usuario)
+# Calendar summary of one athlete (to inform the user)
 calendar_summary <- function(df) {
   days <- unique(df$date)
   span <- as.numeric(max(days) - min(days)) + 1
@@ -125,18 +125,18 @@ calendar_summary <- function(df) {
   )
 }
 
-# Número de día que se muestra: el del archivo (datos con 'day') o el día
-# de calendario desde la primera fecha (datos con fechas)
+# Day number shown: the one in the file (data with 'day') or the calendar
+# day since the first date (data with dates)
 day_number <- function(date, time, first_date = min(date)) {
   if (identical(time, "date")) as.numeric(date - first_date) + 1
   else date_to_day(date)
 }
 
-# --- Cálculos (siempre con el paquete ACWR) ---
+# --- Calculations (always with the ACWR package) ---
 
-# Sesiones -> serie diaria del paquete (una fila por día de calendario:
-# sesiones del mismo día sumadas, días sin sesión = 0, NA si falta la carga
-# de una sesión)
+# Sessions -> the package's daily series (one row per calendar day:
+# same-day sessions summed, days without a session = 0, NA if a session
+# has a missing load)
 daily_series <- function(df) {
   db <- data.frame(ID = 1, load = df$load, date = df$date)
   long <- suppressWarnings(
@@ -147,7 +147,7 @@ daily_series <- function(df) {
              date = long$date, load = long$value)
 }
 
-# ACWR de cada día de la serie diaria con las funciones del paquete
+# ACWR for each day of the daily series, with the package functions
 acwr_daily <- function(daily, partial = FALSE, acute = 7, chronic = 28) {
   suppressWarnings({
     rac  <- ACWR::RAC(TL = daily$load, training_dates = daily$date,
@@ -160,8 +160,8 @@ acwr_daily <- function(daily, partial = FALSE, acute = 7, chronic = 28) {
   data.frame(daily, rac, rau, ewma)
 }
 
-# Formato ancho de fwf_cumulative()/fwf_delta() para una variable:
-# columna day + una columna por ventana tau
+# Wide format of fwf_cumulative()/fwf_delta() for one variable:
+# a day column plus one column per window tau
 fwf_wide <- function(long, var, prefix, time) {
   x <- long[long$variable == var, ]
   windows <- sort(unique(x$window))
@@ -174,20 +174,23 @@ fwf_wide <- function(long, var, prefix, time) {
   out
 }
 
+# Risk zones (indicative, not validated)
+ZONES <- c("Undertrained", "Sweet spot", "Caution", "High risk")
+
 assign_zone <- function(values, t_low, t_mid, t_high) {
   ifelse(is.na(values), NA_character_,
-    ifelse(values < t_low, "Infraentrenado",
-      ifelse(values <= t_mid, "Sweet spot",
-        ifelse(values <= t_high, "Precaución",
-          "Alto riesgo"))))
+    ifelse(values < t_low, ZONES[1],
+      ifelse(values <= t_mid, ZONES[2],
+        ifelse(values <= t_high, ZONES[3],
+          ZONES[4]))))
 }
 
-# --- Cálculo detallado (paso a paso) ---
-# Las columnas Aguda, Crónica y ACWR son las del paquete; las cargas
-# incluidas y sus sumas salen de la misma serie diaria del paquete.
+# --- Detailed calculation (step by step) ---
+# The Acute, Chronic and ACWR columns are the package's values; the loads
+# included and their sums come from the same daily series of the package.
 
-# Días de la ventana [t - from, t - to]; NULL si no hay historial
-# suficiente (o los días disponibles con ventanas parciales)
+# Days of the window [t - from, t - to]; NULL if there is not enough
+# history (or the days available with partial windows)
 window_days <- function(t, from, to, partial) {
   start <- t - from
   end <- t - to
@@ -213,25 +216,25 @@ detail_rolling <- function(res, method, t_low, t_mid, t_high,
     c_idx <- window_days(t, chronic - 1, chronic_to, partial)
     acwr  <- res[[acwr_col]][t]
     data.frame(
-      Dia             = res$day[t],
-      Carga           = res$load[t],
-      Ventana_Acute   = if (is.null(a_idx)) NA_integer_ else length(a_idx),
-      Cargas_Acute    = if (is.null(a_idx)) "—" else format_loads(res$load[a_idx]),
-      Suma_Acute      = if (is.null(a_idx)) NA_real_ else sum(res$load[a_idx]),
-      Aguda           = res[[acute_col]][t],
-      Ventana_Chronic = if (is.null(c_idx)) NA_integer_ else length(c_idx),
-      Cargas_Chronic  = if (is.null(c_idx)) "—" else format_loads(res$load[c_idx]),
-      Suma_Chronic    = if (is.null(c_idx)) NA_real_ else sum(res$load[c_idx]),
-      Cronica         = res[[chronic_col]][t],
-      ACWR            = acwr,
-      Zona            = if (is.na(acwr)) "Sin datos crónicos" else
-                          assign_zone(acwr, t_low, t_mid, t_high),
+      Day           = res$day[t],
+      Load          = res$load[t],
+      Acute_days    = if (is.null(a_idx)) NA_integer_ else length(a_idx),
+      Acute_loads   = if (is.null(a_idx)) "\u2014" else format_loads(res$load[a_idx]),
+      Acute_sum     = if (is.null(a_idx)) NA_real_ else sum(res$load[a_idx]),
+      Acute         = res[[acute_col]][t],
+      Chronic_days  = if (is.null(c_idx)) NA_integer_ else length(c_idx),
+      Chronic_loads = if (is.null(c_idx)) "\u2014" else format_loads(res$load[c_idx]),
+      Chronic_sum   = if (is.null(c_idx)) NA_real_ else sum(res$load[c_idx]),
+      Chronic       = res[[chronic_col]][t],
+      ACWR          = acwr,
+      Zone          = if (is.na(acwr)) "No chronic data" else
+                        assign_zone(acwr, t_low, t_mid, t_high),
       stringsAsFactors = FALSE
     )
   })
   out <- do.call(rbind, rows)
-  # Acoplado: la ventana crónica completa no se lista, como antes
-  if (method == "coupled") out$Cargas_Chronic <- NULL
+  # Coupled: the full chronic window is not listed
+  if (method == "coupled") out$Chronic_loads <- NULL
   out
 }
 
@@ -243,26 +246,26 @@ detail_ewma <- function(res, t_low, t_mid, t_high, acute = 7, chronic = 28) {
   prev_a <- c(NA_real_, res$EWMA_acute[-n])
   prev_c <- c(NA_real_, res$EWMA_chronic[-n])
   first <- seq_len(n) == 1
-  zona <- ifelse(is.na(res$EWMA_ACWR), "Sin datos crónicos",
+  zone <- ifelse(is.na(res$EWMA_ACWR), "No chronic data",
                  assign_zone(res$EWMA_ACWR, t_low, t_mid, t_high))
-  zona[first] <- "Inicialización"
+  zone[first] <- "Initialisation"
   data.frame(
-    Dia           = res$day,
-    Carga         = res$load,
-    la_x_Carga    = ifelse(first, NA_real_, res$load * lambda_a),
+    Day           = res$day,
+    Load          = res$load,
+    la_x_Load     = ifelse(first, NA_real_, res$load * lambda_a),
     Decay_Acute   = (1 - lambda_a) * prev_a,
     EWMA_Acute    = res$EWMA_acute,
-    lc_x_Carga    = ifelse(first, NA_real_, res$load * lambda_c),
+    lc_x_Load     = ifelse(first, NA_real_, res$load * lambda_c),
     Decay_Chronic = (1 - lambda_c) * prev_c,
     EWMA_Chronic  = res$EWMA_chronic,
     ACWR          = res$EWMA_ACWR,
-    Zona          = zona,
+    Zone          = zone,
     stringsAsFactors = FALSE
   )
 }
 
-# Fecha real en las tablas (solo si el archivo tenía fechas)
+# Real date in the tables (only if the file had dates)
 add_date_column <- function(df, dates, time) {
   if (!identical(time, "date")) return(df)
-  cbind(df[1], Fecha = format(dates), df[-1])
+  cbind(df[1], Date = format(dates), df[-1])
 }

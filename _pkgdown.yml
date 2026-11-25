@@ -47,7 +47,7 @@ reference:
   - fwf_cumulative
   - plot_fwf
 - title: Shiny app
-  desc: Interactive app for teaching (in Spanish), built on the functions above.
+  desc: Interactive app for teaching, built on the functions above.
   contents:
   - run_app
 - title: Datasets

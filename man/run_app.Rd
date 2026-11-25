@@ -15,7 +15,7 @@ called for its side effect (it starts the app); does not return
 until the app is closed.
 }
 \description{
-Launches an interactive Shiny app (in Spanish, for teaching) to compute and
+Launches an interactive Shiny app (in English, for teaching) to compute and
 plot the ACWR and the Footballer Workload Footprint of an athlete, from an
 uploaded file or from preloaded datasets.
 }
@@ -24,9 +24,15 @@ All the values shown by the app are computed with the functions of this
 package (\code{\link[=RAC]{RAC()}}, \code{\link[=RAU]{RAU()}}, \code{\link[=EWMA]{EWMA()}}, \code{\link[=fwf_cumulative]{fwf_cumulative()}} and
 \code{\link[=fwf_delta]{fwf_delta()}}), on the same daily calendar.
 
-The app needs the packages shiny, bslib, ggplot2, plotly, DT
-and writexl. They are not installed with ACWR;
-\code{run_app()} says which ones are missing.
+Uploaded CSV files need a \code{date} (or numeric \code{day}) column and a
+\code{load} column, and may have an \code{athlete_id} column and extra
+numeric variables (used for the FWF). The Spanish column names
+\code{fecha}, \code{dia}, \code{carga} and \code{atleta} are accepted as aliases.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{     The app needs the packages shiny, bslib, ggplot2, plotly, DT
+     and writexl. They are not installed with ACWR;
+     `run_app()` says which ones are missing.
+}\if{html}{\out{</div>}}
 }
 \examples{
 if (interactive()) {

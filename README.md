@@ -118,10 +118,10 @@ plot_fwf(fwf, ID = 1, date = "2022-02-26")
 
 ## Shiny app
 
-The package includes an interactive app (in Spanish, designed for
-teaching) to upload or choose a dataset, compute the ACWR with the three
-methods, see each step of the calculation, and explore the Footballer
-Workload Footprint:
+The package includes an interactive app, designed for teaching, to
+upload or choose a dataset, compute the ACWR with the three methods, see
+each step of the calculation, and explore the Footballer Workload
+Footprint:
 
 ``` r
 ACWR::run_app()

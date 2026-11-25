@@ -1,13 +1,13 @@
 # ============================================================
 # Build article-style FWF heatmap (Matas-Bustos et al. 2025, Fig 5-6)
-# Solo grafico: los valores vienen de ACWR::fwf_cumulative() y
-# ACWR::fwf_delta() (ver fwf_wide() en utils_app.R)
+# Plot only: the values come from ACWR::fwf_cumulative() and
+# ACWR::fwf_delta() (see fwf_wide() in utils_app.R)
 #
-# Layout:  X = variables GPS (columnas)
-#          Y = τ filas: Σ τ=1..28 arriba, Δ τ=1..28 abajo
-#          Un solo día seleccionado
-#          Valores normalizados (z-score) por feature
-#          Escala divergente única
+# Layout:  X = GPS variables (columns)
+#          Y = tau rows: Sigma tau=1..28 on top, Delta tau=1..28 below
+#          A single selected day
+#          Values normalised (z-score) per feature
+#          A single diverging scale
 # ============================================================
 
 build_fwf_combined_plot <- function(sigma_list, delta_list, vars,
@@ -21,10 +21,10 @@ build_fwf_combined_plot <- function(sigma_list, delta_list, vars,
     row_s <- which(s_df$day == sel_day)
     if (length(row_s) == 0) next
 
-    s_vals <- as.numeric(s_df[row_s, -1])  # 28 valores
-    d_vals <- as.numeric(d_df[row_s, -1])  # 28 valores
+    s_vals <- as.numeric(s_df[row_s, -1])  # 28 values
+    d_vals <- as.numeric(d_df[row_s, -1])  # 28 values
 
-    # Z-score de Σ usando historial completo de ese feature
+    # Z-score of Sigma over the whole history of that feature
     s_mat <- as.matrix(s_df[, -1])
     for (tau in 1:tau_max) {
       col_vals <- s_mat[, tau]
@@ -42,7 +42,7 @@ build_fwf_combined_plot <- function(sigma_list, delta_list, vars,
       )
     }
 
-    # Z-score de Δ
+    # Z-score of Delta
     d_mat <- as.matrix(d_df[, -1])
     for (tau in 1:tau_max) {
       col_vals <- d_mat[, tau]
@@ -65,16 +65,16 @@ build_fwf_combined_plot <- function(sigma_list, delta_list, vars,
   if (length(rows) == 0) return(NULL)
   plot_df <- do.call(rbind, rows)
 
-  # Ordenar Y: Σ τ=1..28 arriba, Δ τ=1..28 abajo (de arriba a abajo)
+  # Order Y: Sigma tau=1..28 on top, Delta tau=1..28 below (top to bottom)
   sigma_levels <- paste0("\u03a3 \u03c4=", 1:tau_max)
   delta_levels <- paste0("\u0394 \u03c4=", 1:tau_max)
   all_levels   <- c(delta_levels[tau_max:1], sigma_levels[tau_max:1])
   plot_df$feature <- factor(plot_df$feature, levels = all_levels)
 
-  # Variables en X
+  # Variables on X
   plot_df$variable <- factor(plot_df$variable, levels = labels)
 
-  # Clamp z-scores a [-3, 3]
+  # Clamp z-scores to [-3, 3]
   plot_df$z_clamp <- pmin(pmax(plot_df$z, -3, na.rm = TRUE), 3, na.rm = TRUE)
 
   ggplot(plot_df, aes(x = variable, y = feature, fill = z_clamp)) +
@@ -85,7 +85,7 @@ build_fwf_combined_plot <- function(sigma_list, delta_list, vars,
       name = "z-score",
       na.value = "#D9D9D9"
     ) +
-    # Separador visual entre Σ y Δ
+    # Visual separator between Sigma and Delta
     geom_hline(yintercept = tau_max + 0.5, linewidth = 1.2, color = "black") +
     annotate("text", x = 0.4, y = tau_max + tau_max / 2 + 0.5,
              label = "\u03a3", fontface = "bold", size = 4, hjust = 1) +
@@ -94,7 +94,7 @@ build_fwf_combined_plot <- function(sigma_list, delta_list, vars,
     labs(
       x = NULL,
       y = NULL,
-      title = paste0("FWF \u2014 D\u00eda ", sel_day)
+      title = paste0("FWF \u2014 Day ", sel_day)
     ) +
     theme_minimal(base_size = 11) +
     theme(

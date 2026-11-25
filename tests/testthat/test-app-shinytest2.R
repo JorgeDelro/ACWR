@@ -8,6 +8,10 @@ skip_if_not_installed("shinytest2")
 skip_if_not_installed("chromote")
 skip_if(is.null(tryCatch(chromote::find_chrome(), error = function(e) NULL)),
         "Chrome is not available")
+# The app runs in a separate R process, which loads the installed package
+# (e.g. during R CMD check), not a devtools::load_all() session
+skip_if(length(find.package("ACWR", lib.loc = .libPaths(), quiet = TRUE)) == 0,
+        "ACWR is not installed")
 
 # Visible rows of a DT table as a data frame of strings
 visible_table <- function(app, id) {
@@ -51,10 +55,10 @@ test_that("results and detail tables show the package values", {
   }
 
   set(`data-data_source` = "preloaded")
-  set(`data-preloaded_choice` = "Equipo con descansos (3 atletas, fechas)")
+  set(`data-preloaded_choice` = "Team with rest days (3 athletes, dates)")
   set(`data-athlete` = "2")
   set(main_nav = "ACWR")
-  set(`acwr-acwr_tabs` = "Tabla de resultados")
+  set(`acwr-acwr_tabs` = "Results table")
   Sys.sleep(1)
 
   # Package output on the raw sessions of athlete 2, one row per date
@@ -65,7 +69,7 @@ test_that("results and detail tables show the package values", {
 
   tab <- visible_table(app, "acwr-results_table")
   expect_gt(nrow(tab), 20)
-  i <- match(tab$Fecha, ref_date)
+  i <- match(tab$Date, ref_date)
   on_session <- !is.na(i)
   expect_gt(sum(on_session), 10)
   expect_equal(tab$ACWR_COUPLED[on_session], shown(ref$RAC_ACWR[i[on_session]], 2))
@@ -76,11 +80,11 @@ test_that("results and detail tables show the package values", {
   expect_true(all(tab$Load[!on_session] == "0.00"))
 
   # Detailed calculation, uncoupled method (4 decimals)
-  set(`acwr-acwr_tabs` = "C\u00e1lculo Detallado")
+  set(`acwr-acwr_tabs` = "Detailed calculation")
   set(`acwr-detail_method` = "uncoupled")
   Sys.sleep(1)
   det <- visible_table(app, "acwr-detail_table")
-  j <- match(det$Fecha, ref_date)
+  j <- match(det$Date, ref_date)
   ok <- !is.na(j)
   expect_gt(sum(ok), 10)
   expect_equal(det$ACWR[ok], shown(ref$RAU_ACWR[j[ok]], 4))

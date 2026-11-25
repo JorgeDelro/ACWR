@@ -1,28 +1,28 @@
 # ============================================================
-# Datos pre-cargados (8 atletas + 1 equipo)
+# Preloaded data (8 athletes + 1 team)
 # ============================================================
 
-# --- Atleta 8: dataset sintético 180 días, 6 variables GPS (FWF Demo 2) ---
-# Perfil contrastante: alto volumen inicial que decrece, bloque de partidos
-# congestionados, 1 lesión larga, sesiones dobles, partido los domingos.
+# --- Athlete 8: synthetic dataset, 180 days, 6 GPS variables (FWF Demo 2) ---
+# Contrasting profile: high initial volume that decreases, a block of
+# congested matches, 1 long injury, double sessions, match on Sundays.
 generate_fwf_demo2_data <- function() {
   set.seed(99)
   n_days <- 180
 
   meso <- list(
-    list(start = 1,   end = 60,  label = "Preparatorio",  factor = 1.10),
-    list(start = 61,  end = 130, label = "Competitivo",    factor = 0.85),
-    list(start = 131, end = 180, label = "Transición",     factor = 0.60)
+    list(start = 1,   end = 60,  label = "Preparatory",  factor = 1.10),
+    list(start = 61,  end = 130, label = "Competitive",    factor = 0.85),
+    list(start = 131, end = 180, label = "Transition",     factor = 0.60)
   )
 
   base_train <- c(     380,   6200,   150,    500,  20,   800)
   base_match <- c(     620,   11000,  620,    900,  60,   2300)
-  var_names  <- c("sRPE_UA", "distancia_m", "dist_21_kmh",
+  var_names  <- c("sRPE_UA", "distance_m", "dist_21_kmh",
                   "player_load", "n_acc_3", "dist_hmld")
   n_var <- length(var_names)
 
-  # Lun=regen(35%), Mar=físico(100%), Mié=doble sesión(120%),
-  # Jue=táctico(75%), Vie=descanso, Sáb=activación(50%), Dom=partido
+  # Mon=recovery(35%), Tue=physical(100%), Wed=double session(120%),
+  # Thu=tactical(75%), Fri=rest, Sat=activation(50%), Sun=match
   sess_mult <- c(0.35, 1.00, 1.20, 0.75, 0, 0.50, NA)
 
   injury <- 95:112
@@ -62,7 +62,7 @@ generate_fwf_demo2_data <- function() {
     }
   }
 
-  # Progresión intra-mesociclo: rampa INVERSA (empieza alto, baja)
+  # Within-mesocycle progression: REVERSE ramp (starts high, goes down)
   for (m in meso) {
     idx <- m$start:m$end
     len <- length(idx)
@@ -80,26 +80,26 @@ generate_fwf_demo2_data <- function() {
   df
 }
 
-# --- Atleta 7: dataset sintético 200 días, 6 variables GPS (FWF Demo 1) ---
+# --- Athlete 7: synthetic dataset, 200 days, 6 GPS variables (FWF Demo 1) ---
 generate_fwf_demo_data <- function() {
   set.seed(42)
   n_days <- 200
 
   meso <- list(
-    list(start = 1,   end = 50,  label = "Pretemporada",  factor = 0.80),
-    list(start = 51,  end = 100, label = "Inicio Liga",   factor = 0.90),
-    list(start = 101, end = 150, label = "Competitivo",   factor = 1.00),
+    list(start = 1,   end = 50,  label = "Pre-season",  factor = 0.80),
+    list(start = 51,  end = 100, label = "League start",   factor = 0.90),
+    list(start = 101, end = 150, label = "Competitive",   factor = 1.00),
     list(start = 151, end = 200, label = "Tapering",      factor = 0.75)
   )
 
   base_train <- c(     450,   5500,   180,    550,  25,   900)
   base_match <- c(     700,   10500,  550,    850,  55,   2100)
-  var_names  <- c("sRPE_UA", "distancia_m", "dist_21_kmh",
+  var_names  <- c("sRPE_UA", "distance_m", "dist_21_kmh",
                   "player_load", "n_acc_3", "dist_hmld")
   n_var <- length(var_names)
 
-  # Lunes=descanso, Martes=regen(40%), Miércoles=táctico(70%),
-  # Jueves=físico(100%), Viernes=activación(60%), Sábado=partido, Domingo=descanso
+  # Monday=rest, Tuesday=recovery(40%), Wednesday=tactical(70%),
+  # Thursday=physical(100%), Friday=activation(60%), Saturday=match, Sunday=rest
   sess_mult <- c(0, 0.40, 0.70, 1.00, 0.60, NA, 0)
 
   injury_1 <- 72:80
@@ -141,7 +141,7 @@ generate_fwf_demo_data <- function() {
     }
   }
 
-  # Progresión intra-mesociclo: rampa lineal suave (+/- 15%)
+  # Within-mesocycle progression: gentle linear ramp (+/- 15%)
   for (m in meso) {
     idx <- m$start:m$end
     len <- length(idx)
@@ -161,16 +161,16 @@ generate_fwf_demo_data <- function() {
 
 generate_preloaded_data <- function() {
 
-  # --- Atletas 1-3: dataset training_load del paquete ACWR ---
+  # --- Athletes 1-3: training_load dataset of the ACWR package ---
   tl <- as.data.frame(ACWR::training_load)
 
   a1_tl <- tl[tl$ID == 1, ]
   a2_tl <- tl[tl$ID == 2, ]
   a3_tl <- tl[tl$ID == 3, ]
 
-  # --- Atletas 4-6: generados ---
+  # --- Athletes 4-6: generated ---
 
-  # Atleta 4: Aumento gradual y lineal
+  # Athlete 4: gradual, linear increase
   a4 <- seq(16, 54, length.out = 28)
   a4_first21 <- a4[1:21]
   a4_first21 <- a4_first21 * (630 / sum(a4_first21))
@@ -180,7 +180,7 @@ generate_preloaded_data <- function() {
   a4[21] <- a4[21] + (630 - sum(a4[1:21]))
   a4[28] <- a4[28] + (350 - sum(a4[22:28]))
 
-  # Atleta 5: Incremento escalonado (dos niveles)
+  # Athlete 5: stepped increase (two levels), then a rise in the last week
   a5_first21 <- c(18, 20, 22, 17, 25, 20, 23, 19, 26, 21, 24,
                    30, 34, 28, 36, 32, 38, 35, 40, 37, 35)
   a5_last7   <- c(36, 42, 46, 50, 54, 58, 64)
@@ -190,7 +190,7 @@ generate_preloaded_data <- function() {
   a5_last7[7]    <- a5_last7[7] + (350 - sum(a5_last7))
   a5 <- c(a5_first21, a5_last7)
 
-  # Atleta 6: Pico tardio (cargas constantes, luego rampa abrupta)
+  # Athlete 6: late peak (constant loads, then a sudden ramp)
   a6_first21 <- c(32, 30, 28, 31, 30, 29, 31, 30, 29, 30, 30,
                    30, 31, 29, 30, 30, 31, 29, 30, 30, 30)
   a6_last7   <- c(10, 18, 30, 48, 68, 82, 94)
@@ -201,16 +201,16 @@ generate_preloaded_data <- function() {
   a6 <- c(a6_first21, a6_last7)
 
   list(
-    "Atleta 1 (Williams, 2017)" = data.frame(day = a1_tl$Day, load = a1_tl$TL),
-    "Atleta 2 (Williams, 2017)" = data.frame(day = a2_tl$Day, load = a2_tl$TL),
-    "Atleta 3 (Williams, 2017)" = data.frame(day = a3_tl$Day, load = a3_tl$TL),
-    "Atleta 4 (incremento lineal)" = data.frame(day = 1:28, load = a4),
-    "Atleta 5 (incremento aleatorio)" = data.frame(day = 1:28, load = a5),
-    "Atleta 6 (incremento abrupto)" = data.frame(day = 1:28, load = a6),
-    "Atleta 7 (FWF Demo 1)" = generate_fwf_demo_data(),
-    "Atleta 8 (FWF Demo 2)" = generate_fwf_demo2_data(),
-    # Fechas reales, días de descanso y sesiones dobles (atleta 2)
-    "Equipo con descansos (3 atletas, fechas)" = data.frame(
+    "Athlete 1 (Williams, 2017)" = data.frame(day = a1_tl$Day, load = a1_tl$TL),
+    "Athlete 2 (Williams, 2017)" = data.frame(day = a2_tl$Day, load = a2_tl$TL),
+    "Athlete 3 (Williams, 2017)" = data.frame(day = a3_tl$Day, load = a3_tl$TL),
+    "Athlete 4 (linear increase)" = data.frame(day = 1:28, load = a4),
+    "Athlete 5 (two-step increase)" = data.frame(day = 1:28, load = a5),
+    "Athlete 6 (sudden increase)" = data.frame(day = 1:28, load = a6),
+    "Athlete 7 (FWF Demo 1)" = generate_fwf_demo_data(),
+    "Athlete 8 (FWF Demo 2)" = generate_fwf_demo2_data(),
+    # Real dates, rest days and double sessions (athlete 2)
+    "Team with rest days (3 athletes, dates)" = data.frame(
       athlete_id = ACWR::training_load_rest$ID,
       date = ACWR::training_load_rest$Training_Date,
       load = ACWR::training_load_rest$TL

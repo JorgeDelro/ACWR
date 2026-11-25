@@ -1,11 +1,12 @@
 # ============================================================
-# Módulo: Análisis ACWR
+# Module: ACWR analysis
 # ============================================================
 
-# Aviso de zonas no validadas (junto a la leyenda y a la columna "Zona")
+# Warning that the risk zones are not validated (threshold box and "Zone"
+# column)
 ZONE_WARNING <- paste0(
-  "Zonas orientativas: los umbrales (0,8 / 1,3 / 1,5 por defecto) no est\u00e1n ",
-  "validados para predecir lesiones. Ver Teor\u00eda, secci\u00f3n 5."
+  "Indicative zones: the thresholds (0.8 / 1.3 / 1.5 by default) are not ",
+  "validated for predicting injuries. See Theory, section 5."
 )
 
 zone_warning_box <- function() {
@@ -15,55 +16,55 @@ zone_warning_box <- function() {
   )
 }
 
-# Eje X: fechas si el archivo las tenía, número de día si no
+# X axis: dates if the file had them, day number otherwise
 x_values <- function(df) {
-  if ("Fecha" %in% names(df)) as.Date(df$Fecha) else df$Day
+  if ("Date" %in% names(df)) as.Date(df$Date) else df$Day
 }
 
 x_title <- function(df) {
-  if ("Fecha" %in% names(df)) "Fecha" else "D\u00eda"
+  if ("Date" %in% names(df)) "Date" else "Day"
 }
 
 acwrUI <- function(id) {
   ns <- NS(id)
   layout_sidebar(
     sidebar = sidebar(
-      title = "Par\u00e1metros de c\u00e1lculo",
+      title = "Calculation settings",
       width = 350,
       checkboxGroupInput(
-        ns("methods"), "M\u00e9todos de c\u00e1lculo:",
+        ns("methods"), "Calculation methods:",
         choices = c("Coupled (Rolling Average)" = "coupled",
                     "Uncoupled (Rolling Average)" = "uncoupled",
                     "EWMA" = "ewma"),
         selected = c("coupled", "uncoupled", "ewma")
       ),
       hr(),
-      sliderInput(ns("acute_window"), "Ventana aguda (d\u00edas):",
+      sliderInput(ns("acute_window"), "Acute window (days):",
                   min = 3, max = 14, value = 7, step = 1),
-      sliderInput(ns("chronic_window"), "Ventana cr\u00f3nica (d\u00edas):",
+      sliderInput(ns("chronic_window"), "Chronic window (days):",
                   min = 14, max = 56, value = 28, step = 1),
       uiOutput(ns("window_ratio_warning")),
       tags$p(
         class = "text-muted", style = "font-size: 0.8em; margin-top: -6px;",
         icon("info-circle"),
-        " 7/28 d\u00edas es la convenci\u00f3n; otras ventanas sirven para explorar",
-        " c\u00f3mo cambia el ratio seg\u00fan la elecci\u00f3n."
+        " 7/28 days is the convention; other windows are for exploring how",
+        " the choice changes the ratio."
       ),
-      input_switch(ns("partial"), "Ventanas parciales", value = FALSE),
+      input_switch(ns("partial"), "Partial windows", value = FALSE),
       tags$p(
         class = "text-muted", style = "font-size: 0.8em; margin-top: -6px;",
-        "Desactivado (como el paquete): el ACWR es NA hasta tener tantos d\u00edas",
-        " de historial como la ventana cr\u00f3nica. Activado (", tags$code("partial = TRUE"),
-        "): se usan los d\u00edas disponibles, reescalados a 7 d\u00edas; los primeros",
-        " valores se basan en pocos d\u00edas y son inestables. No afecta al EWMA."
+        "Off (as in the package): the ACWR is NA until there are as many days",
+        " of history as the chronic window. On (", tags$code("partial = TRUE"),
+        "): the days available are used, rescaled to 7 days; the first",
+        " values rely on few days and are unstable. EWMA is not affected."
       ),
       hr(),
-      checkboxInput(ns("show_risk_zones"), "Mostrar zonas de riesgo", value = TRUE),
+      checkboxInput(ns("show_risk_zones"), "Show risk zones", value = TRUE),
       conditionalPanel(
         condition = paste0("input['", ns("show_risk_zones"), "']"),
         tags$div(
           style = "margin-top: 6px; padding: 10px; border-radius: 8px; background: var(--bs-tertiary-bg); border-left: 4px solid var(--bs-warning);",
-          tags$p(class = "mb-2", style = "font-size: 0.85em; font-weight: 600;", "Umbrales de las zonas de riesgo:"),
+          tags$p(class = "mb-2", style = "font-size: 0.85em; font-weight: 600;", "Risk zone thresholds:"),
           tags$div(
             class = "d-flex gap-2",
             tags$div(style = "flex: 1;", numericInput(ns("threshold_low"), label = NULL, value = 0.8, min = 0.1, max = 2.0, step = 0.05)),
@@ -72,10 +73,10 @@ acwrUI <- function(id) {
           ),
           tags$div(
             style = "font-size: 0.78em; color: var(--bs-secondary); line-height: 1.5;",
-            tags$span(style = "color: #922B21;", HTML("&#9632;")), " < 0.8 Infraentrenado", tags$br(),
+            tags$span(style = "color: #922B21;", HTML("&#9632;")), " < 0.8 Undertrained", tags$br(),
             tags$span(style = "color: #1E8449;", HTML("&#9632;")), " 0.8\u20131.3 Sweet spot", tags$br(),
-            tags$span(style = "color: #7D6608;", HTML("&#9632;")), " 1.3\u20131.5 Precauci\u00f3n", tags$br(),
-            tags$span(style = "color: #922B21;", HTML("&#9632;")), " > 1.5 Alto riesgo"
+            tags$span(style = "color: #7D6608;", HTML("&#9632;")), " 1.3\u20131.5 Caution", tags$br(),
+            tags$span(style = "color: #922B21;", HTML("&#9632;")), " > 1.5 High risk"
           ),
           tags$div(
             style = "font-size: 0.78em; color: #7D6608; margin-top: 6px;",
@@ -84,42 +85,42 @@ acwrUI <- function(id) {
         )
       ),
       hr(),
-      tags$strong("Descargar resultados:"),
+      tags$strong("Download results:"),
       tags$div(
         style = "margin-top: 6px;",
-        tags$p(class = "text-muted mb-1", style = "font-size: 0.85em;", "Tabla de resultados"),
+        tags$p(class = "text-muted mb-1", style = "font-size: 0.85em;", "Results table"),
         tags$div(
           class = "d-flex gap-2 mb-2",
           downloadButton(ns("download_csv"), "CSV", class = "btn-outline-primary btn-sm", style = "flex: 1;"),
           downloadButton(ns("download_xlsx"), "XLSX", class = "btn-outline-success btn-sm", style = "flex: 1;")
         ),
-        tags$p(class = "text-muted mb-1 mt-2", style = "font-size: 0.85em;", "Gr\u00e1ficos (PNG)"),
+        tags$p(class = "text-muted mb-1 mt-2", style = "font-size: 0.85em;", "Plots (PNG)"),
         tags$div(
           class = "d-flex flex-column gap-2",
-          downloadButton(ns("download_plot"), "ACWR y Carga diaria", class = "btn-outline-secondary btn-sm"),
-          downloadButton(ns("download_loads_plot"), "Cargas Aguda y Cr\u00f3nica", class = "btn-outline-secondary btn-sm")
+          downloadButton(ns("download_plot"), "ACWR and daily load", class = "btn-outline-secondary btn-sm"),
+          downloadButton(ns("download_loads_plot"), "Acute and chronic loads", class = "btn-outline-secondary btn-sm")
         ),
-        tags$p(class = "text-muted mb-1 mt-2", style = "font-size: 0.85em;", "C\u00e1lculo detallado"),
-        downloadButton(ns("download_detail_xlsx"), "XLSX Detallado", class = "btn-outline-success btn-sm w-100")
+        tags$p(class = "text-muted mb-1 mt-2", style = "font-size: 0.85em;", "Detailed calculation"),
+        downloadButton(ns("download_detail_xlsx"), "Detailed XLSX", class = "btn-outline-success btn-sm w-100")
       )
     ),
 
-    # Panel principal con sub-pestañas
+    # Main panel with sub-tabs
     navset_card_tab(
       id = ns("acwr_tabs"),
-      title = "Resultados",
+      title = "Results",
 
       nav_panel(
-        title = "ACWR y Carga diaria",
+        title = "ACWR and daily load",
         icon = icon("chart-area"),
         card_body(
-          uiOutput(ns("zone_warning_plot")),
+          uiOutput(ns("history_hint_plot")),
           plotlyOutput(ns("acwr_plot"), height = "600px")
         )
       ),
 
       nav_panel(
-        title = "Cargas Aguda y Cr\u00f3nica",
+        title = "Acute and chronic loads",
         icon = icon("chart-line"),
         card_body(
           plotlyOutput(ns("loads_plot"), height = "600px")
@@ -127,23 +128,24 @@ acwrUI <- function(id) {
       ),
 
       nav_panel(
-        title = "Tabla de resultados",
+        title = "Results table",
         icon = icon("table"),
         card_body(
+          uiOutput(ns("history_hint_table")),
           DTOutput(ns("results_table"))
         )
       ),
 
       nav_panel(
-        title = "C\u00e1lculo Detallado",
+        title = "Detailed calculation",
         icon = icon("calculator"),
         card_body(
           tags$div(
             class = "mb-3",
             radioButtons(
-              ns("detail_method"), "M\u00e9todo:",
-              choices = c("Acoplado (Coupled)" = "coupled",
-                          "Desacoplado (Uncoupled)" = "uncoupled",
+              ns("detail_method"), "Method:",
+              choices = c("Coupled" = "coupled",
+                          "Uncoupled" = "uncoupled",
                           "EWMA" = "ewma"),
               selected = "coupled",
               inline = TRUE
@@ -156,7 +158,7 @@ acwrUI <- function(id) {
       ),
 
       nav_panel(
-        title = "Teor\u00eda",
+        title = "Theory",
         icon = icon("book"),
         card_body(
           withMathJax(),
@@ -170,13 +172,13 @@ acwrUI <- function(id) {
 acwrServer <- function(id, current_data, plot_theme) {
   moduleServer(id, function(input, output, session) {
 
-    # --- Ventanas: la crónica debe ser más larga que la aguda ---
+    # --- Windows: the chronic window must be longer than the acute one ---
     windows_ok <- reactive({
       validate(need(
         input$chronic_window > input$acute_window,
-        paste0("La ventana cr\u00f3nica (", input$chronic_window, " d\u00edas) debe ",
-               "ser m\u00e1s larga que la aguda (", input$acute_window, " d\u00edas). ",
-               "Mueve los deslizadores del panel lateral.")
+        paste0("The chronic window (", input$chronic_window, " days) must ",
+               "be longer than the acute window (", input$acute_window, " days). ",
+               "Move the sliders in the side panel.")
       ))
       list(acute = input$acute_window, chronic = input$chronic_window)
     })
@@ -184,13 +186,13 @@ acwrServer <- function(id, current_data, plot_theme) {
     observe({
       if (input$chronic_window <= input$acute_window) {
         showNotification(
-          "La ventana cr\u00f3nica debe ser m\u00e1s larga que la aguda.",
+          "The chronic window must be longer than the acute window.",
           type = "warning", duration = 5
         )
       }
     })
 
-    # --- Serie diaria y cálculos del paquete ACWR ---
+    # --- Daily series and ACWR package calculations ---
     package_results <- reactive({
       req(current_data())
       w <- windows_ok()
@@ -200,21 +202,31 @@ acwrServer <- function(id, current_data, plot_theme) {
 
     time_unit <- reactive(attr(current_data(), "time"))
 
-    # --- Aviso: historial insuficiente ---
-    observe({
+    # --- Hint: not enough history for the rolling-average ratios ---
+    history_hint <- reactive({
       res <- package_results()
-      cw <- input$chronic_window
-      if (!isTRUE(input$partial) && nrow(res) < cw) {
-        showNotification(
-          paste0("Hay ", nrow(res), " d\u00edas de datos: con menos de ", cw,
-                 " d\u00edas el ACWR de los m\u00e9todos Coupled y Uncoupled ",
-                 "es NA. Prueba a activar \"Ventanas parciales\"."),
-          type = "warning", duration = 6
-        )
+      cw <- windows_ok()$chronic
+      n <- nrow(res)
+      if (isTRUE(input$partial) || n > cw) return(NULL)
+      when <- if (n < cw) {
+        "so they are NA for every day of these data"
+      } else {
+        paste0("so they only have a value on day ", cw)
       }
+      tags$div(
+        style = "padding: 6px 12px; border-radius: 8px; border-left: 4px solid var(--bs-info); background: var(--bs-tertiary-bg); font-size: 0.82em; margin-bottom: 8px;",
+        icon("circle-info"),
+        paste0(" These data cover ", n, " days. The coupled and uncoupled ",
+               "ratios (RAC, RAU) need ", cw, " days of history (the chronic ",
+               "window), ", when, ". Turn on \"Partial windows\" in the side ",
+               "panel to see earlier values.")
+      )
     })
 
-    # --- Aviso: crónica menor que el doble de la aguda ---
+    output$history_hint_plot <- renderUI(history_hint())
+    output$history_hint_table <- renderUI(history_hint())
+
+    # --- Warning: chronic window shorter than twice the acute window ---
     output$window_ratio_warning <- renderUI({
       aw <- input$acute_window
       cw <- input$chronic_window
@@ -222,18 +234,14 @@ acwrServer <- function(id, current_data, plot_theme) {
       tags$div(
         style = "padding: 6px 10px; border-radius: 8px; border-left: 4px solid var(--bs-warning); background: var(--bs-tertiary-bg); font-size: 0.8em; margin: -6px 0 10px 0;",
         icon("triangle-exclamation"),
-        paste0(" La ventana cr\u00f3nica (", cw, " d\u00edas) es menor que el doble de la ",
-               "aguda (", aw, " d\u00edas): la cr\u00f3nica apenas se diferencia de la ",
-               "aguda (en el m\u00e9todo desacoplado se basa en solo ", cw - aw,
-               " d\u00edas) y el ratio se vuelve muy variable.")
+        paste0(" The chronic window (", cw, " days) is shorter than twice the ",
+               "acute window (", aw, " days): the chronic load barely differs ",
+               "from the acute load (in the uncoupled method it is based on ",
+               "only ", cw - aw, " days) and the ratio becomes very noisy.")
       )
     })
 
-    output$zone_warning_plot <- renderUI({
-      if (isTRUE(input$show_risk_zones)) zone_warning_box()
-    })
-
-    # --- Resultados (valores sin redondear; se redondean al mostrarlos) ---
+    # --- Results (unrounded values; rounded when displayed) ---
     acwr_results <- reactive({
       req(length(input$methods) > 0)
       res <- package_results()
@@ -256,7 +264,7 @@ acwrServer <- function(id, current_data, plot_theme) {
       result
     })
 
-    # --- Gráfico principal ---
+    # --- Main plot ---
     output$acwr_plot <- renderPlotly({
       req(acwr_results())
       th <- plot_theme()
@@ -268,7 +276,7 @@ acwrServer <- function(id, current_data, plot_theme) {
       all_acwr <- all_acwr[!is.na(all_acwr)]
 
       if (length(all_acwr) == 0) {
-        return(plotly_empty() %>% layout(title = "No hay datos suficientes para calcular el ACWR"))
+        return(plotly_empty() %>% layout(title = "Not enough data to calculate the ACWR"))
       }
 
       max_acwr <- max(c(all_acwr, 1.6), na.rm = TRUE) * 1.05
@@ -288,7 +296,7 @@ acwrServer <- function(id, current_data, plot_theme) {
       df$X <- x_values(df)
 
       p <- plot_ly(df, x = ~X) %>%
-        add_bars(y = ~Load, name = "Carga diaria",
+        add_bars(y = ~Load, name = "Daily load",
                  marker = list(color = th$bar_fill,
                                line = list(color = th$bar_border, width = 1)),
                  opacity = 0.85)
@@ -327,13 +335,13 @@ acwrServer <- function(id, current_data, plot_theme) {
         legend = list(orientation = "h", x = 0.5, xanchor = "center", y = 1.08,
                       font = plotly_font),
         shapes = shapes,
-        # Margen derecho para las etiquetas del eje ACWR
+        # Right margin for the ACWR axis labels
         margin = list(r = 80),
         paper_bgcolor = "transparent",
         plot_bgcolor = "transparent",
         xaxis = list(title = x_title(df), tickfont = plotly_font, titlefont = plotly_font,
                      gridcolor = th$grid_color),
-        yaxis = list(title = "Carga diaria (UA)", tickfont = plotly_font,
+        yaxis = list(title = "Daily load (AU)", tickfont = plotly_font,
                      titlefont = plotly_font, gridcolor = th$grid_color,
                      rangemode = "tozero"),
         yaxis2 = list(
@@ -351,7 +359,7 @@ acwrServer <- function(id, current_data, plot_theme) {
       )
     })
 
-    # --- Gráfico cargas aguda/crónica ---
+    # --- Acute and chronic loads plot ---
     output$loads_plot <- renderPlotly({
       req(acwr_results())
       th <- plot_theme()
@@ -359,34 +367,38 @@ acwrServer <- function(id, current_data, plot_theme) {
       df <- acwr_results()
 
       if (all(is.na(df$Acute)) && all(is.na(df$Chronic))) {
-        return(plotly_empty() %>% layout(title = "Selecciona un m\u00e9todo para ver las cargas"))
+        return(plotly_empty() %>% layout(title = "Select a method to see the loads"))
       }
 
       first_method <- input$methods[1]
       method_titles <- c(coupled = "Coupled (RA)", uncoupled = "Uncoupled (RA)", ewma = "EWMA")
-      title_txt <- paste("Cargas Aguda y Cr\u00f3nica -", method_titles[first_method])
-      # RAC/RAU: suma semanal equivalente; EWMA: escala de una carga diaria
-      y_title <- if (first_method == "ewma") "Carga (UA/d\u00eda)" else "Carga (UA/7 d\u00edas)"
+      title_txt <- paste("Acute and chronic loads -", method_titles[first_method])
+      # RAC/RAU: weekly-equivalent sum; EWMA: scale of a daily load
+      y_title <- if (first_method == "ewma") "Load (AU/day)" else "Load (AU/7 days)"
 
       plot_df <- df[, c("Day", "Acute", "Chronic")]
       plot_df$X <- x_values(df)
       pfont <- list(color = th$text_color)
 
       p <- plot_ly(plot_df, x = ~X) %>%
-        add_lines(y = ~Acute, name = "Carga Aguda",
+        add_lines(y = ~Acute, name = "Acute load",
                   line = list(color = "#EF476F", width = 2.5),
                   connectgaps = FALSE) %>%
-        add_lines(y = ~Chronic, name = "Carga Cr\u00f3nica",
+        add_lines(y = ~Chronic, name = "Chronic load",
                   line = list(color = "#6C63FF", width = 2.5, dash = "dash"),
                   connectgaps = FALSE) %>%
         layout(
-          title = list(text = title_txt, font = list(size = 14, color = th$text_color)),
+          # Title at the top of the figure and legend just above the plot
+          # area, with room for both
+          title = list(text = title_txt, font = list(size = 14, color = th$text_color),
+                       y = 0.98, yanchor = "top"),
+          margin = list(t = 90),
           xaxis = list(title = x_title(df), tickfont = pfont, titlefont = pfont,
                        gridcolor = th$grid_color),
           yaxis = list(title = y_title, tickfont = pfont, titlefont = pfont,
                        gridcolor = th$grid_color),
-          legend = list(orientation = "h", x = 0.5, xanchor = "center", y = 1.12,
-                        font = pfont),
+          legend = list(orientation = "h", x = 0.5, xanchor = "center",
+                        y = 1.02, yanchor = "bottom", font = pfont),
           hovermode = "x unified",
           paper_bgcolor = "transparent",
           plot_bgcolor = "transparent"
@@ -395,7 +407,7 @@ acwrServer <- function(id, current_data, plot_theme) {
       p
     })
 
-    # --- Tabla de resultados ---
+    # --- Results table ---
     output$results_table <- renderDT({
       req(acwr_results())
 
@@ -407,7 +419,6 @@ acwrServer <- function(id, current_data, plot_theme) {
         options = list(
           pageLength = 30,
           scrollX = TRUE,
-          language = DT_LANGUAGE,
           dom = "tip"
         ),
         rownames = FALSE
@@ -436,7 +447,7 @@ acwrServer <- function(id, current_data, plot_theme) {
       dt
     })
 
-    # --- Cálculo Detallado ---
+    # --- Detailed calculation ---
     detail_data <- reactive({
       res <- package_results()
       w <- windows_ok()
@@ -460,32 +471,32 @@ acwrServer <- function(id, current_data, plot_theme) {
       aw <- w$acute
       cw <- w$chronic
       partial_txt <- if (isTRUE(input$partial) && input$detail_method != "ewma") {
-        paste0("  |  Ventanas parciales: al principio se usan los d\u00edas disponibles ",
-               "(suma \u00d7 7 / d\u00edas)")
+        paste0("  |  Partial windows: at the start, the days available are used ",
+               "(sum \u00d7 7 / days)")
       } else ""
 
       info <- switch(input$detail_method,
         "coupled" = list(
-          title = "M\u00e9todo Acoplado (Coupled) \u2014 ACWR::RAC()",
-          desc  = paste0("Aguda = suma de los \u00faltimos ", aw, " d\u00edas \u00d7 7/", aw, "  |  ",
-                         "Cr\u00f3nica = suma de los \u00faltimos ", cw, " d\u00edas \u00d7 7/", cw,
-                         " (incluye la ventana aguda)  |  ACWR = Aguda / Cr\u00f3nica  |  ",
-                         "Los d\u00edas sin sesi\u00f3n cuentan como carga 0", partial_txt)
+          title = "Coupled method \u2014 ACWR::RAC()",
+          desc  = paste0("Acute = sum of the last ", aw, " days \u00d7 7/", aw, "  |  ",
+                         "Chronic = sum of the last ", cw, " days \u00d7 7/", cw,
+                         " (includes the acute window)  |  ACWR = Acute / Chronic  |  ",
+                         "Days without a session count as load 0", partial_txt)
         ),
         "uncoupled" = list(
-          title = "M\u00e9todo Desacoplado (Uncoupled) \u2014 ACWR::RAU()",
-          desc  = paste0("Aguda = suma de los \u00faltimos ", aw, " d\u00edas \u00d7 7/", aw, "  |  ",
-                         "Cr\u00f3nica = suma de los d\u00edas t\u2212", cw - 1, " a t\u2212", aw,
+          title = "Uncoupled method \u2014 ACWR::RAU()",
+          desc  = paste0("Acute = sum of the last ", aw, " days \u00d7 7/", aw, "  |  ",
+                         "Chronic = sum of days t\u2212", cw - 1, " to t\u2212", aw,
                          " \u00d7 7/", cw - aw,
-                         " (excluye la ventana aguda)  |  ACWR = Aguda / Cr\u00f3nica  |  ",
-                         "Los d\u00edas sin sesi\u00f3n cuentan como carga 0", partial_txt)
+                         " (excludes the acute window)  |  ACWR = Acute / Chronic  |  ",
+                         "Days without a session count as load 0", partial_txt)
         ),
         "ewma" = list(
           title = "EWMA \u2014 ACWR::EWMA()",
           desc  = paste0("\u03bba = 2/(", aw, "+1) = ", round(2 / (aw + 1), 4),
                          "  |  \u03bbc = 2/(", cw, "+1) = ", round(2 / (cw + 1), 4),
-                         "  |  EWMA(t) = \u03bb\u00b7Carga(t) + (1\u2212\u03bb)\u00b7EWMA(t\u22121)",
-                         "  |  D\u00eda 1: inicializaci\u00f3n = Carga")
+                         "  |  EWMA(t) = \u03bb\u00b7Load(t) + (1\u2212\u03bb)\u00b7EWMA(t\u22121)",
+                         "  |  Day 1: initialisation = Load")
         )
       )
 
@@ -493,10 +504,10 @@ acwrServer <- function(id, current_data, plot_theme) {
         tags$div(
           style = "margin-top: 6px; font-size: 0.85em;",
           icon("circle-info"),
-          " Los primeros valores dependen de la inicializaci\u00f3n con la carga del",
-          " d\u00eda 1 (EWMA aguda = EWMA cr\u00f3nica = carga del d\u00eda 1). Por ejemplo,",
-          " si el d\u00eda 1 es de descanso (carga 0), la cr\u00f3nica parte de 0 y el",
-          " ACWR del d\u00eda 2 sale muy alto. Interpreta con cautela las primeras semanas."
+          " The first values depend on the initialisation with the day-1 load",
+          " (acute EWMA = chronic EWMA = day-1 load). For example, if day 1 is",
+          " a rest day (load 0), the chronic load starts at 0 and the day-2",
+          " ACWR is very high. Interpret the first weeks with caution."
         )
       }
 
@@ -520,26 +531,26 @@ acwrServer <- function(id, current_data, plot_theme) {
         paste0("7/", w$chronic - w$acute)
       }
 
-      # Etiqueta de cada columna (la columna Fecha solo existe con fechas)
+      # Label of each column (the Date column only exists with dates)
       labels <- c(
-        Dia = "D\u00eda", Fecha = "Fecha", Carga = "Carga",
-        Ventana_Acute = "Ventana Acute (d\u00edas)",
-        Cargas_Acute = "Cargas incluidas (Acute)",
-        Suma_Acute = "Suma Acute",
-        Aguda = paste0("Aguda = Suma \u00d7 7/", w$acute, " (", method_fn, "_acute)"),
-        Ventana_Chronic = if (input$detail_method == "coupled") "Ventana Chronic (d\u00edas)"
-                          else "Ventana Chronic (excl. Acute)",
-        Cargas_Chronic = "Cargas incluidas (Chronic)",
-        Suma_Chronic = "Suma Chronic",
-        Cronica = paste0("Cr\u00f3nica = Suma \u00d7 ", div_txt, " (", method_fn, "_chronic)"),
-        la_x_Carga = "\u03bba \u00d7 Carga",
+        Day = "Day", Date = "Date", Load = "Load",
+        Acute_days = "Acute window (days)",
+        Acute_loads = "Loads included (acute)",
+        Acute_sum = "Acute sum",
+        Acute = paste0("Acute = sum \u00d7 7/", w$acute, " (", method_fn, "_acute)"),
+        Chronic_days = if (input$detail_method == "coupled") "Chronic window (days)"
+                       else "Chronic window (excl. acute)",
+        Chronic_loads = "Loads included (chronic)",
+        Chronic_sum = "Chronic sum",
+        Chronic = paste0("Chronic = sum \u00d7 ", div_txt, " (", method_fn, "_chronic)"),
+        la_x_Load = "\u03bba \u00d7 Load",
         Decay_Acute = "(1\u2212\u03bba) \u00d7 EWMA_a(t\u22121)",
-        EWMA_Acute = "EWMA Acute",
-        lc_x_Carga = "\u03bbc \u00d7 Carga",
+        EWMA_Acute = "EWMA acute",
+        lc_x_Load = "\u03bbc \u00d7 Load",
         Decay_Chronic = "(1\u2212\u03bbc) \u00d7 EWMA_c(t\u22121)",
-        EWMA_Chronic = "EWMA Chronic",
+        EWMA_Chronic = "EWMA chronic",
         ACWR = "ACWR",
-        Zona = "Zona \u26a0"
+        Zone = "Zone \u26a0"
       )
       col_labels <- unname(labels[names(df)])
 
@@ -549,29 +560,26 @@ acwrServer <- function(id, current_data, plot_theme) {
         options = list(
           pageLength = 50,
           scrollX = TRUE,
-          language = DT_LANGUAGE,
           dom = "tip",
           columnDefs = list(list(className = "dt-center", targets = "_all"))
         ),
         rownames = FALSE
       )
 
-      # Cargas y sumas con 2 decimales; cargas aguda/crónica y ACWR con 4
+      # Loads and sums with 2 decimals; acute/chronic loads and ACWR with 4
       num_cols <- setdiff(names(df)[vapply(df, is.numeric, logical(1))],
-                          c("Dia", "Ventana_Acute", "Ventana_Chronic"))
-      cols_2 <- intersect(num_cols, c("Carga", "Suma_Acute", "Suma_Chronic"))
+                          c("Day", "Acute_days", "Chronic_days"))
+      cols_2 <- intersect(num_cols, c("Load", "Acute_sum", "Chronic_sum"))
       dt <- dt %>% formatRound(cols_2, 2) %>% formatRound(setdiff(num_cols, cols_2), 4)
 
       dt %>% formatStyle(
-        columns = "Zona",
+        columns = "Zone",
         backgroundColor = styleEqual(
-          c("Infraentrenado", "Sweet spot", "Precauci\u00f3n", "Alto riesgo",
-            "Sin datos cr\u00f3nicos", "Inicializaci\u00f3n"),
+          c(ZONES, "No chronic data", "Initialisation"),
           c("#FADBD8", "#D5F5E3", "#FEF9E7", "#FADBD8", "#F2F3F4", "#F2F3F4")
         ),
         color = styleEqual(
-          c("Infraentrenado", "Sweet spot", "Precauci\u00f3n", "Alto riesgo",
-            "Sin datos cr\u00f3nicos", "Inicializaci\u00f3n"),
+          c(ZONES, "No chronic data", "Initialisation"),
           c("#922B21", "#1E8449", "#7D6608", "#922B21", "#7F8C8D", "#7F8C8D")
         )
       )
@@ -579,14 +587,14 @@ acwrServer <- function(id, current_data, plot_theme) {
 
     output$download_detail_xlsx <- downloadHandler(
       filename = function() {
-        paste0("ACWR_detalle_", input$detail_method, "_", Sys.Date(), ".xlsx")
+        paste0("ACWR_detail_", input$detail_method, "_", Sys.Date(), ".xlsx")
       },
       content = function(file) {
         writexl::write_xlsx(detail_data(), file)
       }
     )
 
-    # --- Descargas ---
+    # --- Downloads ---
     download_data <- reactive({
       df <- acwr_results()
       tl <- input$threshold_low
@@ -595,24 +603,24 @@ acwrServer <- function(id, current_data, plot_theme) {
 
       acwr_cols <- grep("^ACWR_", names(df), value = TRUE)
       for (col in acwr_cols) {
-        zone_col <- sub("^ACWR_", "Zona_", col)
+        zone_col <- sub("^ACWR_", "Zone_", col)
         df[[zone_col]] <- assign_zone(df[[col]], tl, tm, th_val)
       }
       df
     })
 
     output$download_csv <- downloadHandler(
-      filename = function() paste0("ACWR_resultados_", Sys.Date(), ".csv"),
+      filename = function() paste0("ACWR_results_", Sys.Date(), ".csv"),
       content = function(file) write.csv(download_data(), file, row.names = FALSE)
     )
 
     output$download_xlsx <- downloadHandler(
-      filename = function() paste0("ACWR_resultados_", Sys.Date(), ".xlsx"),
+      filename = function() paste0("ACWR_results_", Sys.Date(), ".xlsx"),
       content = function(file) writexl::write_xlsx(download_data(), file)
     )
 
     output$download_plot <- downloadHandler(
-      filename = function() paste0("ACWR_gr\u00e1fico_", Sys.Date(), ".png"),
+      filename = function() paste0("ACWR_plot_", Sys.Date(), ".png"),
       content = function(file) {
         df <- acwr_results()
 
@@ -628,11 +636,11 @@ acwrServer <- function(id, current_data, plot_theme) {
         method_labels <- c(ACWR_COUPLED = "Coupled (RA)", ACWR_UNCOUPLED = "Uncoupled (RA)", ACWR_EWMA = "EWMA")
 
         df$X <- x_values(df)
-        x_scale <- if ("Fecha" %in% names(df)) {
-          scale_x_date(name = "Fecha")
+        x_scale <- if ("Date" %in% names(df)) {
+          scale_x_date(name = "Date")
         } else {
           scale_x_continuous(breaks = seq(min(df$Day), max(df$Day), by = max(1, floor(nrow(df) / 20))),
-                             name = "D\u00eda")
+                             name = "Day")
         }
 
         p <- ggplot(df, aes(x = X)) +
@@ -668,9 +676,9 @@ acwrServer <- function(id, current_data, plot_theme) {
         color_vals <- setNames(method_colors[acwr_cols], method_labels[acwr_cols])
 
         p <- p +
-          scale_color_manual(values = color_vals, name = "M\u00e9todo") +
+          scale_color_manual(values = color_vals, name = "Method") +
           scale_y_continuous(
-            name = "Carga diaria (UA)",
+            name = "Daily load (AU)",
             sec.axis = sec_axis(~ . / scale_factor, name = "ACWR"),
             expand = expansion(mult = c(0, 0.05))
           ) +
@@ -684,25 +692,25 @@ acwrServer <- function(id, current_data, plot_theme) {
     )
 
     output$download_loads_plot <- downloadHandler(
-      filename = function() paste0("Cargas_aguda_cr\u00f3nica_", Sys.Date(), ".png"),
+      filename = function() paste0("Acute_chronic_loads_", Sys.Date(), ".png"),
       content = function(file) {
         df <- acwr_results()
 
         first_method <- input$methods[1]
         method_titles <- c(coupled = "Coupled (RA)", uncoupled = "Uncoupled (RA)", ewma = "EWMA")
-        title_txt <- paste("Cargas Aguda y Cr\u00f3nica -", method_titles[first_method])
-      # RAC/RAU: suma semanal equivalente; EWMA: escala de una carga diaria
-      y_title <- if (first_method == "ewma") "Carga (UA/d\u00eda)" else "Carga (UA/7 d\u00edas)"
+        title_txt <- paste("Acute and chronic loads -", method_titles[first_method])
+        # RAC/RAU: weekly-equivalent sum; EWMA: scale of a daily load
+        y_title <- if (first_method == "ewma") "Load (AU/day)" else "Load (AU/7 days)"
 
         plot_df <- df[, c("Day", "Acute", "Chronic")]
         plot_df$X <- x_values(df)
 
         p <- ggplot(plot_df, aes(x = X)) +
-          geom_line(aes(y = Acute, color = "Carga Aguda"), linewidth = 1.1, na.rm = TRUE) +
-          geom_line(aes(y = Chronic, color = "Carga Cr\u00f3nica"), linewidth = 1.1, linetype = "dashed", na.rm = TRUE) +
-          scale_color_manual(values = c("Carga Aguda" = "#EF476F", "Carga Cr\u00f3nica" = "#6C63FF"), name = "") +
-          (if ("Fecha" %in% names(df)) scale_x_date(name = "Fecha")
-           else scale_x_continuous(name = "D\u00eda")) +
+          geom_line(aes(y = Acute, color = "Acute load"), linewidth = 1.1, na.rm = TRUE) +
+          geom_line(aes(y = Chronic, color = "Chronic load"), linewidth = 1.1, linetype = "dashed", na.rm = TRUE) +
+          scale_color_manual(values = c("Acute load" = "#EF476F", "Chronic load" = "#6C63FF"), name = "") +
+          (if ("Date" %in% names(df)) scale_x_date(name = "Date")
+           else scale_x_continuous(name = "Day")) +
           scale_y_continuous(name = y_title) +
           theme_minimal(base_size = 14) +
           theme(legend.position = "top", panel.grid.minor = element_blank()) +

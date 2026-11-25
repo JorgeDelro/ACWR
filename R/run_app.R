@@ -1,6 +1,6 @@
 #' Run the ACWR Shiny app
 #'
-#' Launches an interactive Shiny app (in Spanish, for teaching) to compute and
+#' Launches an interactive Shiny app (in English, for teaching) to compute and
 #' plot the ACWR and the Footballer Workload Footprint of an athlete, from an
 #' uploaded file or from preloaded datasets.
 #'
@@ -14,7 +14,12 @@
 #' @return called for its side effect (it starts the app); does not return
 #'         until the app is closed.
 #'
-#' @details The app needs the packages shiny, bslib, ggplot2, plotly, DT
+#' @details Uploaded CSV files need a `date` (or numeric `day`) column and a
+#'          `load` column, and may have an `athlete_id` column and extra
+#'          numeric variables (used for the FWF). The Spanish column names
+#'          `fecha`, `dia`, `carga` and `atleta` are accepted as aliases.
+#'
+#'          The app needs the packages shiny, bslib, ggplot2, plotly, DT
 #'          and writexl. They are not installed with ACWR;
 #'          `run_app()` says which ones are missing.
 #'

@@ -1,22 +1,22 @@
 # ============================================================
-# Módulo: Entrada de datos
+# Module: data input
 # ============================================================
 
 dataInputUI <- function(id) {
   ns <- NS(id)
   layout_sidebar(
     sidebar = sidebar(
-      title = "Base de datos",
+      title = "Data",
       width = 350,
       radioButtons(
-        ns("data_source"), "Seleccionar fuente:",
-        choices = c("Subir archivo" = "upload",
-                    "Datos pre-cargados" = "preloaded"),
+        ns("data_source"), "Select source:",
+        choices = c("Upload file" = "upload",
+                    "Preloaded data" = "preloaded"),
         selected = "upload"
       ),
       conditionalPanel(
         condition = paste0("input['", ns("data_source"), "'] == 'upload'"),
-        fileInput(ns("file_upload"), "Subir CSV:",
+        fileInput(ns("file_upload"), "Upload CSV:",
                   accept = c(".csv", ".txt"))
       ),
       conditionalPanel(
@@ -30,12 +30,12 @@ dataInputUI <- function(id) {
       uiOutput(ns("calendar_info"))
     ),
 
-    # Panel principal con sub-pestañas
+    # Main panel with sub-tabs
     navset_card_tab(
       id = ns("data_tabs"),
 
       nav_panel(
-        title = "Vista previa",
+        title = "Preview",
         icon = icon("table"),
         card_body(
           DTOutput(ns("data_preview"))
@@ -43,7 +43,7 @@ dataInputUI <- function(id) {
       ),
 
       nav_panel(
-        title = "Guía de datos",
+        title = "Data guide",
         icon = icon("circle-question"),
         card_body(
           fillable = FALSE,
@@ -53,8 +53,8 @@ dataInputUI <- function(id) {
             # --- Intro ---
             tags$p(
               style = "font-size: 0.95em; color: var(--bs-secondary);",
-              "El archivo CSV tiene una fila por sesión de entrenamiento o partido.",
-              " Separador aceptado: coma (,) o punto y coma (;)."
+              "The CSV file has one row per training session or match.",
+              " Accepted separators: comma (,) or semicolon (;)."
             ),
 
             # --- ACWR ---
@@ -62,23 +62,23 @@ dataInputUI <- function(id) {
               style = "padding: 16px; border-radius: 8px; border-left: 4px solid var(--bs-primary); background: var(--bs-tertiary-bg); margin-bottom: 16px;",
               tags$h6(style = "margin-bottom: 8px;", icon("chart-line"), " ACWR (Acute:Chronic Workload Ratio)"),
               tags$p(style = "margin-bottom: 6px; font-size: 0.9em;",
-                "Requiere ", tags$strong("una columna de tiempo"), " (fecha o día) y ",
-                tags$strong("una columna de carga"), ". La columna de atleta es opcional:"),
+                "Requires ", tags$strong("a time column"), " (date or day) and ",
+                tags$strong("a load column"), ". The athlete column is optional:"),
               tags$table(
                 class = "table table-sm table-bordered",
                 style = "font-size: 0.85em; width: auto;",
                 tags$thead(tags$tr(
-                  tags$th("Columna"), tags$th("Descripción"), tags$th("Ejemplo")
+                  tags$th("Column"), tags$th("Description"), tags$th("Example")
                 )),
                 tags$tbody(
-                  tags$tr(tags$td(tags$code("date"), " o ", tags$code("fecha")),
-                          tags$td("Fecha de la sesión (AAAA-MM-DD o DD/MM/AAAA)"),
+                  tags$tr(tags$td(tags$code("date")),
+                          tags$td("Session date (YYYY-MM-DD or DD/MM/YYYY)"),
                           tags$td("2024-09-02, 02/09/2024...")),
                   tags$tr(tags$td(tags$code("day")),
-                          tags$td("Día numérico (si no hay fecha)"), tags$td("1, 2, 3...")),
-                  tags$tr(tags$td(tags$code("load")), tags$td("Carga en UA"), tags$td("450, 520, 380...")),
-                  tags$tr(tags$td(tags$code("athlete_id"), " (opcional)"),
-                          tags$td("Identificador del atleta"), tags$td("1, 2, Ana..."))
+                          tags$td("Numeric day (if there is no date)"), tags$td("1, 2, 3...")),
+                  tags$tr(tags$td(tags$code("load")), tags$td("Load in AU"), tags$td("450, 520, 380...")),
+                  tags$tr(tags$td(tags$code("athlete_id"), " (optional)"),
+                          tags$td("Athlete identifier"), tags$td("1, 2, Ana..."))
                 )
               ),
               tags$pre(
@@ -87,22 +87,22 @@ dataInputUI <- function(id) {
               )
             ),
 
-            # --- Calendario ---
+            # --- Calendar ---
             tags$div(
               style = "padding: 16px; border-radius: 8px; border-left: 4px solid var(--bs-info); background: var(--bs-tertiary-bg); margin-bottom: 16px;",
-              tags$h6(style = "margin-bottom: 8px;", icon("calendar-days"), " Cómo se colocan las sesiones en el calendario"),
+              tags$h6(style = "margin-bottom: 8px;", icon("calendar-days"), " How sessions are placed on the calendar"),
               tags$ul(
                 style = "margin-bottom: 0; padding-left: 18px; font-size: 0.9em;",
-                tags$li("Los cálculos usan ", tags$strong("días de calendario"),
-                        ", desde el primer hasta el último día del atleta."),
-                tags$li("Los días que no aparecen en el archivo cuentan como ",
-                        tags$strong("descanso (carga 0)"), "."),
-                tags$li("Si hay ", tags$strong("varias sesiones el mismo día"),
-                        ", sus cargas se suman."),
-                tags$li("Con días numéricos pasa lo mismo: en ",
-                        tags$code("1, 2, 4"), " el día 3 es descanso."),
-                tags$li("Una sesión con la carga vacía no se cambia por 0: las ventanas",
-                        " que incluyen ese día dan NA (y el EWMA, desde ese día en adelante).")
+                tags$li("Calculations use ", tags$strong("calendar days"),
+                        ", from the athlete's first to last day."),
+                tags$li("Days that are not in the file count as ",
+                        tags$strong("rest (load 0)"), "."),
+                tags$li("If there are ", tags$strong("several sessions on the same day"),
+                        ", their loads are summed."),
+                tags$li("The same applies to numeric days: in ",
+                        tags$code("1, 2, 4"), ", day 3 is a rest day."),
+                tags$li("A session with an empty load is not replaced by 0: the windows",
+                        " that include that day are NA (and EWMA from that day on).")
               )
             ),
 
@@ -111,57 +111,58 @@ dataInputUI <- function(id) {
               style = "padding: 16px; border-radius: 8px; border-left: 4px solid var(--bs-success); background: var(--bs-tertiary-bg); margin-bottom: 16px;",
               tags$h6(style = "margin-bottom: 8px;", icon("fingerprint"), " FWF (Footballer Workload Footprint)"),
               tags$p(style = "margin-bottom: 6px; font-size: 0.9em;",
-                "Requiere las columnas anteriores + ",
-                tags$strong("columnas GPS adicionales"), " (numéricas):"),
+                "Requires the columns above + ",
+                tags$strong("additional GPS columns"), " (numeric):"),
               tags$table(
                 class = "table table-sm table-bordered",
                 style = "font-size: 0.85em; width: auto;",
                 tags$thead(tags$tr(
-                  tags$th("Columna"), tags$th("Descripción"), tags$th("Unidad")
+                  tags$th("Column"), tags$th("Description"), tags$th("Unit")
                 )),
                 tags$tbody(
-                  tags$tr(tags$td(tags$code("date"), " o ", tags$code("day")), tags$td("Fecha o día"), tags$td("-")),
-                  tags$tr(tags$td(tags$code("load")), tags$td("Carga (sRPE × min)"), tags$td("UA")),
-                  tags$tr(tags$td(tags$code("sRPE_UA")), tags$td("sRPE"), tags$td("UA")),
-                  tags$tr(tags$td(tags$code("distancia_m")), tags$td("Distancia total"), tags$td("m")),
-                  tags$tr(tags$td(tags$code("dist_21_kmh")), tags$td("Distancia >21 km/h"), tags$td("m")),
+                  tags$tr(tags$td(tags$code("date"), " or ", tags$code("day")), tags$td("Date or day"), tags$td("-")),
+                  tags$tr(tags$td(tags$code("load")), tags$td("Load (sRPE \u00d7 min)"), tags$td("AU")),
+                  tags$tr(tags$td(tags$code("sRPE_UA")), tags$td("sRPE"), tags$td("AU")),
+                  tags$tr(tags$td(tags$code("distance_m")), tags$td("Total distance"), tags$td("m")),
+                  tags$tr(tags$td(tags$code("dist_21_kmh")), tags$td("Distance >21 km/h"), tags$td("m")),
                   tags$tr(tags$td(tags$code("player_load")), tags$td("Player Load"), tags$td("-")),
-                  tags$tr(tags$td(tags$code("n_acc_3")), tags$td("Aceleraciones >3 m/s²"), tags$td("n")),
+                  tags$tr(tags$td(tags$code("n_acc_3")), tags$td("Accelerations >3 m/s\u00b2"), tags$td("n")),
                   tags$tr(tags$td(tags$code("dist_hmld")), tags$td("HMLD"), tags$td("m"))
                 )
               ),
               tags$pre(
                 style = "background: var(--bs-body-bg); padding: 8px; border-radius: 4px; font-size: 0.82em; margin-bottom: 4px;",
-                "day,load,sRPE_UA,distancia_m,dist_21_kmh,player_load,n_acc_3,dist_hmld\n1,450,450,5500,180,550,25,900\n2,520,520,6200,210,610,28,1050\n3,0,0,0,0,0,0,0\n..."
+                "day,load,sRPE_UA,distance_m,dist_21_kmh,player_load,n_acc_3,dist_hmld\n1,450,450,5500,180,550,25,900\n2,520,520,6200,210,610,28,1050\n3,0,0,0,0,0,0,0\n..."
               ),
               tags$p(
                 style = "font-size: 0.82em; margin-bottom: 0;",
                 class = "text-muted",
                 icon("info-circle"),
-                " Se recomienda un mínimo de 56 días (28 + 28) para que las matrices Σ y Δ estén completas.",
-                " Si solo dispones de la fecha (o ", tags$code("day"), ") y ", tags$code("load"),
-                ", el FWF funcionará con una única variable."
+                " At least 56 days (28 + 28) are recommended so that the \u03a3 and \u0394 matrices are complete.",
+                " If you only have the date (or ", tags$code("day"), ") and ", tags$code("load"),
+                ", the FWF works with a single variable."
               )
             ),
 
-            # --- Notas generales ---
+            # --- General notes ---
             tags$div(
               style = "padding: 12px; border-radius: 8px; background: var(--bs-tertiary-bg); font-size: 0.85em;",
-              tags$h6(style = "margin-bottom: 8px;", icon("lightbulb"), " Notas generales"),
+              tags$h6(style = "margin-bottom: 8px;", icon("lightbulb"), " General notes"),
               tags$ul(
                 style = "margin-bottom: 0; padding-left: 18px;",
-                tags$li("Los nombres de columna ", tags$strong("no distinguen mayúsculas/minúsculas"),
-                        ". También se aceptan ", tags$code("fecha"), ", ", tags$code("carga"),
-                        " y ", tags$code("atleta"), "."),
-                tags$li("Si el archivo no tiene columnas reconocidas",
-                        ", se usarán las dos primeras como ", tags$code("day"), " y ",
+                tags$li("Column names are ", tags$strong("not case-sensitive"),
+                        ". The Spanish names ", tags$code("fecha"), ", ", tags$code("dia"),
+                        ", ", tags$code("carga"), " and ", tags$code("atleta"),
+                        " are also accepted."),
+                tags$li("If the file has no recognised columns",
+                        ", the first two are used as ", tags$code("day"), " and ",
                         tags$code("load"), "."),
-                tags$li("Las filas sin fecha (o día) se eliminan."),
-                tags$li("Con una columna de atleta aparece un selector en el panel lateral."),
-                tags$li("Las columnas numéricas adicionales se detectan automáticamente para FWF."),
-                tags$li("Los datos pre-cargados (Atletas 7 y 8) ya incluyen 6 variables GPS.",
-                        " El dataset \"Equipo con descansos\" tiene fechas reales, días de",
-                        " descanso y sesiones dobles.")
+                tags$li("Rows without a date (or day) are removed."),
+                tags$li("With an athlete column, a selector appears in the side panel."),
+                tags$li("Additional numeric columns are detected automatically for the FWF."),
+                tags$li("The preloaded data of athletes 7 and 8 include 6 GPS variables.",
+                        " The \"Team with rest days\" dataset has real dates, rest",
+                        " days and double sessions.")
               )
             )
           )
@@ -174,7 +175,7 @@ dataInputUI <- function(id) {
 dataInputServer <- function(id) {
   moduleServer(id, function(input, output, session) {
 
-    # --- Archivo o dataset -> sesiones (todas los atletas) ---
+    # --- File or dataset -> sessions (all athletes) ---
     all_data <- reactive({
       if (input$data_source == "preloaded") {
         req(input$preloaded_choice)
@@ -188,7 +189,7 @@ dataInputServer <- function(id) {
           }
           d
         }, error = function(e) {
-          showNotification("Error al leer el archivo. Verifica el formato.", type = "error")
+          showNotification("The file could not be read. Check its format.", type = "error")
           NULL
         })
         req(raw)
@@ -202,23 +203,23 @@ dataInputServer <- function(id) {
 
       if (attr(df, "dropped") > 0) {
         showNotification(
-          paste0(attr(df, "dropped"), " fila(s) sin fecha (o día) se han eliminado."),
+          paste0(attr(df, "dropped"), " row(s) without a date (or day) were removed."),
           type = "warning", duration = 6
         )
       }
       df
     })
 
-    # --- Selector de atleta (solo si hay columna de atleta) ---
+    # --- Athlete selector (only with an athlete column) ---
     output$athlete_ui <- renderUI({
       df <- all_data()
       if (!attr(df, "has_id")) return(NULL)
       ids <- unique(df$ID)
-      selectInput(session$ns("athlete"), "Atleta:", choices = ids,
+      selectInput(session$ns("athlete"), "Athlete:", choices = ids,
                   selected = ids[1])
     })
 
-    # --- Sesiones del atleta seleccionado ---
+    # --- Sessions of the selected athlete ---
     current_data <- reactive({
       df <- all_data()
       if (attr(df, "has_id")) {
@@ -233,22 +234,22 @@ dataInputServer <- function(id) {
       out
     })
 
-    # --- Aviso: días de descanso y sesiones del mismo día ---
+    # --- Information: rest days and same-day sessions ---
     output$calendar_info <- renderUI({
       s <- calendar_summary(current_data())
       lines <- list(
-        tags$strong(paste0(s$sessions, " sesiones en ", s$span,
-                           " días de calendario.")),
+        tags$strong(paste0(s$sessions, " sessions over ", s$span,
+                           " calendar days.")),
         tags$br(),
         if (s$rest_days > 0) tagList(
-          paste0(s$rest_days, " día(s) sin registro entre el primero y el ",
-                 "último cuentan como descanso (carga 0)."), tags$br()),
+          paste0(s$rest_days, " day(s) without a record between the first and ",
+                 "last day count as rest (load 0)."), tags$br()),
         if (s$multi_days > 0) tagList(
-          paste0(s$multi_days, " día(s) con varias sesiones: sus cargas se suman."),
+          paste0(s$multi_days, " day(s) with several sessions: their loads are summed."),
           tags$br()),
         if (s$missing_load > 0) tagList(
-          paste0(s$missing_load, " sesión(es) sin carga: las ventanas que las ",
-                 "incluyen dan NA."), tags$br())
+          paste0(s$missing_load, " session(s) without a load: the windows that ",
+                 "include them are NA."), tags$br())
       )
       tags$div(
         style = "margin-top: 6px; padding: 10px; border-radius: 8px; border-left: 4px solid var(--bs-info); background: var(--bs-tertiary-bg); font-size: 0.85em;",
@@ -265,21 +266,20 @@ dataInputServer <- function(id) {
       } else {
         show$date <- date_to_day(show$date)
       }
-      names(show)[names(show) == "date"] <- if (identical(time, "date")) "Fecha" else "Día"
-      names(show)[names(show) == "load"] <- "Carga (UA)"
+      names(show)[names(show) == "date"] <- if (identical(time, "date")) "Date" else "Day"
+      names(show)[names(show) == "load"] <- "Load (AU)"
       datatable(
         show,
         options = list(
           pageLength = 15,
           scrollX = TRUE,
-          language = DT_LANGUAGE,
           dom = "tip"
         ),
         rownames = FALSE
       )
     })
 
-    # Retornar el reactivo para que otros módulos lo consuman
+    # Return the reactive for the other modules
     current_data
   })
 }

@@ -2,123 +2,121 @@
 
   <h2 style="text-align:center; margin-bottom: 5px;">Footballer Workload Footprint (FWF)</h2>
   <p style="text-align:center; color: var(--bs-secondary); margin-bottom: 30px;">
-    Representación generalizada de la carga de entrenamiento
+    A generalised representation of training load
   </p>
   <hr>
 
-  <!-- 1. Introducción -->
-  <h3>1. Introducción</h3>
-  <p>El Footballer Workload Footprint (FWF) es un método propuesto por
-    Matas-Bustos et al. (1) que generaliza el concepto de carga de
-    entrenamiento utilizando herramientas del cálculo integral y diferencial.
-    A diferencia del ACWR clásico, que reduce toda la información a un único
-    ratio entre dos ventanas fijas, el FWF genera un conjunto completo de
-    features que capturan la dinámica temporal del entrenamiento.</p>
-  <p>El modelo parte de representar el historial de entrenamiento como una
-    matriz temporal discreta (la <em>matriz FWF</em>), donde cada fila
-    corresponde a una variable de carga y cada columna a un evento (día)
-    de entrenamiento.</p>
+  <!-- 1. Introduction -->
+  <h3>1. Introduction</h3>
+  <p>The Footballer Workload Footprint (FWF) is a method proposed by
+    Matas-Bustos et al. (1) that generalises the concept of training load
+    using tools from integral and differential calculus. Unlike the classic
+    ACWR, which reduces all the information to a single ratio between two
+    fixed windows, the FWF produces a full set of features that capture the
+    time dynamics of training.</p>
+  <p>The model starts by representing the training history as a discrete
+    time matrix (the <em>FWF matrix</em>), where each row is a load variable
+    and each column a training event. In this app, each column is a calendar
+    day.</p>
 
-  <!-- 2. Matriz FWF -->
+  <!-- 2. FWF matrix -->
   <hr>
-  <h3>2. La matriz FWF</h3>
-  <p>Para un deportista con \(V\) variables de carga monitorizadas a lo largo
-    de \(n\) eventos de entrenamiento, la matriz FWF se define como:</p>
+  <h3>2. The FWF matrix</h3>
+  <p>For an athlete with \(V\) load variables monitored over \(n\) training
+    events, the FWF matrix is defined as:</p>
   <p style="text-align:center;">
     $$FWF = \begin{pmatrix} x_1(e_1) & x_1(e_2) & \cdots & x_1(e_n) \\
     x_2(e_1) & x_2(e_2) & \cdots & x_2(e_n) \\
     \vdots & \vdots & \ddots & \vdots \\
     x_V(e_1) & x_V(e_2) & \cdots & x_V(e_n) \end{pmatrix}$$
   </p>
-  <p>Donde \(x_v(e_j)\) es el valor de la variable \(v\) en el evento \(j\).
-    Con una única variable de carga (como en esta aplicación), la matriz se
-    reduce a un vector fila.</p>
+  <p>where \(x_v(e_j)\) is the value of variable \(v\) at event \(j\).
+    With a single load variable, the matrix reduces to a row vector.</p>
 
-  <!-- 3. Variaciones acumulativas -->
+  <!-- 3. Cumulative variations -->
   <hr>
-  <h3>3. Variaciones acumulativas (&#8721;&#7488;FWF)</h3>
-  <p>Las variaciones acumulativas generalizan el concepto de
-    <strong>Carga Aguda</strong>. Para cada variable \(v\), cada día \(e_j\)
-    y cada tamaño de ventana \(\tau\), se define:</p>
+  <h3>3. Cumulative variations (&#8721;&#7488;FWF)</h3>
+  <p>Cumulative variations generalise the concept of <strong>acute
+    load</strong>. For each variable \(v\), each day \(e_j\) and each window
+    size \(\tau\), it is defined as:</p>
   <p style="text-align:center;">
     $$AW_v(e_j, \tau) = \sum_{z=e_j-(\tau-1)}^{e_j} x_v(z)$$
   </p>
-  <p>Es decir, la suma de la carga en los últimos \(\tau\) días.
-    Para \(\tau = 7\) se obtiene exactamente la carga aguda tradicional
-    (suma de 7 días). Para \(\tau = 28\), la carga crónica acumulada.</p>
-  <p>La matriz &#8721;&#7488;FWF contiene todas las combinaciones posibles de
-    \(\tau \in \{1, 2, \ldots, 28\}\), generando 28 features por variable
-    que capturan la acumulación de carga a distintas escalas temporales.</p>
+  <p>That is, the sum of the load over the last \(\tau\) days. For
+    \(\tau = 7\) this is exactly the traditional acute load (sum of 7 days).
+    For \(\tau = 28\), it is the accumulated chronic load.</p>
+  <p>The &#8721;&#7488;FWF matrix contains every window
+    \(\tau \in \{1, 2, \ldots, 28\}\), giving 28 features per variable that
+    capture load accumulation at different time scales.</p>
 
-  <!-- 4. Variaciones temporales -->
+  <!-- 4. Temporary variations -->
   <hr>
-  <h3>4. Variaciones temporales (&#916;&#7488;FWF)</h3>
-  <p>Las variaciones temporales generalizan el concepto de
-    <strong>cambio en la carga</strong>. Se definen como la diferencia
-    entre la carga actual y la carga de hace \(\tau\) días:</p>
+  <h3>4. Temporary variations (&#916;&#7488;FWF)</h3>
+  <p>Temporary variations generalise the concept of <strong>change in
+    load</strong>. They are defined as the difference between the current
+    load and the load \(\tau\) days earlier:</p>
   <p style="text-align:center;">
     $$\Delta_v(e_j, \tau) = x_v(e_j) - x_v(e_j - \tau)$$
   </p>
-  <p>Esta expresión se obtiene a partir de la propiedad telescópica:</p>
+  <p>This expression follows from the telescoping property:</p>
   <p style="text-align:center;">
     $$\Delta_v(e_j, \tau) = AW_v(e_j, \tau) - AW_v(e_{j-1}, \tau)$$
   </p>
-  <p>Es decir, la variación temporal es la diferencia entre la carga acumulada
-    de hoy y la de ayer para la misma ventana \(\tau\). Esto captura el
-    <strong>cambio neto</strong> en la carga respecto a hace \(\tau\) días:</p>
+  <p>That is, the temporary variation is the difference between today's and
+    yesterday's accumulated load for the same window \(\tau\). It captures
+    the <strong>net change</strong> in load relative to \(\tau\) days
+    earlier:</p>
   <ul>
-    <li>\(\Delta > 0\): la carga de hoy es mayor que hace \(\tau\) días (incremento).</li>
-    <li>\(\Delta = 0\): la carga se mantiene estable.</li>
-    <li>\(\Delta < 0\): la carga de hoy es menor que hace \(\tau\) días (descarga).</li>
+    <li>\(\Delta > 0\): today's load is higher than \(\tau\) days earlier (increase).</li>
+    <li>\(\Delta = 0\): the load is stable.</li>
+    <li>\(\Delta < 0\): today's load is lower than \(\tau\) days earlier (unloading).</li>
   </ul>
 
-  <!-- 5. Ventajas -->
+  <!-- 5. Advantages -->
   <hr>
-  <h3>5. Ventajas frente al ACWR clásico</h3>
-  <p>El enfoque FWF supera las limitaciones del ACWR convencional en varios aspectos:</p>
+  <h3>5. Advantages over the classic ACWR</h3>
+  <p>The FWF approach addresses several limitations of the conventional ACWR:</p>
   <ul>
-    <li><strong>No requiere un ratio: </strong>
-      Evita la problemática de la división por cero y el acoplamiento matemático
-      inherente al ACWR acoplado.</li>
-    <li><strong>Múltiples escalas temporales: </strong>
-      En lugar de dos ventanas fijas (7 y 28 días), analiza 28 escalas
-      simultáneamente, capturando patrones a corto, medio y largo plazo.</li>
-    <li><strong>Capacidad predictiva (evidencia limitada): </strong>
-      En los datos de Matas-Bustos et al. (1), las features derivadas del FWF
-      dieron mejores resultados que el ACWR (acoplado, desacoplado y EWMA)
-      en modelos de machine learning para predecir lesiones. Esos datos son
-      de un solo equipo durante una temporada y el resultado no se ha validado
-      externamente: el FWF es una herramienta descriptiva, no un predictor
-      validado de lesiones.</li>
+    <li><strong>No ratio needed: </strong>
+      It avoids the problems of division by zero and the mathematical
+      coupling inherent in the coupled ACWR.</li>
+    <li><strong>Multiple time scales: </strong>
+      Instead of two fixed windows (7 and 28 days), it analyses 28 scales
+      at once, capturing short-, medium- and long-term patterns.</li>
+    <li><strong>Predictive ability (limited evidence): </strong>
+      In the data of Matas-Bustos et al. (1), features derived from the FWF
+      performed better than the ACWR (coupled, uncoupled and EWMA) in machine
+      learning models for injury prediction. Those data come from a single
+      team over one season and the result has not been validated externally:
+      the FWF is a descriptive tool, not a validated injury predictor.</li>
     <li><strong>Multivariable: </strong>
-      El método está diseñado para trabajar simultáneamente con múltiples
-      variables de carga (sRPE, distancia, alta intensidad, aceleraciones, etc.),
-      aunque también funciona con una sola variable.</li>
-    <li><strong>Fundamentación matemática: </strong>
-      Se basa en los conceptos rigurosos del cálculo integral (sumas acumulativas)
-      y diferencial (variaciones temporales), proporcionando una generalización
-      formal del paradigma agudo:crónico.</li>
+      The method is designed to work with several load variables at once
+      (sRPE, distance, high-intensity running, accelerations, etc.), although
+      it also works with a single variable.</li>
+    <li><strong>Mathematical basis: </strong>
+      It rests on concepts from integral calculus (cumulative sums) and
+      differential calculus (temporary variations), giving a formal
+      generalisation of the acute:chronic paradigm.</li>
   </ul>
 
-  <!-- 6. Interpretación -->
+  <!-- 6. Interpretation -->
   <hr>
-  <h3>6. Interpretación de los heatmaps</h3>
-  <h4>6.1. Heatmap &#8721;&#7488;FWF</h4>
-  <p>Cada celda (día, \(\tau\)) muestra la carga acumulada en los últimos
-    \(\tau\) días. Las columnas de \(\tau\) bajo (1-7) reflejan la carga
-    reciente; las de \(\tau\) alto (21-28) reflejan la carga acumulada.
-    Un gradiente pronunciado de izquierda a derecha indica una acumulación
-    progresiva de carga.</p>
-  <h4>6.2. Heatmap &#916;&#7488;FWF</h4>
-  <p>Cada celda muestra el cambio neto respecto a hace \(\tau\) días.
-    Los colores rojos indican incrementos; los azules, descensos; el blanco,
-    estabilidad. Un patrón de rojos intensos en las filas recientes indica
-    picos de carga que podrían asociarse a mayor riesgo de lesión.</p>
+  <h3>6. Interpreting the heatmaps</h3>
+  <h4>6.1. &#8721;&#7488;FWF heatmap</h4>
+  <p>Each cell (day, \(\tau\)) shows the load accumulated over the last
+    \(\tau\) days. Low \(\tau\) values (1-7) reflect recent load; high
+    \(\tau\) values (21-28) reflect accumulated load. A marked gradient from
+    left to right indicates a progressive build-up of load.</p>
+  <h4>6.2. &#916;&#7488;FWF heatmap</h4>
+  <p>Each cell shows the net change relative to \(\tau\) days earlier.
+    Red indicates increases, blue decreases and white stability. A pattern of
+    intense red in the recent rows indicates load spikes that might be
+    associated with a higher injury risk.</p>
 
-  <!-- 7. Bibliografía -->
+  <!-- 7. References -->
   <hr>
-  <h3>7. Referencias bibliográficas</h3>
-  <p style="font-style: italic; color: var(--bs-secondary);">Formato Vancouver</p>
+  <h3>7. References</h3>
+  <p style="font-style: italic; color: var(--bs-secondary);">Vancouver style</p>
   <ol>
     <li>Matas-Bustos JB, Mora-García AM, de Hoyo Lora M, Nieto-Alarcón A,
       Gonzalez-Fernández FT. Advanced feature engineering in Acute:Chronic

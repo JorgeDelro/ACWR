@@ -32,4 +32,5 @@ for (nm in names(inputs)) {
     ))
   }
 }
-saveRDS(ref, "tests/testthat/fixtures/default_results.rds")
+# version = 2 keeps the package installable on R < 3.5.0
+saveRDS(ref, "tests/testthat/fixtures/default_results.rds", version = 2)

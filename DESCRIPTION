@@ -1,7 +1,7 @@
 Package: ACWR
 Type: Package
 Title: Acute Chronic Workload Ratio Calculation
-Version: 0.2.0.9000
+Version: 0.3.0
 Authors@R: person("Jorge R",
              "Fernandez-Santos",
              role = c("aut", "cre"),
@@ -14,7 +14,10 @@ Description: Functions for calculating the acute chronic workload ratio using th
             placed on a daily calendar, so rest days count as zero load. Examples of
             these methods can be found in Williams et al. (2017) <doi:10.1136/bjsports-2016-096589>
             for EWMA and Windt & Gabbett (2019) <doi:10.1136/bjsports-2017-098925> for
-            RAC and RAU.
+            RAC and RAU. Also computes the cumulative and delta variations of the
+            Footballer Workload Footprint (Matas-Bustos et al., 2025)
+            <doi:10.1371/journal.pone.0327960>, and includes a Shiny app for
+            teaching.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -29,13 +32,16 @@ URL: https://jorgedelro.github.io/ACWR/, https://github.com/JorgeDelro/ACWR
 BugReports: https://github.com/JorgeDelro/ACWR/issues
 Suggests: 
     bslib (>= 0.6.0),
+    chromote,
     DT,
     ggplot2,
     knitr,
     plotly,
     rmarkdown,
     shiny,
+    shinytest2,
     testthat (>= 3.0.0),
+    withr,
     writexl
 Config/testthat/edition: 3
 VignetteBuilder: knitr

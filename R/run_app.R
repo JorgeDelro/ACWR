@@ -14,8 +14,8 @@
 #' @return called for its side effect (it starts the app); does not return
 #'         until the app is closed.
 #'
-#' @details The app needs the packages shiny, bslib, ggplot2, plotly, DT,
-#'          writexl and shinyWidgets. They are not installed with ACWR;
+#' @details The app needs the packages shiny, bslib, ggplot2, plotly, DT
+#'          and writexl. They are not installed with ACWR;
 #'          `run_app()` says which ones are missing.
 #'
 #' @export
@@ -27,8 +27,7 @@
 #'
 run_app <- function(...) {
 
-  needed <- c("shiny", "bslib", "ggplot2", "plotly", "DT", "writexl",
-              "shinyWidgets")
+  needed <- c("shiny", "bslib", "ggplot2", "plotly", "DT", "writexl")
   missing_pkgs <- needed[!vapply(needed, is_installed, logical(1))]
   if (length(missing_pkgs) > 0) {
     stop("run_app() needs the following package(s), which are not ",

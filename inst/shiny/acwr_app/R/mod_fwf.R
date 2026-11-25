@@ -136,7 +136,7 @@ fwfServer <- function(id, current_data, plot_theme) {
       req(current_data())
       df <- current_data()
       all_cols <- names(df)
-      extra <- setdiff(all_cols, c("day", "load"))
+      extra <- setdiff(all_cols, c("date", "load"))
       if (length(extra) == 0) return("load")
       is_num <- vapply(extra, function(cn) is.numeric(df[[cn]]), logical(1))
       extra_num <- extra[is_num]
@@ -169,29 +169,38 @@ fwfServer <- function(id, current_data, plot_theme) {
       df <- current_data()
       db <- df[, fwf_load_vars(), drop = FALSE]
       db$ID <- 1
-      db$date <- day_to_date(df$day)
+      db$date <- df$date
       db
     })
+
+    time_unit <- reactive(attr(current_data(), "time"))
+
+    # Día mostrado -> fecha (solo para los títulos con datos con fechas)
+    day_label <- function(day) {
+      df <- current_data()
+      if (!identical(time_unit(), "date")) return(paste("D\u00eda", day))
+      paste0("D\u00eda ", day, " (", format(min(df$date) + day - 1), ")")
+    }
 
     fwf_sigma_list <- reactive({
       vars <- fwf_load_vars()
       long <- ACWR::fwf_cumulative(fwf_db(), ID = "ID", vars = vars,
                                    training_dates = "date", windows = 1:28)
-      lapply(setNames(vars, vars), function(v) fwf_wide(long, v, "sigma"))
+      lapply(setNames(vars, vars), function(v) fwf_wide(long, v, "sigma", time_unit()))
     })
 
     fwf_delta_list <- reactive({
       vars <- fwf_load_vars()
       long <- ACWR::fwf_delta(fwf_db(), ID = "ID", vars = vars,
                               training_dates = "date", windows = 1:28)
-      lapply(setNames(vars, vars), function(v) fwf_wide(long, v, "delta"))
+      lapply(setNames(vars, vars), function(v) fwf_wide(long, v, "delta", time_unit()))
     })
 
     observe({
       req(current_data())
-      df <- current_data()
+      days <- day_number(current_data()$date, time_unit())
       updateSliderInput(session, "fwf_day_select",
-        min = min(df$day), max = max(df$day), value = max(df$day))
+        min = min(days), max = max(days), value = max(days))
     })
 
     # Info dinámica en sidebar
@@ -384,7 +393,7 @@ fwfServer <- function(id, current_data, plot_theme) {
 
     output$fwf_table_title <- renderText({
       n_vars <- length(fwf_load_vars())
-      paste0("Features FWF \u2014 D\u00eda ", input$fwf_day_select,
+      paste0("Features FWF \u2014 ", day_label(input$fwf_day_select),
              " (", n_vars, " variable", ifelse(n_vars > 1, "s", ""), ")")
     })
 

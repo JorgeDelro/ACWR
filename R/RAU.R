@@ -6,13 +6,17 @@
 #'
 #' Sessions are first turned into a daily series from the first to the last
 #' date: sessions on the same day are summed and days without a session count
-#' as a load of 0. Then, for each day \eqn{t}:
+#' as a load of 0. Then, for each day \eqn{t} (default windows):
 #' \itemize{
 #' \item Acute load: sum of the daily load over days \eqn{t-6} to \eqn{t}.
 #' \item Chronic load: sum of the daily load over days \eqn{t-27} to
 #'       \eqn{t-7}, divided by 3 (weekly-equivalent).
 #' \item ACWR: acute / chronic.
 #' }
+#' With other windows, the chronic window is the `chronic` days ending on
+#' \eqn{t} minus the `acute` most recent days (days \eqn{t - chronic + 1}
+#' to \eqn{t - acute}), and both loads are sums times 7 / number of days
+#' (weekly-equivalent).
 #' Each session gets the value of its day. Values are not rounded.
 #'
 #' @inheritParams RAC
@@ -37,6 +41,10 @@
 #'   weeks or of the 3 preceding weeks). This package interprets them as
 #'   rolling windows of 7, 28 and 21 calendar days that end on each day, so
 #'   every day has its own value.
+#' \item The `acute` and `chronic` arguments (other than 7 and 28 days)
+#'   are an extension of this package. Loads are still expressed per 7 days
+#'   (sum x 7 / number of days in the window), so the ratio is the same as
+#'   the ratio of the mean daily loads.
 #' \item With `partial = TRUE`, a window that starts before the first day
 #'   uses only the days available and is rescaled to 7 days (sum x 7 /
 #'   number of days available). The sources do not cover incomplete windows.
@@ -64,16 +72,20 @@
 RAU <- function(TL,
                 weeks = NULL,
                 training_dates,
-                partial = FALSE) {
+                partial = FALSE,
+                acute = 7,
+                chronic = 28) {
 
   if (missing(training_dates)) {
     stop("you must provide `training_dates`", call. = FALSE)
   }
   check_partial(partial)
+  windows <- check_acute_chronic(acute, chronic)
   TL <- check_TL(TL)
   day <- as_calendar_days(training_dates, length(TL))
 
-  res <- session_ACWR(TL, day, "RAU", partial)
+  res <- session_ACWR(TL, day, "RAU", partial,
+                      windows$acute, windows$chronic)
   warn_missing_TL(list(RAU = list(res$missing)), sum(is.na(TL)))
 
   list(RAU_acute = res$values$acute,

@@ -24,8 +24,8 @@ All the values shown by the app are computed with the functions of this
 package (\code{\link[=RAC]{RAC()}}, \code{\link[=RAU]{RAU()}}, \code{\link[=EWMA]{EWMA()}}, \code{\link[=fwf_cumulative]{fwf_cumulative()}} and
 \code{\link[=fwf_delta]{fwf_delta()}}), on the same daily calendar.
 
-The app needs the packages shiny, bslib, ggplot2, plotly, DT,
-writexl and shinyWidgets. They are not installed with ACWR;
+The app needs the packages shiny, bslib, ggplot2, plotly, DT
+and writexl. They are not installed with ACWR;
 \code{run_app()} says which ones are missing.
 }
 \examples{

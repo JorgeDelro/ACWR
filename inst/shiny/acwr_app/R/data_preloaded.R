@@ -1,5 +1,5 @@
 # ============================================================
-# Datos pre-cargados (8 atletas)
+# Datos pre-cargados (8 atletas + 1 equipo)
 # ============================================================
 
 # --- Atleta 8: dataset sintético 180 días, 6 variables GPS (FWF Demo 2) ---
@@ -208,7 +208,13 @@ generate_preloaded_data <- function() {
     "Atleta 5 (incremento aleatorio)" = data.frame(day = 1:28, load = a5),
     "Atleta 6 (incremento abrupto)" = data.frame(day = 1:28, load = a6),
     "Atleta 7 (FWF Demo 1)" = generate_fwf_demo_data(),
-    "Atleta 8 (FWF Demo 2)" = generate_fwf_demo2_data()
+    "Atleta 8 (FWF Demo 2)" = generate_fwf_demo2_data(),
+    # Fechas reales, días de descanso y sesiones dobles (atleta 2)
+    "Equipo con descansos (3 atletas, fechas)" = data.frame(
+      athlete_id = ACWR::training_load_rest$ID,
+      date = ACWR::training_load_rest$Training_Date,
+      load = ACWR::training_load_rest$TL
+    )
   )
 }
 

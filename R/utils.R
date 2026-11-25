@@ -121,34 +121,39 @@ safe_ratio <- function(acute, chronic) {
 #' @param load daily load.
 #' @param method "EWMA", "RAC" or "RAU".
 #' @param partial passed to weekly_load() (RAC and RAU only).
+#' @param acute,chronic window lengths in days (N of the EWMA).
 #'
 #' @return a list with acute, chronic and ACWR (one value per day).
 #' @noRd
-daily_ACWR <- function(load, method, partial = FALSE) {
+daily_ACWR <- function(load, method, partial = FALSE,
+                       acute = 7, chronic = 28) {
 
   if (method == "EWMA") {
-    # Williams et al. (2017): lambda = 2 / (N + 1), N = 7 and 28 days
-    lambda_acute <- 2 / (7 + 1)
-    lambda_chronic <- 2 / (28 + 1)
-    acute <- chronic <- numeric(length(load))
-    acute[1] <- chronic[1] <- load[1]
+    # Williams et al. (2017): lambda = 2 / (N + 1), N = acute and chronic
+    # days (7 and 28 by default)
+    lambda_acute <- 2 / (acute + 1)
+    lambda_chronic <- 2 / (chronic + 1)
+    a_load <- c_load <- numeric(length(load))
+    a_load[1] <- c_load[1] <- load[1]
     for (t in seq_along(load)[-1]) {
-      acute[t] <- load[t] * lambda_acute + (1 - lambda_acute) * acute[t - 1]
-      chronic[t] <- load[t] * lambda_chronic + (1 - lambda_chronic) * chronic[t - 1]
+      a_load[t] <- load[t] * lambda_acute + (1 - lambda_acute) * a_load[t - 1]
+      c_load[t] <- load[t] * lambda_chronic + (1 - lambda_chronic) * c_load[t - 1]
     }
   }
 
+  # Default windows: acute days t-6..t; chronic days t-27..t (RAC) or
+  # t-27..t-7 (RAU)
   if (method == "RAC") {
-    acute <- weekly_load(load, 6, 0, partial)    # days t-6..t
-    chronic <- weekly_load(load, 27, 0, partial) # days t-27..t
+    a_load <- weekly_load(load, acute - 1, 0, partial)
+    c_load <- weekly_load(load, chronic - 1, 0, partial)
   }
 
   if (method == "RAU") {
-    acute <- weekly_load(load, 6, 0, partial)    # days t-6..t
-    chronic <- weekly_load(load, 27, 7, partial) # days t-27..t-7
+    a_load <- weekly_load(load, acute - 1, 0, partial)
+    c_load <- weekly_load(load, chronic - 1, acute, partial)
   }
 
-  list(acute = acute, chronic = chronic, ACWR = safe_ratio(acute, chronic))
+  list(acute = a_load, chronic = c_load, ACWR = safe_ratio(a_load, c_load))
 }
 
 #' Compute one method for one athlete, per session
@@ -157,10 +162,11 @@ daily_ACWR <- function(load, method, partial = FALSE) {
 #'         session, in the input order) and `missing` (information on missing
 #'         loads, or NULL).
 #' @noRd
-session_ACWR <- function(TL, day, method, partial = FALSE) {
+session_ACWR <- function(TL, day, method, partial = FALSE,
+                         acute = 7, chronic = 28) {
 
   daily <- daily_series(TL, day)
-  res <- daily_ACWR(daily$load, method, partial)
+  res <- daily_ACWR(daily$load, method, partial, acute, chronic)
   values <- lapply(res, function(x) x[daily$index])
 
   missing <- NULL
@@ -168,7 +174,7 @@ session_ACWR <- function(TL, day, method, partial = FALSE) {
     # Days that are NA only because of the missing load(s)
     filled <- daily$load
     filled[is.na(filled)] <- 0
-    res_filled <- daily_ACWR(filled, method, partial)
+    res_filled <- daily_ACWR(filled, method, partial, acute, chronic)
     missing <- list(
       sessions = sum(is.na(TL)),
       days_na = sum(is.na(res$ACWR) & !is.na(res_filled$ACWR))
@@ -214,4 +220,24 @@ check_partial <- function(partial) {
   if (!is.logical(partial) || length(partial) != 1 || is.na(partial)) {
     stop("`partial` must be TRUE or FALSE.", call. = FALSE)
   }
+}
+
+#' Check the `acute` and `chronic` window arguments
+#'
+#' @return the windows as integers.
+#' @noRd
+check_acute_chronic <- function(acute, chronic) {
+  for (arg in c("acute", "chronic")) {
+    x <- get(arg)
+    if (!is.numeric(x) || length(x) != 1 || is.na(x) || x < 1 ||
+        x != round(x)) {
+      stop("`", arg, "` must be a single positive whole number of days.",
+           call. = FALSE)
+    }
+  }
+  if (chronic <= acute) {
+    stop("`chronic` (", chronic, " days) must be longer than `acute` (",
+         acute, " days).", call. = FALSE)
+  }
+  list(acute = as.integer(acute), chronic = as.integer(chronic))
 }

@@ -14,7 +14,6 @@ library(ggplot2)
 library(plotly)
 library(DT)
 library(writexl)
-library(shinyWidgets)
 library(ACWR)
 
 # Todos los archivos en R/ se cargan automáticamente por Shiny:

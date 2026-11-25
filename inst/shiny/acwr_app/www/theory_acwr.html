@@ -62,6 +62,24 @@
     por Lolli et al. (6), quienes evidenciaron que este acoplamiento puede inflar
     artificialmente la asociación entre el ACWR y el riesgo de lesión.</p>
 
+  <h4>2.3. Cómo muestra la app las cargas</h4>
+  <p>La app (y el paquete ACWR) expresa las cargas aguda y crónica como
+    <strong>sumas semanales equivalentes</strong>: la suma de la ventana
+    multiplicada por \(7 / N\). Con las ventanas habituales, la carga aguda es
+    la suma de los últimos 7 días y la crónica es la suma de los últimos 28
+    días dividida entre 4:</p>
+  <p style="text-align:center;">
+    $$\text{Aguda} = \frac{7}{N_a} \sum_{i=d-N_a+1}^{d} L_i \qquad
+      \text{Crónica} = \frac{7}{N_c} \sum_{i=d-N_c+1}^{d} L_i$$
+  </p>
+  <p>Como las dos cargas se multiplican por 7, el factor se cancela y
+    <strong>el ACWR es idéntico al que se obtiene con las medias
+    diarias</strong> de las fórmulas anteriores; solo cambia la escala en que
+    se muestran las cargas (UA por 7 días en lugar de UA por día). Los días sin
+    sesión cuentan como carga 0. En el método desacoplado la crónica es la suma
+    de los días \(d-N_c+1\) a \(d-N_a\) multiplicada por \(7 / (N_c - N_a)\).
+    El EWMA se muestra en la escala de una carga diaria.</p>
+
   <!-- 3. Uncoupled -->
   <hr>
   <h3>3. Rolling Average - Método Desacoplado (Uncoupled)</h3>
@@ -146,9 +164,39 @@
     captura la <em>distribución temporal</em> de la carga, mientras que
     el rolling average solo captura el promedio.</p>
 
-  <!-- 5. Bibliografía -->
+  <!-- 5. Limitaciones y críticas -->
   <hr>
-  <h3>5. Referencias bibliográficas</h3>
+  <h3>5. Limitaciones y críticas</h3>
+  <p>El ACWR se calcula aquí tal como se describe en la literatura, pero el
+    ratio tiene limitaciones bien documentadas que conviene conocer antes de
+    usarlo para tomar decisiones:</p>
+  <ul>
+    <li><strong>Acoplamiento matemático.</strong> En el método acoplado, la
+      semana aguda forma parte también de la carga crónica. Esto genera una
+      correlación espuria entre ambas y reduce la variabilidad entre atletas
+      de la carga crónica (6). Además, el ratio acoplado nunca puede superar
+      el valor 4 (15). El método desacoplado elimina el solapamiento, pero no
+      los problemas siguientes.</li>
+    <li><strong>Artefactos del ratio.</strong> El ACWR se comporta como un
+      reescalado de la carga aguda: se obtienen asociaciones con las lesiones
+      similares cuando la carga aguda se divide por cargas "crónicas" fijas o
+      aleatorias, y el ratio no aporta valor predictivo sobre la carga aguda
+      sola (13). Un ratio no siempre es una forma adecuada de representar los
+      cambios de actividad, y los valores del EWMA dependen de la carga inicial
+      en las primeras semanas (14).</li>
+    <li><strong>Umbrales no validados.</strong> Los umbrales recomendados (por
+      ejemplo, el "sweet spot" de 0,8-1,3 de la sección 1.1) están afectados
+      por estas limitaciones y por problemas como la discretización y los datos
+      escasos, que comprometen su validez como puntos de corte del riesgo de
+      lesión (13, 14). Por eso la app marca las zonas como orientativas.</li>
+    <!-- PENDIENTE: ensayo controlado aleatorizado de Dalen-Lorentsen et al.
+         (2021). La referencia no está en el README ni en la viñeta del
+         paquete; añadir cuando el profesor facilite la cita exacta. -->
+  </ul>
+
+  <!-- 6. Bibliografía -->
+  <hr>
+  <h3>6. Referencias bibliográficas</h3>
   <p style="font-style: italic; color: var(--bs-secondary);">Formato Vancouver</p>
   <ol>
     <li>Banister EW, Calvert TW, Savage MV, Bach T. A systems model of training for athletic performance. Aust J Sports Med. 1975;7(3):57-61.</li>
@@ -163,6 +211,9 @@
     <li>Murray NB, Gabbett TJ, Townshend AD, Blanch P. Calculating acute:chronic workload ratios using exponentially weighted moving averages provides a more sensitive indicator of injury likelihood than rolling averages. Br J Sports Med. 2017;51(9):749-54.</li>
     <li>Menaspa P. Are rolling averages a good way to assess training load for injury prevention? Br J Sports Med. 2017;51(7):618-9.</li>
     <li>Drew MK, Purdam C. Time to bin the term 'overuse' injury: is 'training load error' a more accurate term? Br J Sports Med. 2016;50(22):1423-4.</li>
+    <li>Impellizzeri FM, Woodcock S, Coutts AJ, et al. What role do chronic workloads play in the acute to chronic workload ratio? Time to dismiss ACWR and its underlying theory. Sports Med. 2021;51(3):581-92.</li>
+    <li>Wang C, Vargas JT, Stokes T, et al. Analyzing activity and injury: lessons learned from the acute:chronic workload ratio. Sports Med. 2020;50(7):1243-54.</li>
+    <li>Windt J, Gabbett TJ. Is it all for naught? What does mathematical coupling mean for acute:chronic workload ratios? Br J Sports Med. 2019;53(16):988-90.</li>
   </ol>
 
 </div>

@@ -9,7 +9,8 @@
 #' as a load of 0. Then, for every calendar day \eqn{t} with daily load
 #' \eqn{w_t}:
 #' \deqn{E_t = w_t \lambda + (1 - \lambda) E_{t-1}, \quad \lambda = 2 / (N + 1)}
-#' with \eqn{N = 7} (acute) and \eqn{N = 28} (chronic), and \eqn{E_1 = w_1}.
+#' with \eqn{N = 7} (acute) and \eqn{N = 28} (chronic) by default (see
+#' `acute` and `chronic`), and \eqn{E_1 = w_1}.
 #' Acute and chronic loads are on the scale of a daily load. Each session gets
 #' the value of its day. Values are not rounded.
 #'
@@ -17,6 +18,9 @@
 #' @param training_dates date of each session (Date or POSIXct). Sessions do
 #'        not need to be sorted. If `NULL` (default), sessions are assumed to
 #'        be on consecutive days, in the order given, and a message is shown.
+#' @param acute \eqn{N} of the acute EWMA, in days (default 7).
+#' @param chronic \eqn{N} of the chronic EWMA, in days (default 28). Must be
+#'        longer than `acute`.
 #'
 #' @return {A list with one value per session, in the input order:
 #' \itemize{
@@ -34,6 +38,8 @@
 #' The following choices are made by this package; they are not taken from
 #' the cited sources:
 #' \itemize{
+#' \item Values of `acute` and `chronic` other than 7 and 28 days are an
+#'   extension of this package.
 #' \item The ratio is NA when the chronic load is 0 (e.g. no training in the
 #'   chronic window): a ratio to zero load is undefined, and returning NA
 #'   avoids infinite values in summaries and plots.
@@ -58,8 +64,11 @@
 #'                     training_dates = training_load_1$Training_Date)
 #'
 EWMA <- function(TL,
-                 training_dates = NULL) {
+                 training_dates = NULL,
+                 acute = 7,
+                 chronic = 28) {
 
+  windows <- check_acute_chronic(acute, chronic)
   TL <- check_TL(TL)
   if (is.null(training_dates)) {
     message("`training_dates` not supplied: assuming one session per day ",
@@ -69,7 +78,8 @@ EWMA <- function(TL,
     day <- as_calendar_days(training_dates, length(TL))
   }
 
-  res <- session_ACWR(TL, day, "EWMA")
+  res <- session_ACWR(TL, day, "EWMA", acute = windows$acute,
+                      chronic = windows$chronic)
   warn_missing_TL(list(EWMA = list(res$missing)), sum(is.na(TL)))
 
   list(EWMA_acute = res$values$acute,

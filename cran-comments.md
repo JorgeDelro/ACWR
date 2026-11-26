@@ -27,21 +27,36 @@ Dependencies:
 ## Test environments
 
 * local macOS Sequoia 15.4.1 (aarch64-apple-darwin20), R 4.5.3:
-  `devtools::check()` (R CMD check --as-cran --no-manual) on ACWR 0.3.0
-
-<!-- Before submitting: add win-builder (R-devel) results for 0.3.0 and
-     re-run the check with the manual. -->
+  `R CMD check --as-cran` on the built tarball ACWR_0.3.0.tar.gz, with the
+  PDF and HTML manuals
+* win-builder (Windows Server 2022, x86_64), R-devel (2026-11-17
+  r90926)
 
 ## R CMD check results
 
-On local macOS (R 4.5.3): 0 errors | 0 warnings | 1 note
+On local macOS (R 4.5.3): 0 errors | 0 warnings | 2 notes
 
 * checking for future file timestamps ... NOTE
   unable to verify current time
   This note comes from the local check machine (it could not reach the time
   server), not from the package.
+* checking HTML version of manual ... NOTE
+  Skipping checking HTML validation: 'tidy' doesn't look like recent enough
+  HTML Tidy.
+  The local machine only has the old HTML Tidy shipped with macOS; this is
+  not a problem in the package. The PDF manual was built without problems
+  ("checking PDF version of manual ... OK").
+
+On win-builder (R-devel): 0 errors | 0 warnings | 1 note
+
+* checking CRAN incoming feasibility ... NOTE
+  Possibly misspelled words in DESCRIPTION: Bustos (18:50),
+  Matas (18:44)
+  "Matas-Bustos" is the surname of the first author of a cited
+  article (Matas-Bustos et al., 2025) and is spelled correctly.
 
 ## Reverse dependencies
 
-There are currently no reverse dependencies on CRAN
-(tools::package_dependencies("ACWR", reverse = TRUE, which = "all")).
+There are currently no reverse dependencies on CRAN:
+`tools::package_dependencies("ACWR", reverse = TRUE, which = "all")`
+returned `character(0)` on 2026-11-26.
